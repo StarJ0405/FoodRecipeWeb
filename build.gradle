@@ -14,6 +14,7 @@ java {
 repositories {
 	mavenCentral()
 }
+//https://velog.io/@on5949/SpringSecurity-OAuth-%EC%99%80-%EC%9D%BC%EB%B0%98%EB%A1%9C%EA%B7%B8%EC%9D%B8%EC%9D%84-%EB%8F%99%EC%9D%BC%ED%95%98%EA%B2%8C-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -32,11 +33,11 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation 'org.commonmark:commonmark:0.21.0'
 	implementation 'org.springframework.boot:spring-boot-starter-mail' // 메일
-	implementation 'commons-fileupload:commons-fileupload:1.4' // 파일
+	implementation 'commons-fileupload:commons-fileupload' // 파일
 
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.7.0'// Oauth-구글
-	implementation 'com.google.api-client:google-api-client:1.32.1' // Oauth-구글
-	implementation 'com.google.oauth-client:google-oauth-client-builder:1.32.1' // Oauth-구글
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'// Oauth-구글
+	implementation 'com.google.api-client:google-api-client' // Oauth-구글
+	implementation 'com.google.oauth-client:google-oauth-client-builder' // Oauth-구글
 }
 
 tasks.named('test') {
