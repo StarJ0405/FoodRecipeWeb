@@ -3,13 +3,17 @@
     <div class="my-10 flex justify-center">
         <div class="flex items-center flex-col">
             <div class="border border-black rounded-xl flex h-[300px] w-[500px] justify-center items-center text-xl">
-                <form action="/user/singup" method="post" th:object="${loginForm}" class="flex flex-col items-center">
-                    <input type="text" placeholder="로그인"
+                <form action="/user/signup" method="post" th:object="${signupForm}" class="flex flex-col items-center">
+                    <input type="text" placeholder="아이디" th:field="*{id}"
                            class="border border-2 border-primary-content rounded-md w-[300px]">
-                    <input type="password" placeholder="비밀번호"
+                    <input type="password" placeholder="비밀번호" th:field="*{password}"
                            class="border border-2 border-primary-content rounded-md w-[300px] ">
+                    <input type="text" placeholder="닉네임" th:field="*{nickname}"
+                           class="border border-2 border-primary-content rounded-md w-[300px]">
+                    <input type="text" placeholder="이메일" th:field="*{email}"
+                           class="border border-2 border-primary-content rounded-md w-[300px]">
                     <br>
-                    <input type="submit" value="Login"
+                    <input type="submit" value="회원가입"
                            class="w-[300px] border border-2 border-primary-content rounded-md bg-primary-content">
                 </form>
             </div>

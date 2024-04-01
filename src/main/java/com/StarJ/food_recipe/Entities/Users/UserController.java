@@ -18,15 +18,21 @@ public class UserController {
         return "login";
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public String login(@Valid LoginForm loginForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
             return "login";
         return "redirect:/";
     }
 
-    @GetMapping("signup")
+    @GetMapping("/signup")
     public String signup(SignupForm signupForm) {
+        return "signup";
+    }
+
+    @PostMapping("/signup")
+    public String signup(@Valid SignupForm signupForm, BindingResult bindingResult) {
+        System.out.print("try to singup");
         return "signup";
     }
 }
