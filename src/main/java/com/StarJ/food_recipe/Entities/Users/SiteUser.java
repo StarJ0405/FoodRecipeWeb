@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -12,12 +13,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 public class SiteUser {
     @Id
-    @Column(length = 16)
+    @Column(columnDefinition = "TEXT")
     private String id;
 
-    @Column(length = 16)
+    @Column(columnDefinition = "TEXT")
     private String nickname;
 
     @Column(columnDefinition = "TEXT")
@@ -36,7 +38,6 @@ public class SiteUser {
     private String provider;
     private String providerId;
     @Builder
-
     public SiteUser(String id, String nickname, String password, String role, String email, LocalDateTime createDate, boolean locked, boolean emailVerified, String provider, String providerId) {
         this.id = id;
         this.nickname = nickname;

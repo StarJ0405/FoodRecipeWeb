@@ -1,5 +1,8 @@
 <html layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content">
-    signup
+    <form action="/user/signup" method="post">
+        <input type ="text" placeholder="아이디">
+        <input type ="password" placeholder="비밀번호">
+    </form>
 </div>
 </html>

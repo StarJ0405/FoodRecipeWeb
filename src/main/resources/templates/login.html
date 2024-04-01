@@ -1,6 +1,13 @@
 <html layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content">
+    <form action="/user/login" method="post">
+        <input type ="text" placeholder="로그인">
+        <input type ="password" placeholder="비밀번호">
+        <input type="submit" value="Login">
+    </form>
     <button type="button" onclick="location.href='/user/signup'">회원가입</button>
     <button type="button" onclick="location.href='/oauth2/authorization/google'">구글 로그인</button>
+<!--    <button type="button" onclick="location.href='/oauth2/authorization/naver'">네이버 로그인</button>-->
+    <button type="button" onclick="location.href='/oauth2/authorization/kakao'">카카오 로그인</button>
 </div>
 </html>

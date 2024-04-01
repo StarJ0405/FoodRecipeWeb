@@ -8,6 +8,7 @@ import com.StarJ.food_recipe.Securities.UsersInfo.GoogleUserInfo;
 import com.StarJ.food_recipe.Securities.UsersInfo.KakaoUserInfo;
 import com.StarJ.food_recipe.Securities.UsersInfo.NaverUserInfo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -20,8 +21,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
-
-    private UserRepository userRepository;
+    @Autowired
+    private final UserRepository userRepository;
 
     //구글로 부터 받은 userRequest 데이터에 대한 후처리 되는 함수
     //함수종료시 @AuthenticationPrincipal 어노테이션이 만들어진다.

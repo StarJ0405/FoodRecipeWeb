@@ -33,11 +33,11 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation 'org.commonmark:commonmark:0.21.0'
 	implementation 'org.springframework.boot:spring-boot-starter-mail' // 메일
-	implementation 'commons-fileupload:commons-fileupload' // 파일
+//	implementation 'commons-fileupload:commons-fileupload' // 파일
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'// Oauth-구글
-	implementation 'com.google.api-client:google-api-client' // Oauth-구글
-	implementation 'com.google.oauth-client:google-oauth-client-builder' // Oauth-구글
+//	implementation 'com.google.api-client:google-api-client' // Oauth-구글
+//	implementation 'com.google.oauth-client:google-oauth-client-builder' // Oauth-구글
 }
 
 tasks.named('test') {

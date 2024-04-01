@@ -1,5 +1,6 @@
 <html layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content">
-    home
+    <button sec:authorize="isAnonymous()" type="button" onclick="location.href='/user/login'">로그인</button>
+    <button sec:authorize="isAuthenticated()" type="button" onclick="location.href='/user/logout'">로그아웃</button>
 </div>
 </html>
