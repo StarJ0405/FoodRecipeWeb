@@ -1,8 +1,19 @@
-<html layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<html layout:decorate="~{layout_Non}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content">
-    <form action="/user/signup" method="post">
-        <input type ="text" placeholder="아이디">
-        <input type ="password" placeholder="비밀번호">
-    </form>
+    <div class="my-10 flex justify-center">
+        <div class="flex items-center flex-col">
+            <div class="border border-black rounded-xl flex h-[300px] w-[500px] justify-center items-center text-xl">
+                <form action="/user/singup" method="post" th:object="${loginForm}" class="flex flex-col items-center">
+                    <input type="text" placeholder="로그인"
+                           class="border border-2 border-primary-content rounded-md w-[300px]">
+                    <input type="password" placeholder="비밀번호"
+                           class="border border-2 border-primary-content rounded-md w-[300px] ">
+                    <br>
+                    <input type="submit" value="Login"
+                           class="w-[300px] border border-2 border-primary-content rounded-md bg-primary-content">
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 </html>

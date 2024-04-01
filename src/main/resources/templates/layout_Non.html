@@ -4,15 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- 기본 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.9.0/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.9.0/dist/full.min.css" rel="stylesheet" type="text/css"/>
     <title>음식 레시피</title>
 </head>
 <body>
-<!-- Header 내용 -->
-<header th:replace="~{header :: headerFragment}"></header>
-<!--nav 내용-->
-<nav th:replace="~{navbar :: navbarFragment}"></nav>
-<!-- 삽입될 내용 -->
+<div class="navbar bg-info text-primary-content justify-center">
+    <a th:href="@{/}"><img src="/icon.png" class="w-[150px] cursor-pointer"></a>
+</div>
 <th:block layout:fragment="content"></th:block>
 <!-- Footer 내용 -->
 <footer th:replace="~{footer :: footerFragment}"></footer>
@@ -21,5 +19,6 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <!-- 자바스크립트 -->
 <th:block layout:fragment="script"></th:block>
+
 </body>
 </html>
