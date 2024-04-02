@@ -19,12 +19,19 @@ public class UserService {
         return userRepository.findById(id).isPresent();
     }
 
-    public SiteUser getUser(String id) {
+    public SiteUser getUserbyID(String id) {
         Optional<SiteUser> optional = userRepository.findById(id);
         if (optional.isPresent())
             return optional.get();
         else
             throw new DataNotFoundException("유저를 찾을 수 없습니다.");
+    }
+    public SiteUser getUserbyEmail(String email){
+        Optional<SiteUser> optional = userRepository.findAllByEmail(email);
+        if(optional.isPresent())
+            return optional.get();
+        else
+            throw new DataNotFoundException("");
     }
 
     public SiteUser create(String id, String password, String nickname, String email) {
