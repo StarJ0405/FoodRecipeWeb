@@ -1,13 +1,0 @@
-<header th:fragment="headerFragment">
-    <div class="flex justify-end">
-        <div>
-            <button sec:authorize="isAnonymous()" type="button" onclick="location.href='/user/login'">로그인</button>
-            <button sec:authorize="isAuthenticated()" type="button" onclick="location.href='/user/logout'">로그아웃</button>
-            <button sec:authorize="isAnonymous()" type="button" onclick="location.href='/user/signup'">회원가입</button>
-        </div>
-    </div>
-    <div class="flex justify-center">
-        <img src="/icon.png" class="w-[75px]">
-        <input type="text" placeholder="검색어" class="input input-bordered input-info w-full max-w-xs" /><button class="btn btn-info text-[20px]">🔍</button>
-    </div>
-</header>

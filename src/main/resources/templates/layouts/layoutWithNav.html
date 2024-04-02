@@ -1,0 +1,14 @@
+<html layout:decorate="~{/layouts/layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<body layout:fragment="body">
+<!-- Header 내용 -->
+<header th:replace="~{/layouts/header :: headerFragment}"></header>
+<!--nav 내용-->
+<nav th:replace="~{/layouts/navbar :: navbarFragment}"></nav>
+<!-- 삽입될 내용 -->
+<th:block layout:fragment="content"></th:block>
+<!-- Footer 내용 -->
+<footer th:replace="~{/layouts/footer :: footerFragment}"></footer>
+<!-- 자바스크립트 -->
+<th:block layout:fragment="script"></th:block>
+</body>
+</html>

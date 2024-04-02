@@ -37,6 +37,8 @@ public class SiteUser {
 
     private String provider;
     private String providerId;
+
+
     @Builder
     public SiteUser(String id, String nickname, String password, String role, String email, LocalDateTime createDate, boolean locked, boolean emailVerified, String provider, String providerId) {
         this.id = id;

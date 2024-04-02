@@ -1,15 +1,23 @@
 package com.StarJ.food_recipe.Entities.Users;
 
 import com.StarJ.food_recipe.Exceptions.DataNotFoundException;
+import com.StarJ.food_recipe.Securities.UserRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public boolean hasUser(String id) {
+        return userRepository.findById(id).isPresent();
+    }
 
     public SiteUser getUser(String id) {
         Optional<SiteUser> optional = userRepository.findById(id);
@@ -19,13 +27,15 @@ public class UserService {
             throw new DataNotFoundException("유저를 찾을 수 없습니다.");
     }
 
-    public SiteUser create(String id,String password, String email, String role, String provider, String providerId) {
+    public SiteUser create(String id, String password, String nickname, String email) {
         SiteUser user = SiteUser.builder()
                 .id(id)
+                .password(passwordEncoder.encode(password))
+                .nickname(nickname)
                 .email(email)
-                .role(role)
-                .provider(provider)
-                .providerId(providerId)
+                .role(UserRole.USER.getValue())
+                .createDate(LocalDateTime.now())
+                .emailVerified(true)
                 .build();
         userRepository.save(user);
         return user;

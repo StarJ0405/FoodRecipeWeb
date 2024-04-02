@@ -1,0 +1,41 @@
+<html layout:decorate="~{/layouts/layout_Non}" xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml">
+<div layout:fragment="content">
+    <div class="my-10 flex justify-center">
+        <div class="flex items-center flex-col">
+            <div class="border border-black rounded-xl flex h-[300px] w-[500px] justify-center items-end text-xl">
+                <div th:if="${param.error}">
+                    <dialog id="my_modal_1" class="modal">
+                        <div class="modal-box">
+                            <p class="py-4">사용자ID 또는 비밀번호를 확인해 주세요.</p>
+                        </div>
+                        <form method="dialog" class="modal-backdrop">
+                            <button>close</button>
+                        </form>
+                    </dialog>
+                    <script>document.getElementById("my_modal_1").showModal();</script>
+                </div>
+                <!--                                <form th:action="@{/user/login}" method="post" class="flex flex-col items-center">-->
+                <form th:action="@{/user/loginProcess}" method="post" class="flex flex-col items-center">
+                    <input type="text" name="username" id="username" placeholder="아이디"
+                           class="border border-2 border-primary-content rounded-md w-[300px]">
+                    <input type="password" id="password" name="password" placeholder="비밀번호"
+                           class="border border-2 border-primary-content rounded-md w-[300px] ">
+                    <br>
+                    <input type="submit" value="Login"
+                           class="w-[300px] border border-2 border-primary-content rounded-md bg-primary-content">
+                    <div class="m-5 flex justify-center">
+                        <a href="/oauth2/authorization/google" class="p-2"><img src="/google.png" class="w-[75px] rounded-full overflow-hidden m-0" alt="구글 로그인"/></a>
+                        <a href="/oauth2/authorization/kakao" class="p-2"><img src="/kakao.png" class="w-[75px] rounded-full overflow-hidden m-0" alt="카카오 로그인"/></a>
+                    </div>
+                </form>
+            </div>
+            <div>
+                <button type="button" onclick="location.href='/user/signup'" class="p-2">회원가입</button>
+                <button type="button" onclick="location.href='/user/findID'" class="p-2">아이디 찾기</button>
+                <button type="button" onclick="location.href='/user/findPW'" class="p-2">비밀번호 찾기</button>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

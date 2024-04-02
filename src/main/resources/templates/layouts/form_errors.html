@@ -1,0 +1,16 @@
+<div th:fragment="formErrorsFragment"
+     role="alert" th:if="${#fields.hasAnyErrors()}" xmlns:th="http://www.w3.org/1999/xhtml">
+    <dialog id="my_modal" class="modal">
+        <div class="modal-box">
+            <div th:each="err : ${#fields.allErrors()}">
+                <p class="py-4" th:text="${err}"></p>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+    <script>document.getElementById("my_modal").showModal();</script>
+
+
+</div>

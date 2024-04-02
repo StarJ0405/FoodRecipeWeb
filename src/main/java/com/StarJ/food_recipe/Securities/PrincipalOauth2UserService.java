@@ -1,12 +1,11 @@
 package com.StarJ.food_recipe.Securities;
 
-import com.StarJ.food_recipe.Entities.Users.PrincipalDetail;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
 import com.StarJ.food_recipe.Entities.Users.UserRepository;
-import com.StarJ.food_recipe.Securities.UsersInfo.FacebookUserInfo;
-import com.StarJ.food_recipe.Securities.UsersInfo.GoogleUserInfo;
-import com.StarJ.food_recipe.Securities.UsersInfo.KakaoUserInfo;
-import com.StarJ.food_recipe.Securities.UsersInfo.NaverUserInfo;
+import com.StarJ.food_recipe.Securities.OAuthUserInfoes.FacebookUserInfo;
+import com.StarJ.food_recipe.Securities.OAuthUserInfoes.GoogleUserInfo;
+import com.StarJ.food_recipe.Securities.OAuthUserInfoes.KakaoUserInfo;
+import com.StarJ.food_recipe.Securities.OAuthUserInfoes.NaverUserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -15,6 +14,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -44,24 +44,24 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             return null;
 
 
-        String provider = oAuth2UserInfo.getProvider(); // google
+        String provider = oAuth2UserInfo.getProvider();
         String providerId = oAuth2UserInfo.getProviderId();
         String id = provider + "_" + providerId;
-        String email = oAuth2UserInfo.getEmail();
-        String role = "ROLE_USER";
-
         Optional<SiteUser> optional = userRepository.findById(id);
         SiteUser user;
         if (optional.isEmpty()) {
-            //강제 회원가입
-            //회원 DB에 추가함
-            //password 가 null 이기 때문에 일반적인 회원가입을 할 수가 없음
+            // 강제 회원가입, DB에 추가
+            // password 가 null 이기 때문에 일반적인 회원가입을 할 수가 없음
+            String email = oAuth2UserInfo.getEmail();
+            String role = UserRole.USER.getValue();
             user = SiteUser.builder()
                     .id(id)
                     .email(email)
                     .role(role)
                     .provider(provider)
                     .providerId(providerId)
+                    .createDate(LocalDateTime.now())
+                    .nickname("닉네임")
                     .build();
             userRepository.save(user);
         } else user = optional.get();
