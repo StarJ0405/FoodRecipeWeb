@@ -1,0 +1,22 @@
+<html layout:decorate="~{/layouts/layoutWithNav}" xmlns:layout="http://www.w3.org/1999/xhtml"
+>
+<div layout:fragment="content">
+    <div class="flex w-full h-[500px]">
+        <div class="h-full card bg-base-300 rounded-box flex w-[200px]">
+            <ul class="list-disc list-inside ml-3 mt-3">
+                <li>카테고리</li>
+                <li>태그</li>
+                <li>재료</li>
+            </ul>
+        </div>
+        <div class="divider divider-horizontal"></div>
+        <div class="grid h-full flex-grow card bg-base-300 rounded-box place-items-center">
+            <div class="flex flex-col w-full border-opacity-50">
+                <div class="grid h-20 card bg-base-300 rounded-box place-items-center">content</div>
+                <div class="divider">OR</div>
+                <div class="grid h-20 card bg-base-300 rounded-box place-items-center">content</div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
