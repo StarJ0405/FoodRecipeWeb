@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -61,7 +62,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .provider(provider)
                     .providerId(providerId)
                     .createDate(LocalDateTime.now())
-                    .nickname("닉네임")
+                    .nickname("임시 닉네임"+new Random().nextInt())
                     .build();
             userRepository.save(user);
         } else user = optional.get();

@@ -31,10 +31,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                        .requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
+//                .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
+//                        .requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
                 .csrf((csrf) -> csrf
-                        .ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))
+                        .ignoringRequestMatchers(new AntPathRequestMatcher("/h2/**")))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/user/login", "/h2-console", "/user/signup").permitAll()
                         .requestMatchers("/user/**").authenticated()

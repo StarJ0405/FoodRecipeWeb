@@ -38,6 +38,7 @@ public class SiteUser {
     private String provider;
     private String providerId;
 
+    private String iconUrl;
 
     @Builder
     public SiteUser(String id, String nickname, String password, String role, String email, LocalDateTime createDate, boolean locked, boolean emailVerified, String provider, String providerId) {
@@ -51,5 +52,6 @@ public class SiteUser {
         this.emailVerified = emailVerified;
         this.provider = provider;
         this.providerId = providerId;
+        this.iconUrl = "/common/default.jpg";
     }
 }

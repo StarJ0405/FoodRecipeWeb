@@ -6,13 +6,15 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.CompletableFuture;
+
 @Service
 @RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender javaMailSender;
 
-    @Async
-    public boolean sendMailReject(String targetEmail, String subject, String body) {
+    @Async // CompletableFuture<Boolean>
+    public void sendMailReject(String targetEmail, String subject, String body) {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
         simpleMailMessage.setTo(targetEmail);
@@ -22,8 +24,6 @@ public class EmailService {
         try {
             javaMailSender.send(simpleMailMessage);
         } catch (Exception e) {
-            return false;
         }
-        return true;
     }
 }
