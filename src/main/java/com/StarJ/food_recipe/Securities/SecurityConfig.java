@@ -38,8 +38,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/user/login", "/h2-console", "/user/signup").permitAll()
                         .requestMatchers("/user/**").authenticated()
-                        .requestMatchers("/manager").hasAnyRole(UserRole.ADMIN.name(), UserRole.MANAGER.name())
-                        .requestMatchers("/admin").hasRole(UserRole.ADMIN.name())
+                        .requestMatchers("/manager/**").hasAnyRole(UserRole.ADMIN.name(), UserRole.MANAGER.name())
+                        .requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name())
                         .anyRequest().permitAll()
                 )
                 // 콘솔 허용

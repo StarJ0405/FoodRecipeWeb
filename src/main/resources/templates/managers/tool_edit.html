@@ -1,0 +1,22 @@
+<html layout:decorate="~{/layouts/managerLayout}" xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml">
+<div layout:fragment="content" class="flex flex-col w-full border-opacity-50 place-items-center">
+    <form th:action="@{|/manager/tool/${id}|}" th:object="${toolEditForm}" method="post">
+        <div class="w-[1000px] border-2 p-4 border-black">
+            <input type="text" th:field="*{name}" id="name" name="name" class="w-full p-2" placeholder="이름">
+            <div class="divider"></div>
+            <textarea id="description" name="description"
+                      class="textarea textarea-info textarea-bordered w-full resize-none p-2"
+                      rows=18 th:field="*{description}" placeholder="설명"></textarea>
+            <input type="submit" value="저장" class="btn btn-outline btn-info">
+            <input type="button" value="취소" class="btn btn-outline btn-info" onclick="location.href='/manager/tool'">
+            <input type="button" value="삭제" id="delete" class="btn btn-outline btn-info"
+                   onclick="if(confirm('정말로 삭제하시겠습니까?')) location.href = this.dataset.uri;"
+                   th:data-uri="@{|/manager/tool/delete/${id}|}">
+        </div>
+    </form>
+    <!--    </div>-->
+    <!--        <div class="divider">OR</div>-->
+    <!--        <div class="grid h-20 card bg-base-300 rounded-box place-items-center">content</div>-->
+</div>
+</html>

@@ -27,7 +27,7 @@
                 </div>
                 <div class="divider divider-horizontal"></div>
                 <div class="grid h-20 flex-grow card bg-base-300 rounded-box place-items-center">
-                    <input type="text"id="newNickname" placeholder="닉네임" th:value="${user.nickname}" class="w-[250px] input input-bordered input-primary max-w-xs" />
+                    <input type="text"id="newNickname" placeholder="닉네임" th:value="${user.nickname}" class="w-[250px] input input-bordered input-success max-w-xs" />
                 </div>
             </div>
             <div class="flex w-full  justify-center items-center">
@@ -36,7 +36,7 @@
                 </div>
                 <div class="divider divider-horizontal"></div>
                 <div class="grid flex-grow card bg-base-300 rounded-box place-items-center">
-                    <input type="text" th:value="${user.email}" disabled class="w-[250px] input input-bordered input-primary max-w-xs" />
+                    <input type="text" th:value="${user.email}" readonly class="w-[250px] input input-bordered input-error max-w-xs" />
                     <input type="button" value="이메일 변경" onclick="location.href='/user/changeEmail'"
                            class="mt-5 mx-5 mb-5 btn btn-outline">
                 </div>
@@ -48,7 +48,7 @@
                 </div>
                 <div class="divider divider-horizontal"></div>
                 <div class="grid flex-grow card bg-base-300 rounded-box place-items-center">
-                    <input type="text" th:value="${user.id}" disabled class="w-[250px] input input-bordered input-primary max-w-xs" />
+                    <input type="text" th:value="${user.id}" readonly class="w-[250px] input input-bordered input-error max-w-xs" />
                     <input type="button" value="비밀번호 변경" onclick="location.href='/user/changePassword'"
                            class="mt-5 mx-5 mb-5 btn btn-outline">
                 </div>

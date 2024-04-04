@@ -8,7 +8,12 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 
 @Controller
 public class MainController {
-
+    //@AuthenticationPrincipal PrincipalDetail principalDetail
+    //@PreAuthorize("isAuthenticated")
+    @GetMapping("/manager")
+    public String managerHome() {
+        return "managers/home";
+    }
     @GetMapping("/")
     public String home() {
         return "home";

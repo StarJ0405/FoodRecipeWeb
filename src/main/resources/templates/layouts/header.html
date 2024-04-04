@@ -4,8 +4,8 @@
             <div sec:authorize="isAuthenticated()" property="principal" var="principal" class="dropdown dropdown-hover">
                 <div tabindex="0" role="button" th:text="${user.nickname+'▼'}" class="btn m-1"/>
                 <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><a sec:authorize="hasAnyRole('ADMIN','MANAGER')" th:href="@{|/manager|}">관리 페이지</a></li>
                     <li><a th:href="@{|/user/profile|}">프로필</a></li>
-                    <li><a sec:authorize="hasAnyRole('ADMIN')" th:href="@{|/admin|}">관리 페이지</a></li>
                 </ul>
             </div>
             <button sec:authorize="isAnonymous()" type="button" onclick="location.href='/user/login'"

@@ -21,8 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
     private final UserService userService;
 
-    //@AuthenticationPrincipal PrincipalDetail principalDetail
-    //@PreAuthorize("isAuthenticated")
     @GetMapping("/login")
     public String login() {
         return "users/login";

@@ -1,0 +1,32 @@
+<html layout:decorate="~{/layouts/layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<body layout:fragment="body">
+<!-- Header 내용 -->
+<header th:replace="~{/layouts/header :: headerFragment}"></header>
+<!--nav 내용-->
+<nav th:replace="~{/layouts/navbar :: navbarFragment}"></nav>
+<!-- 삽입될 내용 -->
+<div class="flex w-full h-[750px]">
+    <div class="h-full card bg-base-300 rounded-box flex w-[200px]">
+        <ul class="list-disc list-inside ml-3 mt-3">
+            <li><a class="link link-hover" th:href="@{|/manager|}">통계</a></li>
+            <li><a class="link link-hover" th:href="@{|/manager/tool|}">도구</a></li>
+            <li><a class="link link-hover" th:href="@{|/manager/tool|}">단위</a></li>
+            <li><a class="link link-hover" th:href="@{|/manager/tool|}">영양분</a></li>
+            <li><a class="link link-hover" th:href="@{|/manager/category|}">카테고리</a></li>
+            <li><a class="link link-hover" th:href="@{|/manager/tag|}">태그</a></li>
+            <li><a class="link link-hover" th:href="@{|/manager/ingredient|}">재료</a></li>
+            <li><a class="link link-hover" th:href="@{|/manager/recipe|}">레시피</a></li>
+        </ul>
+    </div>
+    <div class="divider divider-horizontal"></div>
+    <div class="grid h-full flex-grow card bg-base-300 rounded-box place-items-center">
+        <th:block layout:fragment="content"></th:block>
+    </div>
+</div>
+<!-- Footer 내용 -->
+<footer th:replace="~{/layouts/footer :: footerFragment}"></footer>
+<!-- 자바스크립트 -->
+<th:block layout:fragment="script"></th:block>
+</body>
+</html>
+
