@@ -11,6 +11,8 @@ import lombok.Setter;
 @Entity
 public class Nutrient {
     @Id
+    private int id;
+    @Column(unique = true)
     private String name;
     @Column(columnDefinition = "TEXT")
     private String description;

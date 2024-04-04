@@ -9,6 +9,8 @@ import java.util.List;
 @Entity
 public class Ingredients {
     @Id
+    private int id;
+    @Column(unique = true)
     private String name;
     private int cal;
     @Column(columnDefinition = "TEXT")

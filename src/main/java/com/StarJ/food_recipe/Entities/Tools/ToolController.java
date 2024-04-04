@@ -18,7 +18,7 @@ public class ToolController {
     @GetMapping("/tool")
     public String tools(Model model, @RequestParam(value = "page", defaultValue = "0") Integer page) {
         model.addAttribute("paging", toolService.getTools(page));
-        return "managers/tool";
+        return "managers/tools/tool";
     }
 
     @GetMapping("/tool/{id}")
@@ -27,7 +27,7 @@ public class ToolController {
         toolEditForm.setName(tool.getName());
         toolEditForm.setDescription(tool.getDescription());
 //        model.addAttribute("tool", tool);
-        return "managers/tool_edit";
+        return "managers/tools/tool_edit";
     }
 
     @PostMapping("/tool/{id}")
@@ -46,7 +46,7 @@ public class ToolController {
 
     @GetMapping("/tool/create")
     public String create(ToolEditForm toolEditForm) {
-        return "managers/tool_create";
+        return "managers/tools/tool_create";
     }
 
     @PostMapping("/tool/create")

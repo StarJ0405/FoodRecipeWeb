@@ -35,7 +35,5 @@ public class Tool {
         this.description = description;
         this.author = author;
         this.createDate = LocalDateTime.now();
-        this.modifier = null;
-        this.modifiedDate = null;
     }
 }

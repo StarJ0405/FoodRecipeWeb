@@ -6,12 +6,12 @@
             <input type="button" value="추가" id="delete" class="btn btn-outline btn-info mb-2"
                    onclick="location.href = this.dataset.uri;"
                    th:data-uri="@{/manager/tool/create}">
-            <table class="table [&_th]:border-2 [&_th]:border-black [&_td]:border-2 [&_td]:border-black">
+            <table class="table [&_th]:border-2 [&_th]:border-black [&_td]:border-2 [&_td]:border-black text-center">
                 <tr>
-                    <th>번호</th>
-                    <th>이름</th>
-                    <th>작성</th>
-                    <th>수정</th>
+                    <th class="w-[100px]" th:text="번호"/>
+                    <th class="w-[150px]" th:text="이름"/>
+                    <th class="w-[300px]" th:text="'작성 정보'"/>
+                    <th class="w-[300px]" th:text="'수정 정보'"/>
                 </tr>
                 <tr th:each="tool,loop : ${paging}" class="hover">
                     <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>

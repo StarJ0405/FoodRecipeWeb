@@ -1,0 +1,55 @@
+<html layout:decorate="~{/layouts/managerLayout}" xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml">
+<div layout:fragment="content" class="flex flex-col w-full border-opacity-50">
+    <div class="grid h-20 card bg-base-300 rounded-box place-items-center">
+        <div class="overflow-x-auto">
+            <input type="button" value="추가" id="delete" class="btn btn-outline btn-info mb-2"
+                   onclick="location.href = this.dataset.uri;"
+                   th:data-uri="@{/manager/unit/create}">
+            <table class="table [&_th]:border-2 [&_th]:border-black [&_td]:border-2 [&_td]:border-black">
+                <tr>
+                    <th class="w-[100px]" th:text="번호"/>
+                    <th class="w-[150px]" th:text="이름"/>
+                    <th class="w-[300px]" th:text="'작성 정보'"/>
+                    <th class="w-[300px]" th:text="'수정 정보'"/>
+                </tr>
+                <tr th:each="unit,loop : ${paging}" class="hover">
+                    <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
+                    <td><a th:href="@{|/manager/unit/${unit.id}|}" th:text="${unit.name}"/></td>
+                    <td>
+                        <span th:text="${#temporals.format(unit.createDate, 'yyyy-MM-dd HH:mm')}"/>
+                        <span th:if="${unit.author != null}" th:text="${unit.author.nickname}"/>
+                    </td>
+                    <td th:if="${unit.modifiedDate!=null}">
+                        <span th:text="${#temporals.format(unit.modifiedDate, 'yyyy-MM-dd HH:mm')}"/>
+                        <span th:if="${unit.modifier != null}" th:text="${unit.modifier.nickname}"/></td>
+                    <td th:if="${unit.modifiedDate==null}"></td>
+                </tr>
+            </table>
+            <div class="join">
+                <input type="button" th:classappend="${!paging.hasPrevious} ? 'btn-disabled'" id="previous"
+                       class="join-item btn page-link" th:value="'< 이전'" th:data-page="${page<10? 0 :page-10 }"/>
+                <input type="button" th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+                       th:classappend="${paging.number==page} ? 'btn-disabled'"
+                       th:if="${page >= paging.number-10 and page <= paging.number+10}"
+                       class="join-item btn page-link" th:value="${page}" th:data-page="${page}"/>
+                <input type="button" th:classappend="${!paging.hasNext} ? 'btn-disabled'" id="next"
+                       class="join-item btn page-link" th:value="'다음 >'"
+                       th:data-page="${paging.number+10 < paging.totalPages ? paging.number+10: paging.totalPages-1}"/>
+            </div>
+        </div>
+    </div>
+    <form id="page-form" method="get">
+        <input type="hidden" id="page" name="page" th:value="${paging.number}">
+    </form>
+</div>
+<script layout:fragment="script" type='text/javascript'>
+    const page_elements = document.getElementsByClassName("page-link");
+       Array.from(page_elements).forEach(function(element) {
+           element.addEventListener('click', function() {
+               document.getElementById('page').value = this.dataset.page;
+               document.getElementById('page-form').submit();
+           });
+       });
+</script>
+</html>
