@@ -1,7 +1,9 @@
 <html layout:decorate="~{/layouts/managerLayout}" xmlns:layout="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.w3.org/1999/xhtml">
-<div layout:fragment="content" class="flex flex-col w-full border-opacity-50 place-items-center">
-    <form th:action="@{|/manager/unit/${id}|}" th:object="${unitEditForm}" method="post">
+<div layout:fragment="content" class="flex flex-col w-full border-opacity-50 place-items-center"
+     th:object="${unitEditForm}">
+    <div th:replace="~{/layouts/form_errors :: formErrorsFragment}"></div>
+    <form th:action="@{|${destination}|}" method="post">
         <div class="w-[1000px] border-2 p-4 border-black">
             <input type="text" th:field="*{name}" id="name" name="name" class="w-full p-2" placeholder="이름">
             <div class="divider"></div>
@@ -12,6 +14,7 @@
             <input type="button" value="취소" class="btn btn-outline btn-info" onclick="location.href='/manager/unit'">
             <input type="button" value="삭제" id="delete" class="btn btn-outline btn-info"
                    onclick="if(confirm('정말로 삭제하시겠습니까?')) location.href = this.dataset.uri;"
+                   th:if="${!#strings.contains(destination, 'create')}"
                    th:data-uri="@{|/manager/unit/delete/${id}|}">
         </div>
     </form>

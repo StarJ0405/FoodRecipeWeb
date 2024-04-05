@@ -41,15 +41,15 @@ public class SiteUser {
     private String iconUrl;
 
     @Builder
-    public SiteUser(String id, String nickname, String password, String role, String email, LocalDateTime createDate, boolean locked, boolean emailVerified, String provider, String providerId) {
+    public SiteUser(String id, String nickname, String password, String role, String email, String provider, String providerId) {
         this.id = id;
         this.nickname = nickname;
         this.password = password;
         this.role = role;
         this.email = email;
-        this.createDate = createDate;
-        this.locked = locked;
-        this.emailVerified = emailVerified;
+        this.createDate = LocalDateTime.now();
+        this.locked = false;
+        this.emailVerified = true;
         this.provider = provider;
         this.providerId = providerId;
         this.iconUrl = "/common/default.jpg";

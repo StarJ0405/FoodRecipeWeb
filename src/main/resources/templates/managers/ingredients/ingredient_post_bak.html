@@ -1,0 +1,51 @@
+<html layout:decorate="~{/layouts/managerLayout}" xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml">
+<div layout:fragment="content" class="flex flex-col w-full border-opacity-50 place-items-center"
+     th:object="${ingredientEditForm}">
+    <div th:replace="~{/layouts/form_errors :: formErrorsFragment}"></div>
+    <form th:action="@{|${destination}|}" method="post">
+        <div class="w-[1000px] border-2 p-4 border-black">
+            <input type="text" th:field="*{name}" id="name" name="name" class="w-full p-2" placeholder="이름">
+            <div class="divider"></div>
+            <input type="text" th:field="*{info}" id="info" name="info" class="w-full p-2" placeholder="정보">
+            <div class="divider"></div>
+            <input type="number" th:field="*{cal}" id="cal" name="cal" class="w-full p-2" placeholder="칼로리" min=0>
+            <div class="divider"></div>
+            <select th:field="*{unit}" class="mb-2 w-full">
+                <option th:each="unit : ${units}" th:text="${unit.name}" th:value="${unit.name}"/>
+            </select>
+            <div class="divider"></div>
+            <div>
+                <input type="button" id="add" value="추가" class="btn btn-outline btn-info mt-2"
+                       onclick="#">
+                <div id="container">
+                    <select class="mb-2 w-1/2" id="select" name="nutrientInfoForm.nutrient" for="nutrientInfoForm.nutrient">
+                        <option th:each="nutrient : ${nutrients}" th:text="${nutrient.name}"
+                                th:value="${nutrient.name}"/>
+                    </select><input type="number" id="number" min="0" name="nutrientInfoForm.amount" for="nutrientInfoForm.amount" value="0"/>
+                </div>
+            </div>
+            <div class="divider"></div>
+            <input type="submit" value="저장" class="btn btn-outline btn-info mt-4">
+            <input type="button" value="취소" class="btn btn-outline btn-info"
+                   onclick="location.href='/manager/ingredient'">
+            <input type="button" value="삭제" id="delete" class="btn btn-outline btn-info"
+                   onclick="if(confirm('정말로 삭제하시겠습니까?')) location.href = this.dataset.uri;"
+                   th:if="${!#strings.contains(destination, 'create')}"
+                   th:data-uri="@{|/manager/ingredient/delete/${id}|}">
+        </div>
+    </form>
+</div>
+<script layout:fragment="script" type='text/javascript'>
+    const button = document.getElementById("add");
+    button.addEventListener("click", () => {
+        const select =document.getElementById("select");
+        const clone1 = select.cloneNode(true);
+        const number =document.getElementById("number");
+        const clone2 = number.cloneNode(true);
+        const container =document.getElementById("container");
+        container.appendChild(clone1);
+        container.appendChild(clone2);
+    });
+</script>
+</html>

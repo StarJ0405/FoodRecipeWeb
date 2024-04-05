@@ -61,7 +61,6 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .role(role)
                     .provider(provider)
                     .providerId(providerId)
-                    .createDate(LocalDateTime.now())
                     .nickname("임시 닉네임"+new Random().nextInt())
                     .build();
             userRepository.save(user);

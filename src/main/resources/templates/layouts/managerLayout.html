@@ -5,14 +5,14 @@
 <!--nav 내용-->
 <nav th:replace="~{/layouts/navbar :: navbarFragment}"></nav>
 <!-- 삽입될 내용 -->
-<div class="flex w-full h-[750px]">
+<div class="flex w-full h-screen">
     <div class="h-full card bg-base-300 rounded-box flex w-[200px]">
         <ul class="list-disc list-inside ml-3 mt-3">
             <li><a class="link link-hover" th:href="@{|/manager|}">통계</a></li>
             <li><a class="link link-hover" th:href="@{|/manager/user|}">유저</a></li>
             <li><a class="link link-hover" th:href="@{|/manager/tool|}">도구</a></li>
             <li><a class="link link-hover" th:href="@{|/manager/unit|}">단위</a></li>
-            <li><a class="link link-hover" th:href="@{|/manager/nutrients|}">영양분</a></li>
+            <li><a class="link link-hover" th:href="@{|/manager/nutrient|}">영양분</a></li>
             <li><a class="link link-hover" th:href="@{|/manager/category|}">카테고리</a></li>
             <li><a class="link link-hover" th:href="@{|/manager/tag|}">태그</a></li>
             <li><a class="link link-hover" th:href="@{|/manager/ingredient|}">재료</a></li>

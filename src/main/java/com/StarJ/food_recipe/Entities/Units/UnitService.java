@@ -1,7 +1,5 @@
 package com.StarJ.food_recipe.Entities.Units;
 
-import com.StarJ.food_recipe.Entities.Units.Unit;
-import com.StarJ.food_recipe.Entities.Units.UnitRepository;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
 import com.StarJ.food_recipe.Exceptions.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +10,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class UnitService {
     private final UnitRepository unitRepository;
-
+    public List<Unit> getUnits(){
+        return unitRepository.findAll();
+    }
     public Page<Unit> getUnits(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Order.desc("createDate")));
         return unitRepository.findAll(pageable);
@@ -31,6 +32,15 @@ public class UnitService {
         else
             throw new DataNotFoundException("없는 도구입니다.");
     }
+
+    public Unit getUnit(String name) {
+        Optional<Unit> _unit = unitRepository.findById(name);
+        if (_unit.isPresent())
+            return _unit.get();
+        else
+            throw new DataNotFoundException("없는 도구입니다.");
+    }
+
 
     public void modify(Unit unit, SiteUser user, String name, String description) {
         unit.setModifier(user);
@@ -47,5 +57,9 @@ public class UnitService {
     public void create(SiteUser user, String name, String description) {
         Unit unit = Unit.builder().author(user).name(name).description(description).build();
         unitRepository.save(unit);
+    }
+
+    public boolean has(String name) {
+        return unitRepository.findById(name).isPresent();
     }
 }

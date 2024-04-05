@@ -63,8 +63,6 @@ public class UserService {
                 .nickname(nickname)
                 .email(email)
                 .role(UserRole.USER.getValue())
-                .createDate(LocalDateTime.now())
-                .emailVerified(true)
                 .build();
         userRepository.save(user);
         return user;

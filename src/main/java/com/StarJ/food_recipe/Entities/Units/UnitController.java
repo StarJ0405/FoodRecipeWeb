@@ -1,14 +1,13 @@
 package com.StarJ.food_recipe.Entities.Units;
 
 import com.StarJ.food_recipe.Entities.Units.Form.UnitEditForm;
-import com.StarJ.food_recipe.Entities.Units.Unit;
-import com.StarJ.food_recipe.Entities.Units.UnitService;
 import com.StarJ.food_recipe.Securities.PrincipalDetail;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -24,34 +23,56 @@ public class UnitController {
     }
 
     @GetMapping("/unit/{id}")
-    public String post(Model model, @PathVariable("id") Integer name, UnitEditForm unitEditForm) {
-        Unit unit = unitService.getUnit(name);
+    public String edit(Model model, @PathVariable("id") Integer id, UnitEditForm unitEditForm) {
+        Unit unit = unitService.getUnit(id);
         unitEditForm.setName(unit.getName());
         unitEditForm.setDescription(unit.getDescription());
-        return "managers/units/unit_edit";
+        model.addAttribute("destination", String.format("/manager/unit/%s", id));
+        return "managers/units/unit_post";
     }
 
     @PostMapping("/unit/{id}")
-    public String post(@AuthenticationPrincipal PrincipalDetail principalDetail, @PathVariable("id") Integer id, @Param("name") String name, @Param("description") String description) {
+    public String edit(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail, @PathVariable("id") Integer id, @Valid UnitEditForm unitEditForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("destination", String.format("/manager/unit/%s", id));
+            return "managers/units/unit_post";
+        }
         Unit unit = unitService.getUnit(id);
-        unitService.modify(unit, principalDetail.getUser(), name, description);
+        if (!unit.getName().equals(unitEditForm.getName()) && unitService.has(unitEditForm.getName())) {
+            bindingResult.rejectValue("name", "hasSameName", "중복 값입니다.");
+            model.addAttribute("destination", String.format("/manager/unit/%s", id));
+            return "managers/units/unit_post";
+        }
+
+
+        unitService.modify(unit, principalDetail.getUser(), unitEditForm.getName(), unitEditForm.getDescription());
         return "redirect:/manager/unit";
     }
 
     @GetMapping("/unit/delete/{id}")
-    public String delete(Model model, @PathVariable("id") Integer id) {
+    public String delete(@PathVariable("id") Integer id) {
         Unit unit = unitService.getUnit(id);
         unitService.delete(unit);
         return "redirect:/manager/unit";
     }
 
     @GetMapping("/unit/create")
-    public String create(UnitEditForm unitEditForm) {
-        return "managers/units/unit_create";
+    public String create(Model model, UnitEditForm unitEditForm) {
+        model.addAttribute("destination", "/manager/unit/create");
+        return "managers/units/unit_post";
     }
 
     @PostMapping("/unit/create")
-    public String create(@AuthenticationPrincipal PrincipalDetail principalDetail, UnitEditForm unitEditForm) {
+    public String create(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail, @Valid UnitEditForm unitEditForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("destination", "/manager/unit/create");
+            return "managers/units/unit_post";
+        }
+        if (unitService.has(unitEditForm.getName())) {
+            bindingResult.rejectValue("name", "hasSameName", "중복 값입니다.");
+            model.addAttribute("destination", "/manager/unit/create");
+            return "managers/units/unit_post";
+        }
         unitService.create(principalDetail.getUser(), unitEditForm.getName(), unitEditForm.getDescription());
         return "redirect:/manager/unit";
     }

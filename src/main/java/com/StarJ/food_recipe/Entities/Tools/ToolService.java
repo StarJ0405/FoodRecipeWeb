@@ -46,4 +46,7 @@ public class ToolService {
         Tool tool = Tool.builder().author(user).name(name).description(description).build();
         toolRepository.save(tool);
     }
+    public boolean has(String name) {
+        return toolRepository.findById(name).isPresent();
+    }
 }
