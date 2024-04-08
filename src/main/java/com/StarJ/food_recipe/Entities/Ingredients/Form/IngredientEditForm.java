@@ -1,6 +1,6 @@
 package com.StarJ.food_recipe.Entities.Ingredients.Form;
 
-import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.Form.NutrientInfoForm;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.Form.NutrientInfoForm;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

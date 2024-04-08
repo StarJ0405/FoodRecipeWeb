@@ -1,7 +1,5 @@
-package com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo;
+package com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos;
 
-import com.StarJ.food_recipe.Entities.Ingredients.Ingredient;
-import com.StarJ.food_recipe.Entities.Nutrients.Nutrient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

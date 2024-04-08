@@ -1,4 +1,4 @@
-package com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.Form;
+package com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.Form;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -1,6 +1,6 @@
 package com.StarJ.food_recipe.Entities.Ingredients;
 
-import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.NutrientInfo;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.NutrientInfo;
 import com.StarJ.food_recipe.Entities.Units.Unit;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
 import jakarta.persistence.*;
@@ -26,16 +26,16 @@ public class Ingredient {
     @Column(columnDefinition = "TEXT")
     private String info;
     private int cal;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Unit unit;
 
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NutrientInfo> nutrientInfos;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private SiteUser author;
     private LocalDateTime createDate;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private SiteUser modifier;
     private LocalDateTime modifiedDate;
 

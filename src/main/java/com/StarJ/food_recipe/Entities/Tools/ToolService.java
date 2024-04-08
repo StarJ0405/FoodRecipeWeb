@@ -10,12 +10,20 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class ToolService {
     private final ToolRepository toolRepository;
+
+    public List<Tool> getTools() {
+        return toolRepository.findAll();
+    }
+    public List<Tool> getTools(List<String> _tools) {
+        return toolRepository.findByNames(_tools);
+    }
 
     public Page<Tool> getTools(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Order.desc("createDate")));
@@ -46,6 +54,7 @@ public class ToolService {
         Tool tool = Tool.builder().author(user).name(name).description(description).build();
         toolRepository.save(tool);
     }
+
     public boolean has(String name) {
         return toolRepository.findById(name).isPresent();
     }

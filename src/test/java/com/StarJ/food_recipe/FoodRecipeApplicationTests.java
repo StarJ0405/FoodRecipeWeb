@@ -44,8 +44,6 @@ class FoodRecipeApplicationTests {
             Nutrient nutrient = Nutrient.builder().author(user).name("영양분" + i).description(i + "번째 영양분").build();
             nutrientRepository.save(nutrient);
         }
-
-
     }
 
 

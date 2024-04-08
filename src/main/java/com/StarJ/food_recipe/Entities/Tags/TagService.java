@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -19,6 +20,14 @@ import java.util.Optional;
 public class TagService {
     private final TagRepository tagRepository;
     private final CategoryService categoryService;
+
+    public List<Tag> getTags() {
+        return tagRepository.findAll();
+    }
+    public List<Tag> getTags(List<String> _tags) {
+        return tagRepository.findByNames(_tags);
+    }
+
     public Page<Tag> getTags(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Order.desc("createDate")));
         return tagRepository.findAll(pageable);
@@ -50,6 +59,7 @@ public class TagService {
         Tag tag = Tag.builder().author(user).name(name).category(category).build();
         tagRepository.save(tag);
     }
+
     public boolean has(String name) {
         return tagRepository.findById(name).isPresent();
     }

@@ -1,8 +1,8 @@
 package com.StarJ.food_recipe.Entities.Ingredients;
 
-import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.Form.NutrientInfoForm;
-import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.NutrientInfo;
-import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.NutrientInfoService;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.Form.NutrientInfoForm;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.NutrientInfo;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.NutrientInfoService;
 import com.StarJ.food_recipe.Entities.Nutrients.Nutrient;
 import com.StarJ.food_recipe.Entities.Nutrients.NutrientService;
 import com.StarJ.food_recipe.Entities.Units.Unit;
@@ -86,7 +86,6 @@ public class IngredientService {
         Unit unit = unitService.getUnit(_unit);
         Ingredient ingredient = Ingredient.builder().author(user).name(name).info(info).cal(cal).unit(unit).build();
         List<NutrientInfo> nutrientInfos = ingredient.getNutrientInfos();
-        ingredientRepository.save(ingredient);
         for (NutrientInfoForm form : nutrients) {
             Nutrient nutrient = nutrientService.getNutrient(form.getNutrient());
             NutrientInfo nutrientInfo = nutrientInfoService.getNutrientInfo(ingredient, nutrient, form.getAmount());

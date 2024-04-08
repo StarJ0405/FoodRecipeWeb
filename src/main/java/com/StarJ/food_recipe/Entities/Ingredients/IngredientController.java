@@ -1,8 +1,8 @@
 package com.StarJ.food_recipe.Entities.Ingredients;
 
 import com.StarJ.food_recipe.Entities.Ingredients.Form.IngredientEditForm;
-import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.Form.NutrientInfoForm;
-import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.NutrientInfo;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.Form.NutrientInfoForm;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.NutrientInfo;
 import com.StarJ.food_recipe.Entities.Nutrients.Nutrient;
 import com.StarJ.food_recipe.Entities.Nutrients.NutrientService;
 import com.StarJ.food_recipe.Entities.Units.Unit;
@@ -105,7 +105,7 @@ public class IngredientController {
             return "managers/ingredients/ingredient_post";
         }
         List<NutrientInfoForm> nutrientInfoForms = ingredientEditForm.getNutrientInfos();
-        ingredientEditForm.setNutrientInfos(nutrientInfoForms != null ? nutrientInfoForms.stream().filter(v -> v.getNutrient() != null).toList() : new ArrayList<>());
+        ingredientEditForm.setNutrientInfos(nutrientInfoForms != null ? nutrientInfoForms.stream().filter(n -> n.getNutrient() != null && n.getAmount() > 0).toList() : new ArrayList<>());
         ingredientService.create(principalDetail.getUser(), ingredientEditForm.getName(), ingredientEditForm.getInfo(), ingredientEditForm.getCal(), ingredientEditForm.getUnit(), ingredientEditForm.getNutrientInfos());
         return "redirect:/manager/ingredient";
     }

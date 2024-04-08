@@ -23,10 +23,10 @@ public class Nutrient {
     private String name;
     @Column(columnDefinition = "TEXT")
     private String description;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private SiteUser author;
     private LocalDateTime createDate;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private SiteUser modifier;
     private LocalDateTime modifiedDate;
 

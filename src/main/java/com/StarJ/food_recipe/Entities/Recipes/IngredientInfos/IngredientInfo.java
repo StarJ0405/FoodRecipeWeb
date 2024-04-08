@@ -1,7 +1,7 @@
-package com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo;
+package com.StarJ.food_recipe.Entities.Recipes.IngredientInfos;
 
 import com.StarJ.food_recipe.Entities.Ingredients.Ingredient;
-import com.StarJ.food_recipe.Entities.Nutrients.Nutrient;
+import com.StarJ.food_recipe.Entities.Recipes.Recipe;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,20 +12,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NutrientInfo {
+public class IngredientInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Recipe recipe;
+    @ManyToOne(fetch = FetchType.LAZY)
     private Ingredient ingredient;
-    @ManyToOne
-    private Nutrient nutrient;
     private int amount;
 
     @Builder
-    public NutrientInfo(Ingredient ingredient, Nutrient nutrient, int amount) {
+    public IngredientInfo(Recipe recipe, Ingredient ingredient, int amount) {
+        this.recipe = recipe;
         this.ingredient = ingredient;
-        this.nutrient = nutrient;
         this.amount = amount;
     }
 }
