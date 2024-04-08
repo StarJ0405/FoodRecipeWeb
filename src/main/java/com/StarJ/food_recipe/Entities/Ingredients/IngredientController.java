@@ -1,6 +1,8 @@
 package com.StarJ.food_recipe.Entities.Ingredients;
 
 import com.StarJ.food_recipe.Entities.Ingredients.Form.IngredientEditForm;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.Form.NutrientInfoForm;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.NutrientInfo;
 import com.StarJ.food_recipe.Entities.Nutrients.Nutrient;
 import com.StarJ.food_recipe.Entities.Nutrients.NutrientService;
 import com.StarJ.food_recipe.Entities.Units.Unit;
@@ -14,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -44,6 +47,17 @@ public class IngredientController {
     public String edit(Model model, @PathVariable("id") Integer id, IngredientEditForm ingredientEditForm) {
         Ingredient ingredient = ingredientService.getIngredient(id);
         ingredientEditForm.setName(ingredient.getName());
+        ingredientEditForm.setInfo(ingredient.getInfo());
+        ingredientEditForm.setCal(ingredient.getCal());
+        ingredientEditForm.setUnit(ingredient.getUnit().getName());
+        List<NutrientInfoForm> infos = new ArrayList<>();
+        for (NutrientInfo info : ingredient.getNutrientInfos()) {
+            NutrientInfoForm form = new NutrientInfoForm();
+            form.setNutrient(info.getNutrient().getName());
+            form.setAmount(info.getAmount());
+            infos.add(form);
+        }
+        ingredientEditForm.setNutrientInfos(infos);
         model.addAttribute("destination", String.format("/manager/ingredient/%s", id));
         return "managers/ingredients/ingredient_post";
     }
@@ -60,7 +74,9 @@ public class IngredientController {
             model.addAttribute("destination", String.format("/manager/ingredient/%s", id));
             return "managers/ingredients/ingredient_post";
         }
-//        ingredientService.modify(ingredient, principalDetail.getUser(), ingredientEditForm.getName(), ingredientEditForm.getInfo(), ingredientEditForm.getCal(), ingredientEditForm.getUnit(), ingredientEditForm.getNutrientInfos());
+        List<NutrientInfoForm> nutrientInfoForms = ingredientEditForm.getNutrientInfos();
+        ingredientEditForm.setNutrientInfos(nutrientInfoForms != null ? nutrientInfoForms.stream().filter(v -> v.getNutrient() != null).toList() : new ArrayList<>());
+        ingredientService.modify(ingredient, principalDetail.getUser(), ingredientEditForm.getName(), ingredientEditForm.getInfo(), ingredientEditForm.getCal(), ingredientEditForm.getUnit(), ingredientEditForm.getNutrientInfos());
         return "redirect:/manager/ingredient";
     }
 
@@ -88,7 +104,9 @@ public class IngredientController {
             model.addAttribute("destination", "/manager/ingredient/create");
             return "managers/ingredients/ingredient_post";
         }
-//        ingredientService.create(principalDetail.getUser(), ingredientEditForm.getName(), ingredientEditForm.getInfo(), ingredientEditForm.getCal(), ingredientEditForm.getUnit(), ingredientEditForm.getNutrientInfos());
+        List<NutrientInfoForm> nutrientInfoForms = ingredientEditForm.getNutrientInfos();
+        ingredientEditForm.setNutrientInfos(nutrientInfoForms != null ? nutrientInfoForms.stream().filter(v -> v.getNutrient() != null).toList() : new ArrayList<>());
+        ingredientService.create(principalDetail.getUser(), ingredientEditForm.getName(), ingredientEditForm.getInfo(), ingredientEditForm.getCal(), ingredientEditForm.getUnit(), ingredientEditForm.getNutrientInfos());
         return "redirect:/manager/ingredient";
     }
 }

@@ -1,13 +1,15 @@
 package com.StarJ.food_recipe.Entities.Ingredients;
 
-import com.StarJ.food_recipe.Entities.Nutrients.Form.NutrientInfoForm;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.Form.NutrientInfoForm;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.NutrientInfo;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.NutrientInfoService;
 import com.StarJ.food_recipe.Entities.Nutrients.Nutrient;
-import com.StarJ.food_recipe.Entities.Nutrients.NutrientInfo;
 import com.StarJ.food_recipe.Entities.Nutrients.NutrientService;
 import com.StarJ.food_recipe.Entities.Units.Unit;
 import com.StarJ.food_recipe.Entities.Units.UnitService;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
 import com.StarJ.food_recipe.Exceptions.DataNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,7 @@ public class IngredientService {
     private final IngredientRepository ingredientRepository;
     private final UnitService unitService;
     private final NutrientService nutrientService;
+    private final NutrientInfoService nutrientInfoService;
 
     public List<Ingredient> getIngredients() {
         return ingredientRepository.findAll();
@@ -60,12 +62,14 @@ public class IngredientService {
         ingredient.setInfo(info);
         ingredient.setCal(cal);
         ingredient.setUnit(unit);
-        List<NutrientInfo> nutrientInfos = new ArrayList<>();
+        List<NutrientInfo> nutrientInfos = ingredient.getNutrientInfos();
+        nutrientInfos.clear();
         for (NutrientInfoForm form : nutrients) {
             Nutrient nutrient = nutrientService.getNutrient(form.getNutrient());
-            nutrientInfos.add(NutrientInfo.builder().nutrient(nutrient).amount(form.getAmount()).build());
+            NutrientInfo nutrientInfo = nutrientInfoService.getModifiedNutrientInfo(ingredient, nutrient, form.getAmount());
+            if (nutrientInfo != null)
+                nutrientInfos.add(nutrientInfo);
         }
-        ingredient.setNutrientInfos(nutrientInfos);
         ingredientRepository.save(ingredient);
     }
 
@@ -77,14 +81,18 @@ public class IngredientService {
         ingredientRepository.delete(ingredient);
     }
 
+    @Transactional
     public void create(SiteUser user, String name, String info, int cal, String _unit, List<NutrientInfoForm> nutrients) {
         Unit unit = unitService.getUnit(_unit);
-        List<NutrientInfo> nutrientInfos = new ArrayList<>();
+        Ingredient ingredient = Ingredient.builder().author(user).name(name).info(info).cal(cal).unit(unit).build();
+        List<NutrientInfo> nutrientInfos = ingredient.getNutrientInfos();
+        ingredientRepository.save(ingredient);
         for (NutrientInfoForm form : nutrients) {
             Nutrient nutrient = nutrientService.getNutrient(form.getNutrient());
-            nutrientInfos.add(NutrientInfo.builder().nutrient(nutrient).amount(form.getAmount()).build());
+            NutrientInfo nutrientInfo = nutrientInfoService.getNutrientInfo(ingredient, nutrient, form.getAmount());
+            if (nutrientInfo != null)
+                nutrientInfos.add(nutrientInfo);
         }
-        Ingredient ingredient = Ingredient.builder().author(user).name(name).info(info).cal(cal).unit(unit).nutrientInfos(nutrientInfos).build();
         ingredientRepository.save(ingredient);
     }
 }

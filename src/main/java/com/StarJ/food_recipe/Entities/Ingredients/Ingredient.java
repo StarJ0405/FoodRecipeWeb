@@ -1,7 +1,6 @@
 package com.StarJ.food_recipe.Entities.Ingredients;
 
-import com.StarJ.food_recipe.Entities.Nutrients.Nutrient;
-import com.StarJ.food_recipe.Entities.Nutrients.NutrientInfo;
+import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfo.NutrientInfo;
 import com.StarJ.food_recipe.Entities.Units.Unit;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
 import jakarta.persistence.*;
@@ -11,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -28,7 +28,8 @@ public class Ingredient {
     private int cal;
     @ManyToOne
     private Unit unit;
-    @OneToMany(cascade = CascadeType.REMOVE)
+
+    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NutrientInfo> nutrientInfos;
 
     @ManyToOne
@@ -39,12 +40,12 @@ public class Ingredient {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public Ingredient(String name, String info, int cal, Unit unit, List<NutrientInfo> nutrientInfos, SiteUser author, LocalDateTime createDate) {
+    public Ingredient(String name, String info, int cal, Unit unit, SiteUser author, LocalDateTime createDate) {
         this.name = name;
         this.cal = cal;
         this.info = info;
         this.unit = unit;
-        this.nutrientInfos = nutrientInfos;
+        this.nutrientInfos = new ArrayList<>();
         this.author = author;
         this.createDate = createDate;
     }
