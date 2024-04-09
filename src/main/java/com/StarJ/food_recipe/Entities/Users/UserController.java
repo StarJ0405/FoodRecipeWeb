@@ -96,6 +96,7 @@ public class UserController {
     @GetMapping("/profile")
     public String profile(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail) {
         model.addAttribute("iconUrl", principalDetail.getUser().getIconUrl());
+        model.addAttribute("nickname", principalDetail.getUser().getNickname());
         return "users/profile";
     }
 
@@ -107,10 +108,12 @@ public class UserController {
 
 
     @PostMapping("/profile/image")
-    public String profileImage(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail, @RequestParam MultipartFile file) {
-        String url = userService.saveTempImage(file, principalDetail.getUser());
-        if (url != null)
-            model.addAttribute("iconUrl", url);
+    public String profileImage(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail, @RequestParam String nickname, @RequestParam MultipartFile file) {
+        String url = null;
+        if (file.getContentType().contains("image"))
+            url = userService.saveTempImage(file, principalDetail.getUser());
+        model.addAttribute("iconUrl", url != null ? url : principalDetail.getUser().getIconUrl());
+        model.addAttribute("nickname", nickname);
         return "/users/profile";
     }
 

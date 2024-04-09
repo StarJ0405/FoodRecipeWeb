@@ -8,13 +8,13 @@
             <table class="table [&_th]:border-2 [&_th]:border-black [&_td]:border-2 [&_td]:border-black text-center">
                 <tr>
                     <th class="w-[100px]" th:text="번호"/>
-                    <th class="w-[150px]" th:text="이름"/>
+                    <th class="w-[150px]" th:text="제목"/>
                     <th class="w-[300px]" th:text="'작성 정보'"/>
                     <th class="w-[300px]" th:text="'수정 정보'"/>
                 </tr>
                 <tr th:each="recipe,loop : ${paging}" class="hover">
                     <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
-                    <td><a th:href="@{|/recipe/${recipe.id}|}" th:text="${recipe.name}"/></td>
+                    <td><a th:href="@{|/recipe/edit/${recipe.id}|}" th:text="${recipe.subject}"/></td>
                     <td>
                         <span th:text="${#temporals.format(recipe.createDate, 'yyyy-MM-dd HH:mm')}"/>
                         <span th:if="${recipe.author != null}" th:text="${recipe.author.nickname}"/>

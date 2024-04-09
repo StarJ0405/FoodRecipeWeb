@@ -14,6 +14,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @Getter
@@ -24,7 +25,7 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String subject;
-
+    private UUID UUID;
     @Column(columnDefinition = "TEXT")
     private String baseImg;
 
@@ -45,10 +46,10 @@ public class Recipe {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public Recipe(String subject,String baseImg, List<Tag> tags, List<Tool> tools, SiteUser author) {
-        this.subject=subject;
-        this.baseImg=baseImg;
-        this.bodyImages=new ArrayList<>();
+    public Recipe(String subject, UUID uuid, List<Tag> tags, List<Tool> tools, SiteUser author) {
+        this.subject = subject;
+        this.UUID = uuid;
+        this.bodyImages = new ArrayList<>();
         this.ingredientInfos = new ArrayList<>();
         this.tags = tags;
         this.tools = tools;

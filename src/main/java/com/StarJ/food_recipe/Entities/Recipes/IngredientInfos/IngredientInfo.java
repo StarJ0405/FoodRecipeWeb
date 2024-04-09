@@ -16,7 +16,7 @@ public class IngredientInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Recipe recipe;
     @ManyToOne(fetch = FetchType.LAZY)
     private Ingredient ingredient;

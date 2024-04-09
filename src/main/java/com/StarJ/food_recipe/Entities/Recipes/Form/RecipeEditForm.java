@@ -15,8 +15,7 @@ public class RecipeEditForm {
     @NotBlank(message = "제목을 입력해주세요")
     private String subject;
 
-    @NotNull(message = "기본 이미지를 입력해주세요")
-    private MultipartFile baseImg;
+    private String baseImg;
 
     private List<BodyImageForm> bodyImages;
     private List<IngredientInfoForm> ingredientInfos;

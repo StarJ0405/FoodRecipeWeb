@@ -1,0 +1,143 @@
+<html layout:decorate="~{/layouts/layoutWithNav}" xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml">
+<div layout:fragment="content" th:object="${recipeEditForm}"
+     class="flex flex-col w-full border-opacity-50 place-items-center bg-base-300 p-5">
+    <div th:replace="~{/layouts/form_errors :: formErrorsFragment}"></div>
+    <form th:action="@{|${destination}|}" method="post">
+        <div class="w-[1000px] border-2 p-4 border-black">
+            <input type="text" th:field="*{subject}" th:value="*{subject}" id="subject" name="subject"
+                   class="w-full p-2 mb-3" placeholder="제목"/>
+            <div class="divider"></div>
+            <div class="flex place-items-center">
+                <label>대표 이미지</label>
+                <div class="divider divider-horizontal"></div>
+                <img id="img" th:src="@{${imgUrl}}" class="w-[150px] h-[150px] flex"/>
+                <input type="hidden" name="baseImg" th:value="${imgUrl}">
+            </div>
+            <div class="divider"></div>
+            <div>
+                <input type="button" id="add_ingredient" value="재료 추가" class="btn btn-outline btn-info mt-2 mb-2"
+                       onclick="#">
+                <div id="ingredients">
+                    <div th:each="ingredientInfo,loop : *{ingredientInfos}">
+                        <select class="mb-2 w-1/2 ingredient" th:name="'ingredientInfos['+${loop.index}+'].ingredient'"
+                                th:id="'ingredientInfos['+${loop.index}+'].ingredient'">
+                            <option th:each="ingredient : ${ingredients}" th:text="${ingredient.name}"
+                                    th:value="${ingredient.name}"
+                                    th:selected="${ingredientInfo.ingredient == ingredient.name}"/>
+                        </select><input class="w-1/4 ingredient_amount" type="number" min="0"
+                                        th:name="'ingredientInfos['+${loop.index}+'].amount'"
+                                        th:value="${ingredientInfo.amount}"/><input
+                            class="btn btn-outline btn-info ml-2" type="button"
+                            th:name="'ingredientInfos['+${loop.index}+']'" value="제거" onclick="remove(this)"/>
+                    </div>
+                </div>
+            </div>
+            <div class="divider"></div>
+            <select class="mb-2 w-full" id="tools" name="tools" th:field="*{tools}" multiple>
+                <option th:each="tool : ${tools}" th:text="${tool.name}" th:value="${tool.name}" th:selected="${recipeEditForm.tools!=null? #arrays.contains(recipeEditForm.tools,tool.name):false}" />
+            </select>
+            <div>
+
+            </div>
+            <div class="divider"></div>
+            <input type="submit" value="저장" class="btn btn-outline btn-info mt-5">
+            <input type="button" value="취소" class="btn btn-outline btn-info mt-5"
+                   onclick="location.href='/recipe/list'">
+            <input type="button" value="삭제" id="delete" class="btn btn-outline btn-info mt-5"
+                   onclick="if(confirm('정말로 삭제하시겠습니까?')) location.href = this.dataset.uri;"
+                   th:if="${!#strings.contains(destination, 'create')}"
+                   th:data-uri="@{|/recipe/delete/${id}|}">
+        </div>
+    </form>
+    <form th:action="@{/recipe/baseImg}" id="temp" enctype="multipart/form-data" method="post">
+        <input type="file" id="tempImg" name="tempImg" class="hidden"/>
+        <input type="hidden" id="destination" name="destination" th:value="${destination}"/>
+    </form>
+    <select class="mb-2 w-1/2 hidden" id="select_ingredient">
+        <option th:each="ingredient : ${ingredients}" th:text="${ingredient.name}"
+                th:value="${ingredient.name}"/>
+    </select>
+    <input class="hidden w-1/4" type="number" id="amount_ingredient" min="0" value="0"/>
+    <input class="hidden btn btn-outline btn-info ml-2" type="button" id="remove" value="제거" onclick="remove(this)"/>
+    <input type="hidden" id="index_ingredient"
+           th:value="${recipeEditForm.ingredientInfos!=null ? #lists.size(recipeEditForm.ingredientInfos) : 0}">
+</div>
+<script layout:fragment="script" type='text/javascript'>
+    const icon = document.getElementById("img");
+    icon.addEventListener('click', function() {
+        document.getElementById('tempImg').click();
+    });
+    const tempImg = document.getElementById('tempImg');
+    tempImg.addEventListener('change',function() {
+        const temp = document.getElementById('temp');
+        const subject = document.getElementById('subject').cloneNode(true);
+        temp.appendChild(subject);
+        //
+        const origin_tools = document.getElementById('tools');
+        const tools =origin_tools.cloneNode(true)
+        for(var i=0, cnt=origin_tools.options.length;i<cnt;i++)
+            if(origin_tools.options[i].selected==true)
+                tools.options[i].selected=true;
+        temp.appendChild(tools);
+        //
+        const ingredient = document.getElementsByClassName('ingredient');
+        Array.from(ingredient).forEach(function(element) {
+            const copy = element.cloneNode(true);
+            copy.setAttribute('name','ingredient');
+            copy.classList.remove('ingredient');
+            copy.value = element.value;
+            temp.appendChild(copy);
+        });
+        const ingredient_amount= document.getElementsByClassName('ingredient_amount');
+        Array.from(ingredient_amount).forEach(function(element) {
+            const copy = element.cloneNode(true);
+            copy.setAttribute('name','ingredient_amount');
+            copy.classList.remove('ingredient_amount');
+            temp.appendChild(copy);
+        });
+        temp.submit();
+    });
+    const button = document.getElementById("add_ingredient");
+    button.addEventListener("click", () => {
+        const index =document.getElementById("index_ingredient").value;
+        const select =document.getElementById("select_ingredient");
+        const clone1 = select.cloneNode(true);
+        clone1.classList.remove('hidden');
+        clone1.classList.add('ingredient');
+        clone1.removeAttribute('ingredient');
+        clone1.setAttribute('name','ingredientInfos['+index+'].ingredient')
+
+        const amount =document.getElementById("amount_ingredient");
+        const clone2 = amount.cloneNode(true);
+        clone2.classList.remove('hidden');
+        clone2.classList.add('ingredient_amount');
+        clone2.removeAttribute('id');
+        clone2.setAttribute('name','ingredientInfos['+index+'].amount')
+
+        const remove =document.getElementById("remove");
+        const clone3 = remove.cloneNode(true);
+        clone3.classList.remove('hidden');
+        clone3.removeAttribute('id');
+        clone3.setAttribute('name','ingredientInfos['+index+']')
+
+        const container =document.getElementById("ingredients");
+        container.appendChild(clone1);
+        container.appendChild(clone2);
+        container.appendChild(clone3);
+        document.getElementById("index_ingredient").value = Number(index)+1;
+    });
+    function remove(element){
+        const name = element.getAttribute('name');
+        const ingredients =document.getElementsByName(name+'.ingredient');
+        Array.from(ingredients).forEach(function(ingredient) {
+            ingredient.remove();
+        });
+        const amounts =document.getElementsByName(name+'.amount');
+        Array.from(amounts).forEach(function(amount) {
+            amount.remove();
+        });
+        element.remove();
+    }
+</script>
+</html>
