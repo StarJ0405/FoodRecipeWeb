@@ -3,9 +3,10 @@ package com.StarJ.food_recipe.Entities.Recipes.BodyImages;
 import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.NutrientInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-
+@Repository
 public interface BodyImageRepository extends JpaRepository<BodyImage, Integer> {
     @Query("select "
             + "distinct bi "

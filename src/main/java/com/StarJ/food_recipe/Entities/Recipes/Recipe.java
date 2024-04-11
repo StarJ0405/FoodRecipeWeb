@@ -2,8 +2,8 @@ package com.StarJ.food_recipe.Entities.Recipes;
 
 import com.StarJ.food_recipe.Entities.Recipes.BodyImages.BodyImage;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfo;
-import com.StarJ.food_recipe.Entities.Tags.Tag;
-import com.StarJ.food_recipe.Entities.Tools.Tool;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeTags.RecipeTag;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeTools.RecipeTool;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -34,10 +34,12 @@ public class Recipe {
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IngredientInfo> ingredientInfos;
-    @OneToMany
-    private List<Tag> tags;
-    @OneToMany
-    private List<Tool> tools;
+
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecipeTool> tools;
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecipeTag> tags;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private SiteUser author;
     private LocalDateTime createDate;
@@ -46,13 +48,11 @@ public class Recipe {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public Recipe(String subject, UUID uuid, List<Tag> tags, List<Tool> tools, SiteUser author) {
+    public Recipe(String subject, UUID uuid, SiteUser author) {
         this.subject = subject;
         this.UUID = uuid;
         this.bodyImages = new ArrayList<>();
         this.ingredientInfos = new ArrayList<>();
-        this.tags = tags;
-        this.tools = tools;
         this.author = author;
         this.createDate = LocalDateTime.now();
     }

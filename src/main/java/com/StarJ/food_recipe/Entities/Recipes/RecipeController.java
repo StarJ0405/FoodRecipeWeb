@@ -7,6 +7,8 @@ import com.StarJ.food_recipe.Entities.Recipes.BodyImages.Form.BodyImageForm;
 import com.StarJ.food_recipe.Entities.Recipes.Form.RecipeEditForm;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.Form.IngredientInfoForm;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfo;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeTags.RecipeTag;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeTools.RecipeTool;
 import com.StarJ.food_recipe.Entities.Tags.Tag;
 import com.StarJ.food_recipe.Entities.Tags.TagService;
 import com.StarJ.food_recipe.Entities.Tools.Tool;
@@ -14,7 +16,6 @@ import com.StarJ.food_recipe.Entities.Tools.ToolService;
 import com.StarJ.food_recipe.Securities.PrincipalDetail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -49,8 +50,9 @@ public class RecipeController {
     public List<Tool> getTools() {
         return toolService.getTools();
     }
+
     @GetMapping("")
-    public String home(){
+    public String home() {
         return "redirect:/recipe/list";
     }
 
@@ -60,13 +62,6 @@ public class RecipeController {
         return "recipes/list";
     }
 
-    @PreAuthorize("isAuthenticated")
-    @GetMapping("/create")
-    public String create(Model model, RecipeEditForm recipeEditForm) {
-        model.addAttribute("destination", "/recipe/create");
-        model.addAttribute("imgUrl", "/common/white.png");
-        return "recipes/post";
-    }
 
     @PreAuthorize("isAuthenticated")
     @GetMapping("/edit/{id}")
@@ -83,16 +78,45 @@ public class RecipeController {
             ingredientInfoForms.add(new IngredientInfoForm(ingredientInfo.getIngredient().getName(), ingredientInfo.getAmount()));
         recipeEditForm.setIngredientInfos(ingredientInfoForms);
         List<String> tags = new ArrayList<>();
-        for (Tag tag : recipe.getTags())
-            tags.add(tag.getName());
+        for (RecipeTag recipeTag : recipe.getTags())
+            tags.add(recipeTag.getTag().getName());
         recipeEditForm.setTags(tags);
         List<String> tools = new ArrayList<>();
-        for (Tool tool : recipe.getTools())
-            tools.add(tool.getName());
+        for (RecipeTool recipeTool : recipe.getTools())
+            tools.add(recipeTool.getTool().getName());
         recipeEditForm.setTools(tools);
         String url = recipeEditForm.getBaseImg();
-        model.addAttribute("imgUrl", url != null ? url : "/common/white.png");
+        model.addAttribute("imgUrl", url);
         model.addAttribute("destination", String.format("/recipe/edit/%s", id));
+        return "recipes/post";
+    }
+
+    @PreAuthorize("isAuthenticated")
+    @PostMapping("/edit/{id}")
+    public String edit(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail, @PathVariable("id") Integer id, @Valid RecipeEditForm recipeEditForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("destination", String.format("/recipe/edit/%s", id));
+            return "recipes/post";
+        }
+        Recipe recipe = recipeService.getRecipe(id);
+        List<BodyImageForm> bodyImageForms = recipeEditForm.getBodyImages();
+
+        recipeEditForm.setBodyImages(bodyImageForms != null ? bodyImageForms.stream().filter(img -> img.getBody() != null || img.getImgURL() != null).toList() : new ArrayList<>());
+
+        System.out.println(recipeEditForm.getBodyImages().size());
+        for(BodyImageForm bodyImageForm : recipeEditForm.getBodyImages())
+            System.out.println(bodyImageForm.getBody());
+
+        List<IngredientInfoForm> ingredientInfoForms = recipeEditForm.getIngredientInfos();
+        recipeEditForm.setIngredientInfos(ingredientInfoForms != null ? ingredientInfoForms.stream().filter(ing -> ing.getIngredient() != null && ing.getAmount() > 0).toList() : new ArrayList<>());
+        recipeService.edit(recipe, principalDetail.getUser(), recipeEditForm.getSubject(), recipeEditForm.getBaseImg(), recipeEditForm.getTags(), recipeEditForm.getTools(), recipeEditForm.getBodyImages(), recipeEditForm.getIngredientInfos());
+        return "redirect:/recipe/list";
+    }
+
+    @PreAuthorize("isAuthenticated")
+    @GetMapping("/create")
+    public String create(Model model, RecipeEditForm recipeEditForm) {
+        model.addAttribute("destination", "/recipe/create");
         return "recipes/post";
     }
 
@@ -114,13 +138,13 @@ public class RecipeController {
 
     @PreAuthorize("isAuthenticated")
     @PostMapping("/baseImg")
-    public String tempImg(Model model, @RequestParam("destination") String destination  , @AuthenticationPrincipal PrincipalDetail principalDetail, @RequestParam("tempImg") MultipartFile file,
+    public String tempImg(Model model, @RequestParam("destination") String destination, @AuthenticationPrincipal PrincipalDetail principalDetail, @RequestParam("tempImg") MultipartFile file,
                           @RequestParam("subject") String subject, @RequestParam(value = "ingredient", required = false) List<String> ingredients, @RequestParam(value = "ingredient_amount", required = false) List<Integer> ingredient_amounts
-            , @RequestParam(value = "tools", required = false) List<String> tools) {
+            , @RequestParam(value = "tools", required = false) List<String> tools,@RequestParam(value="tags") List<String> tags) {
         String url = null;
-        if (file.getContentType().contains("image"))
+        if (file != null && file.getContentType().contains("image"))
             url = recipeService.saveTempImage(file, principalDetail.getUser());
-        model.addAttribute("imgUrl", url != null ? url : "/common/white.png");
+        model.addAttribute("imgUrl", url);
         model.addAttribute("destination", destination);
 
         RecipeEditForm recipeEditForm = new RecipeEditForm();
@@ -131,7 +155,7 @@ public class RecipeController {
                 ingredientInfos.add(new IngredientInfoForm(ingredients.get(i), ingredient_amounts.get(i)));
         recipeEditForm.setIngredientInfos(ingredientInfos);
         recipeEditForm.setTools(tools);
-
+        recipeEditForm.setTags(tags);
         model.addAttribute("recipeEditForm", recipeEditForm);
         return "recipes/post";
     }
@@ -139,7 +163,7 @@ public class RecipeController {
     @PreAuthorize("isAuthenticated")
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Integer id) {
-        Recipe recipe =recipeService.getRecipe(id);
+        Recipe recipe = recipeService.getRecipe(id);
         recipeService.delete(recipe);
         return "redirect:/recipe/list";
     }

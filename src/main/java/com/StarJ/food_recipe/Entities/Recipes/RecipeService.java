@@ -8,6 +8,10 @@ import com.StarJ.food_recipe.Entities.Recipes.BodyImages.Form.BodyImageForm;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.Form.IngredientInfoForm;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfo;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfoService;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeTags.RecipeTag;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeTags.RecipeTagService;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeTools.RecipeTool;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeTools.RecipeToolService;
 import com.StarJ.food_recipe.Entities.Tags.Tag;
 import com.StarJ.food_recipe.Entities.Tags.TagService;
 import com.StarJ.food_recipe.Entities.Tools.Tool;
@@ -32,6 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,6 +50,8 @@ public class RecipeService {
     private final BodyImageService bodyImageService;
     private final IngredientService ingredientService;
     private final IngredientInfoService ingredientInfoService;
+    private final RecipeToolService recipeToolService;
+    private final RecipeTagService recipeTagService;
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -66,8 +73,15 @@ public class RecipeService {
         recipe.setModifiedDate(LocalDateTime.now());
         recipe.setSubject(subject);
         recipe.setBaseImg(baseImg);
-        recipe.setTags(tagService.getTags(_tags));
-        recipe.setTools(toolService.getTools(_tools));
+        List<RecipeTool> recipeTools = new ArrayList<>();
+        for (Tool tool : toolService.getTools(_tools))
+            recipeTools.add(recipeToolService.getRecipeTool(recipe, tool));
+        recipe.setTools(recipeTools);
+        List<RecipeTag> recipeTags = new ArrayList<>();
+        for (Tag tag : tagService.getTags(_tags))
+            recipeTags.add(recipeTagService.getRecipeTag(recipe, tag));
+        recipe.setTags(recipeTags);
+
         List<BodyImage> bodyImages = recipe.getBodyImages();
         bodyImages.clear();
         for (BodyImageForm form : bodyImageForms) {
@@ -115,19 +129,60 @@ public class RecipeService {
         } else System.out.println("not exists");
     }
 
-    @Transactional
-    public void create(SiteUser user, String subject, String baseImg, List<String> _tags, List<String> _tools, List<BodyImageForm> bodyImageForms, List<IngredientInfoForm> ingredientInfoForms) {
-        List<Tag> tags = tagService.getTags(_tags);
-        List<Tool> tools = toolService.getTools(_tools);
-        Recipe recipe = Recipe.builder().author(user).subject(subject).tags(tags).uuid(UUID.randomUUID()).tools(tools).build();
-        if (!baseImg.equals(""))
+    public void edit(Recipe recipe, SiteUser user, String subject, String baseImg, List<String> _tags, List<String> _tools, List<BodyImageForm> bodyImageForms, List<IngredientInfoForm> ingredientInfoForms) {
+        recipe.setModifier(user);
+        recipe.setModifiedDate(LocalDateTime.now());
+        recipe.setSubject(subject);
+        if (baseImg != null && !baseImg.equals("") && !baseImg.equals(recipe.getBaseImg()))
             try {
                 String path = resourceLoader.getResource("classpath:/static").getFile().getPath();
                 Path oldPath = Paths.get(path + baseImg);
                 File recipeFolder = new File(path + "/recipes/" + recipe.getUUID().toString());
                 if (!recipeFolder.exists())
                     recipeFolder.mkdirs();
-                String newUrl = "/recipes/" + recipe.getUUID().toString() + "/baseImg" + baseImg.split("\\.")[1];
+                String newUrl = "/recipes/" + recipe.getUUID().toString() + "/baseImg." + baseImg.split("\\.")[1];
+                Path newPath = Paths.get(path + newUrl);
+                Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+                recipe.setBaseImg(newUrl);
+            } catch (IOException ex) {
+
+            }
+        List<BodyImage> bodyImages = recipe.getBodyImages();
+        bodyImages.clear();
+        for (BodyImageForm form : bodyImageForms)
+            bodyImages.add(bodyImageService.getBodyImage(recipe, form.getBody(), form.getImgURL()));
+        List<IngredientInfo> ingredientInfos = recipe.getIngredientInfos();
+        ingredientInfos.clear();
+        for (IngredientInfoForm form : ingredientInfoForms) {
+            Ingredient ingredient = ingredientService.getIngredient(form.getIngredient());
+            IngredientInfo ingredientInfo = ingredientInfoService.getIngredientInfo(recipe, ingredient, form.getAmount());
+            if (ingredientInfo != null)
+                ingredientInfos.add(ingredientInfo);
+        }
+        List<RecipeTool> tools = recipe.getTools();
+        tools.clear();
+        for (Tool tool : toolService.getTools(_tools))
+            tools.add(recipeToolService.getRecipeTool(recipe, tool));
+        recipe.setTools(tools);
+        List<RecipeTag> tags = recipe.getTags();
+        tags.clear();
+        for (Tag tag : tagService.getTags(_tags))
+            tags.add(recipeTagService.getRecipeTag(recipe, tag));
+        recipe.setTags(tags);
+        recipeRepository.save(recipe);
+    }
+
+    @Transactional
+    public void create(SiteUser user, String subject, String baseImg, List<String> _tags, List<String> _tools, List<BodyImageForm> bodyImageForms, List<IngredientInfoForm> ingredientInfoForms) {
+        Recipe recipe = Recipe.builder().author(user).subject(subject).uuid(UUID.randomUUID()).build();
+        if (baseImg != null && !baseImg.equals(""))
+            try {
+                String path = resourceLoader.getResource("classpath:/static").getFile().getPath();
+                Path oldPath = Paths.get(path + baseImg);
+                File recipeFolder = new File(path + "/recipes/" + recipe.getUUID().toString());
+                if (!recipeFolder.exists())
+                    recipeFolder.mkdirs();
+                String newUrl = "/recipes/" + recipe.getUUID().toString() + "/baseImg." + baseImg.split("\\.")[1];
                 Path newPath = Paths.get(path + newUrl);
                 Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
                 recipe.setBaseImg(newUrl);
@@ -147,6 +202,15 @@ public class RecipeService {
             if (ingredientInfo != null)
                 ingredientInfos.add(ingredientInfo);
         }
+        List<RecipeTool> tools = new ArrayList<>();
+        for (Tool tool : toolService.getTools(_tools))
+            tools.add(recipeToolService.getRecipeTool(recipe, tool));
+        recipe.setTools(tools);
+
+        List<RecipeTag> tags = new ArrayList<>();
+        for (Tag tag : tagService.getTags(_tags))
+            tags.add(recipeTagService.getRecipeTag(recipe, tag));
+        recipe.setTags(tags);
         recipeRepository.save(recipe);
     }
 
@@ -165,4 +229,6 @@ public class RecipeService {
             }
         return null;
     }
+
+
 }

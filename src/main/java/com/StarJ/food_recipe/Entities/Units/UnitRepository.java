@@ -2,9 +2,10 @@ package com.StarJ.food_recipe.Entities.Units;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-
+@Repository
 public interface UnitRepository extends JpaRepository<Unit, Integer> {
     @Query("select "
             + "distinct u "

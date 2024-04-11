@@ -9,9 +9,13 @@
                    class="w-full p-2 mb-3" placeholder="제목"/>
             <div class="divider"></div>
             <div class="flex place-items-center">
-                <label>대표 이미지</label>
+                <div class="text-center">
+                    <label>대표 이미지</label><br/>
+                    <input type="button" id="remove_img" value="이미지 삭제" class="btn btn-outline btn-info mt-2 mb-2"
+                           onclick="#">
+                </div>
                 <div class="divider divider-horizontal"></div>
-                <img id="img" th:src="@{${imgUrl}}" class="w-[150px] h-[150px] flex"/>
+                <img id="img" th:src="@{${imgUrl !=null?imgUrl:'/common/white.png'}}" class="w-[150px] h-[150px] flex"/>
                 <input type="hidden" name="baseImg" th:value="${imgUrl}">
             </div>
             <div class="divider"></div>
@@ -35,10 +39,34 @@
             </div>
             <div class="divider"></div>
             <select class="mb-2 w-full" id="tools" name="tools" th:field="*{tools}" multiple>
-                <option th:each="tool : ${tools}" th:text="${tool.name}" th:value="${tool.name}" th:selected="${recipeEditForm.tools!=null? #arrays.contains(recipeEditForm.tools,tool.name):false}" />
+                <option th:each="tool : ${tools}" th:text="${tool.name}" th:value="${tool.name}"
+                        th:selected="${recipeEditForm.tools!=null? #arrays.contains(recipeEditForm.tools,tool.name):false}"/>
             </select>
+            <div class="divider"></div>
             <div>
-
+                <div th:each="tag : ${tags}" class="inline-block">
+                    <input type="checkbox" th:field="*{tags}" th:id="tags" th:name="tags" th:value="${tag.name}"
+                           class="m-2 tags"/>
+                    <label th:text="${tag.name}"/>
+                </div>
+            </div>
+            <div class="divider"></div>
+            <div>
+                <input type="button" id="add_bodyImage" value="내용 추가" class="btn btn-outline btn-info mt-2 mb-2"
+                       onclick="#">
+                <div id="bodyImages">
+                    <div th:each="bodyImage,loop : *{bodyImages}" class="flex mb-4">
+                        <textarea th:name="'bodyImages['+${loop.index}+'].body'" class="body resize-none w-3/4 body" rows="6"
+                                  th:text="${bodyImage.body}"></textarea>
+                        <img th:src="@{${bodyURL !=null ? bodyURL : '/common/white.png'}}"
+                             th:name="'bodyImages['+${loop.index}+'].img'"
+                             class="w-1/4 h-[150px] ml-2 img"/>
+                        <input type="hidden" name="bodyImage" th:name="'bodyImages['+${loop.index}+'].imgURL'" class="imgURL"
+                               th:value="${bodyImage.imgURL}"/>
+                        <input class="btn btn-outline btn-info ml-2" type="button"
+                               th:name="'bodyImages['+${loop.index}+']'" value="제거" onclick="remove(this)"/>
+                    </div>
+                </div>
             </div>
             <div class="divider"></div>
             <input type="submit" value="저장" class="btn btn-outline btn-info mt-5">
@@ -62,82 +90,159 @@
     <input class="hidden btn btn-outline btn-info ml-2" type="button" id="remove" value="제거" onclick="remove(this)"/>
     <input type="hidden" id="index_ingredient"
            th:value="${recipeEditForm.ingredientInfos!=null ? #lists.size(recipeEditForm.ingredientInfos) : 0}">
+    <textarea id="body" name="body" class="hidden resize-none w-3/4 body" rows="6"></textarea>
+    <img th:src="@{${bodyURL !=null ? bodyURL : '/common/white.png'}}" id="body_image"
+         class="hidden w-1/4 h-[150px] ml-2"/>
+    <input type="hidden" id="bodyImage" name="bodyImage"/>
+    <input class="hidden btn btn-outline btn-info ml-2" type="button"
+           id="body_remove"
+           name="body_remove" value="제거" onclick="remove(this)"/>
+    <input type="hidden" id="index_bodyImages"
+           th:value="${recipeEditForm.bodyImages!=null ? #lists.size(recipeEditForm.bodyImages) : 0}">
 </div>
 <script layout:fragment="script" type='text/javascript'>
-    const icon = document.getElementById("img");
-    icon.addEventListener('click', function() {
-        document.getElementById('tempImg').click();
-    });
-    const tempImg = document.getElementById('tempImg');
-    tempImg.addEventListener('change',function() {
-        const temp = document.getElementById('temp');
-        const subject = document.getElementById('subject').cloneNode(true);
-        temp.appendChild(subject);
-        //
-        const origin_tools = document.getElementById('tools');
-        const tools =origin_tools.cloneNode(true)
-        for(var i=0, cnt=origin_tools.options.length;i<cnt;i++)
-            if(origin_tools.options[i].selected==true)
-                tools.options[i].selected=true;
-        temp.appendChild(tools);
-        //
-        const ingredient = document.getElementsByClassName('ingredient');
-        Array.from(ingredient).forEach(function(element) {
-            const copy = element.cloneNode(true);
-            copy.setAttribute('name','ingredient');
-            copy.classList.remove('ingredient');
-            copy.value = element.value;
-            temp.appendChild(copy);
-        });
-        const ingredient_amount= document.getElementsByClassName('ingredient_amount');
-        Array.from(ingredient_amount).forEach(function(element) {
-            const copy = element.cloneNode(true);
-            copy.setAttribute('name','ingredient_amount');
-            copy.classList.remove('ingredient_amount');
-            temp.appendChild(copy);
-        });
-        temp.submit();
-    });
-    const button = document.getElementById("add_ingredient");
-    button.addEventListener("click", () => {
-        const index =document.getElementById("index_ingredient").value;
-        const select =document.getElementById("select_ingredient");
-        const clone1 = select.cloneNode(true);
-        clone1.classList.remove('hidden');
-        clone1.classList.add('ingredient');
-        clone1.removeAttribute('ingredient');
-        clone1.setAttribute('name','ingredientInfos['+index+'].ingredient')
+    const add_bodyImage = document.getElementById("add_bodyImage");
+    add_bodyImage.addEventListener("click", () => {
+       const index =document.getElementById("index_bodyImages").value;
+       const div = document.createElement("div");
+       div.classList.add('flex');
+       div.classList.add('mb-4');
+       div.setAttribute('name','bodyImages['+index+'].div')
+       const textarea =document.getElementById("body");
+       const clone1 = textarea.cloneNode(true);
+       clone1.classList.remove('hidden');
+       clone1.classList.add('body');
+       clone1.removeAttribute('id');
+       clone1.setAttribute('name','bodyImages['+index+'].body')
 
-        const amount =document.getElementById("amount_ingredient");
-        const clone2 = amount.cloneNode(true);
-        clone2.classList.remove('hidden');
-        clone2.classList.add('ingredient_amount');
-        clone2.removeAttribute('id');
-        clone2.setAttribute('name','ingredientInfos['+index+'].amount')
+       const body_image =document.getElementById("body_image");
+       const clone2 = body_image.cloneNode(true);
+       clone2.classList.remove('hidden');
+       clone2.removeAttribute('id');
+       clone2.setAttribute('name','bodyImages['+index+'].img')
 
-        const remove =document.getElementById("remove");
-        const clone3 = remove.cloneNode(true);
-        clone3.classList.remove('hidden');
-        clone3.removeAttribute('id');
-        clone3.setAttribute('name','ingredientInfos['+index+']')
+       const bodyImage =document.getElementById("bodyImage");
+       const clone3 = bodyImage.cloneNode(true);
+       clone3.classList.remove('hidden');
+       clone3.classList.add('imgURL');
+       clone3.removeAttribute('id');
+       clone3.setAttribute('name','bodyImages['+index+'].imgURL')
 
-        const container =document.getElementById("ingredients");
-        container.appendChild(clone1);
-        container.appendChild(clone2);
-        container.appendChild(clone3);
-        document.getElementById("index_ingredient").value = Number(index)+1;
-    });
-    function remove(element){
-        const name = element.getAttribute('name');
-        const ingredients =document.getElementsByName(name+'.ingredient');
-        Array.from(ingredients).forEach(function(ingredient) {
-            ingredient.remove();
-        });
-        const amounts =document.getElementsByName(name+'.amount');
-        Array.from(amounts).forEach(function(amount) {
-            amount.remove();
-        });
-        element.remove();
-    }
+       const remove =document.getElementById("body_remove");
+       const clone4 = remove.cloneNode(true);
+       clone4.classList.remove('hidden');
+       clone4.removeAttribute('id');
+       clone4.setAttribute('name','bodyImages['+index+']')
+
+       const container =document.getElementById("bodyImages");
+       container.appendChild(div);
+       div.appendChild(clone1);
+       div.appendChild(clone2);
+       div.appendChild(clone3);
+       div.appendChild(clone4);
+       document.getElementById("index_bodyImages").value = Number(index)+1;
+   });
+   function post(){
+    const temp = document.getElementById('temp');
+       const subject = document.getElementById('subject').cloneNode(true);
+       temp.appendChild(subject);
+       //
+       const origin_tools = document.getElementById('tools');
+       const tools =origin_tools.cloneNode(true)
+       for(var i=0, cnt=origin_tools.options.length;i<cnt;i++)
+           if(origin_tools.options[i].selected==true)
+               tools.options[i].selected=true;
+       temp.appendChild(tools);
+       //
+       const ingredient = document.getElementsByClassName('ingredient');
+       Array.from(ingredient).forEach(function(element) {
+           const copy = element.cloneNode(true);
+           copy.setAttribute('name','ingredient');
+           copy.classList.remove('ingredient');
+           copy.value = element.value;
+           temp.appendChild(copy);
+       });
+       const ingredient_amount= document.getElementsByClassName('ingredient_amount');
+       Array.from(ingredient_amount).forEach(function(element) {
+           const copy = element.cloneNode(true);
+           copy.setAttribute('name','ingredient_amount');
+           copy.classList.remove('ingredient_amount');
+           temp.appendChild(copy);
+       });
+       const tags= document.getElementsByClassName('tags');
+       Array.from(tags).forEach(function(element) {
+           const copy = element.cloneNode(true);
+           temp.appendChild(copy);
+       });
+       temp.submit();
+   };
+   const remove_img = document.getElementById("remove_img");
+   remove_img.addEventListener('click', post);
+
+   const icon = document.getElementById("img");
+   icon.addEventListener('click', function() {
+       document.getElementById('tempImg').click();
+   });
+
+   const tempImg = document.getElementById('tempImg');
+   tempImg.addEventListener('change',post);
+
+   const add_ingredient = document.getElementById("add_ingredient");
+   add_ingredient.addEventListener("click", () => {
+       const index =document.getElementById("index_ingredient").value;
+       const select =document.getElementById("select_ingredient");
+       const clone1 = select.cloneNode(true);
+       clone1.classList.remove('hidden');
+       clone1.classList.add('ingredient');
+       clone1.removeAttribute('id');
+       clone1.setAttribute('name','ingredientInfos['+index+'].ingredient')
+
+       const amount =document.getElementById("amount_ingredient");
+       const clone2 = amount.cloneNode(true);
+       clone2.classList.remove('hidden');
+       clone2.classList.add('ingredient_amount');
+       clone2.removeAttribute('id');
+       clone2.setAttribute('name','ingredientInfos['+index+'].amount')
+
+       const remove =document.getElementById("remove");
+       const clone3 = remove.cloneNode(true);
+       clone3.classList.remove('hidden');
+       clone3.removeAttribute('id');
+       clone3.setAttribute('name','ingredientInfos['+index+']')
+
+       const container =document.getElementById("ingredients");
+       container.appendChild(clone1);
+       container.appendChild(clone2);
+       container.appendChild(clone3);
+       document.getElementById("index_ingredient").value = Number(index)+1;
+   });
+   function remove(element){
+       const name = element.getAttribute('name');
+       const ingredients =document.getElementsByName(name+'.ingredient');
+       Array.from(ingredients).forEach(function(ingredient) {
+           ingredient.remove();
+       });
+       const amounts =document.getElementsByName(name+'.amount');
+       Array.from(amounts).forEach(function(amount) {
+           amount.remove();
+       });
+       const bodies =document.getElementsByName(name+'.body');
+       Array.from(bodies).forEach(function(body) {
+           body.remove();
+       });
+       const img =document.getElementsByName(name+'.img');
+       Array.from(img).forEach(function(_img) {
+           _img.remove();
+       });
+       const imgURLs =document.getElementsByName(name+'.imgURL');
+       Array.from(imgURLs).forEach(function(imgURL) {
+           imgURL.remove();
+       });
+       const divs =document.getElementsByName(name+'.div');
+       Array.from(divs).forEach(function(div) {
+           div.remove();
+       });
+       element.remove();
+   }
 </script>
 </html>

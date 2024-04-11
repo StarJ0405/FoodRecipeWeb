@@ -40,13 +40,13 @@ public class Ingredient {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public Ingredient(String name, String info, int cal, Unit unit, SiteUser author, LocalDateTime createDate) {
+    public Ingredient(String name, String info, int cal, Unit unit, SiteUser author) {
         this.name = name;
         this.cal = cal;
         this.info = info;
         this.unit = unit;
         this.nutrientInfos = new ArrayList<>();
         this.author = author;
-        this.createDate = createDate;
+        this.createDate = LocalDateTime.now();
     }
 }

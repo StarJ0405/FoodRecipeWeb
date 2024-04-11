@@ -16,6 +16,6 @@ public class BodyImageService {
         if (_bi.isPresent())
             return _bi.get();
         else
-            return bodyImageRepository.save(BodyImage.builder().body(body).imgURL(imgURL).build());
+            return bodyImageRepository.save(BodyImage.builder().recipe(recipe).body(body).imgURL(imgURL).build());
     }
 }

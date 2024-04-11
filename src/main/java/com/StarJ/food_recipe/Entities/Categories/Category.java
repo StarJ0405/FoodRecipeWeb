@@ -28,9 +28,9 @@ public class Category {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public Category(String name, SiteUser author, LocalDateTime createDate) {
+    public Category(String name, SiteUser author) {
         this.name = name;
         this.author = author;
-        this.createDate = createDate;
+        this.createDate = LocalDateTime.now();
     }
 }
