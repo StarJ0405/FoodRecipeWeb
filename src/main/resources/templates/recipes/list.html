@@ -1,31 +1,21 @@
-<html layout:decorate="~{/layouts/layoutWithNav}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
-<div layout:fragment="content">
+<html layout:decorate="~{/layouts/layoutWithNav}" xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml">
+<div layout:fragment="content" >
     <div class="grid card bg-base-300 rounded-box place-items-center p-5">
         <div class="overflow-x-auto">
-            <input type="button" value="추가" id="delete" class="btn btn-outline btn-info mb-2"
+            <input type="button" value="글 등록" id="delete" class="btn btn-outline btn-info mb-2"
                    onclick="location.href = this.dataset.uri;"
                    th:data-uri="@{/recipe/create}">
-            <table class="table [&_th]:border-2 [&_th]:border-black [&_td]:border-2 [&_td]:border-black text-center">
-                <tr>
-                    <th class="w-[100px]" th:text="번호"/>
-                    <th class="w-[150px]" th:text="제목"/>
-                    <th class="w-[300px]" th:text="'작성 정보'"/>
-                    <th class="w-[300px]" th:text="'수정 정보'"/>
-                </tr>
-                <tr th:each="recipe,loop : ${paging}" class="hover">
-                    <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
-                    <td><a th:href="@{|/recipe/edit/${recipe.id}|}" th:text="${recipe.subject}"/></td>
-                    <td>
-                        <span th:text="${#temporals.format(recipe.createDate, 'yyyy-MM-dd HH:mm')}"/>
-                        <span th:if="${recipe.author != null}" th:text="${recipe.author.nickname}"/>
-                    </td>
-                    <td th:if="${recipe.modifiedDate!=null}">
-                        <span th:text="${#temporals.format(recipe.modifiedDate, 'yyyy-MM-dd HH:mm')}"/>
-                        <span th:if="${recipe.modifier != null}" th:text="${recipe.modifier.nickname}"/></td>
-                    <td th:if="${recipe.modifiedDate==null}"></td>
-                </tr>
-            </table>
-            <div class="join">
+            <div class="flex flex-wrap w-[800px] h-[800px] content-start">
+                <a th:href="@{|/recipe/detail/${recipe.id}|}" th:each="recipe,loop : ${paging}"
+                   class="flex flex-col m-4 text-center">
+                    <img th:src="@{${  !#strings.isEmpty(recipe.baseImg) ?recipe.baseImg:'/common/white.png'}}"
+                         class="w-[100px] h-[100px]"/>
+                    <label th:text="${recipe.subject}" class="w-[100px] overflow-hidden"/>
+                    <label th:text="${recipe.author.nickname}" class="w-[100px] overflow-hidden"/>
+                </a>
+            </div>
+            <div class="join flex justify-center">
                 <input type="button" th:classappend="${!paging.hasPrevious} ? 'btn-disabled'" id="previous"
                        class="join-item btn page-link" th:value="'< 이전'" th:data-page="${page<10? 0 :page-10 }"/>
                 <input type="button" th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"

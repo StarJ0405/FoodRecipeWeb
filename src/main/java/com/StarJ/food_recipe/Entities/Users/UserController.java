@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -95,8 +96,10 @@ public class UserController {
     //    @PreAuthorize("isAuthenticated")
     @GetMapping("/profile")
     public String profile(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail) {
-        model.addAttribute("iconUrl", principalDetail.getUser().getIconUrl());
-        model.addAttribute("nickname", principalDetail.getUser().getNickname());
+        if (!model.containsAttribute("iconUrl"))
+            model.addAttribute("iconUrl", principalDetail.getUser().getIconUrl());
+        if (!model.containsAttribute("nickname"))
+            model.addAttribute("nickname", principalDetail.getUser().getNickname());
         return "users/profile";
     }
 
@@ -108,13 +111,13 @@ public class UserController {
 
 
     @PostMapping("/profile/image")
-    public String profileImage(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail, @RequestParam String nickname, @RequestParam MultipartFile file) {
+    public String profileImage(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail, @RequestParam("nickname") String nickname, @RequestParam("file") MultipartFile file, RedirectAttributes rtti) {
         String url = null;
         if (file.getContentType().contains("image"))
             url = userService.saveTempImage(file, principalDetail.getUser());
-        model.addAttribute("iconUrl", url != null ? url : principalDetail.getUser().getIconUrl());
-        model.addAttribute("nickname", nickname);
-        return "/users/profile";
+        rtti.addFlashAttribute("iconUrl", url != null ? url : principalDetail.getUser().getIconUrl());
+        rtti.addFlashAttribute("nickname", nickname);
+        return "redirect:/user/profile";
     }
 
     @GetMapping("/changePassword")

@@ -8,7 +8,7 @@ import com.StarJ.food_recipe.Entities.Nutrients.NutrientService;
 import com.StarJ.food_recipe.Entities.Units.Unit;
 import com.StarJ.food_recipe.Entities.Units.UnitService;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
-import com.StarJ.food_recipe.Exceptions.DataNotFoundException;
+import com.StarJ.food_recipe.Global.Exceptions.DataNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

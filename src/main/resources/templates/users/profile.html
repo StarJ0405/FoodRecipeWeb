@@ -2,72 +2,65 @@
       xmlns:th="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content">
     <div class="flex flex-col w-full border-opacity-50">
-        <div class="grid  card bg-base-300 rounded-box place-items-center">
-            <div class="flex w-full justify-center items-center">
-                <div class="grid h-50 flex-grow card bg-base-300 rounded-box place-items-center"><label
-                        class="w-[250px]">프로필 수정</label>
-                </div>
-                <div class="divider divider-horizontal"></div>
-                <div class="grid h-50 flex-grow card bg-base-300 rounded-box place-items-center">
-                    <div class="avatar">
-                        <div class="mt-3 w-[250px] rounded">
-                            <img id="profileIcon" th:src="@{${iconUrl}}">
-                            <form th:action="@{/user/profile/image}" method="post" enctype="multipart/form-data"
-                                  id="temp">
+        <form th:action="@{/user/profile}" method="post" id="form"  enctype="multipart/form-data">
+            <div class="grid  card bg-base-300 rounded-box place-items-center">
+                <div class="flex w-full justify-center items-center">
+                    <div class="grid h-50 flex-grow card bg-base-300 rounded-box place-items-center"><label
+                            class="w-[250px]">프로필 수정</label>
+                    </div>
+                    <div class="divider divider-horizontal"></div>
+                    <div class="grid h-50 flex-grow card bg-base-300 rounded-box place-items-center">
+                        <div class="avatar">
+                            <div class="mt-3 w-[250px] rounded">
+                                <img id="profileIcon" th:src="@{${iconUrl}}">
                                 <input type="file" id="file" name="file" class="hidden">
-                                <input type="hidden" id="r_nickname" name="nickname">
-                            </form>
+                                <input type="hidden" name="url" id="url" th:value="${iconUrl}">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="flex w-full  justify-center items-center">
-                <div class="grid h-20 flex-grow card bg-base-300 rounded-box place-items-center">
-                    <label class="w-[250px]">닉네임 수정</label>
+                <div class="flex w-full  justify-center items-center">
+                    <div class="grid h-20 flex-grow card bg-base-300 rounded-box place-items-center">
+                        <label class="w-[250px]">닉네임 수정</label>
+                    </div>
+                    <div class="divider divider-horizontal"></div>
+                    <div class="grid h-20 flex-grow card bg-base-300 rounded-box place-items-center">
+                        <input type="text" id="nickname" name="nickname" placeholder="닉네임" th:value="${nickname}"
+                               class="w-[250px] input input-bordered input-success max-w-xs"/>
+                    </div>
                 </div>
-                <div class="divider divider-horizontal"></div>
-                <div class="grid h-20 flex-grow card bg-base-300 rounded-box place-items-center">
-                    <input type="text"id="newNickname" placeholder="닉네임" th:value="${nickname}" class="w-[250px] input input-bordered input-success max-w-xs" />
+                <div class="flex w-full  justify-center items-center">
+                    <div class="grid h-20 flex-grow card bg-base-300 rounded-box place-items-center">
+                        <label class="w-[250px]">이메일</label>
+                    </div>
+                    <div class="divider divider-horizontal"></div>
+                    <div class="grid flex-grow card bg-base-300 rounded-box place-items-center">
+                        <input type="text" th:value="${user.email}" readonly
+                               class="w-[250px] input input-bordered input-error max-w-xs"/>
+                        <input type="button" value="이메일 변경" onclick="location.href='/user/changeEmail'"
+                               class="mt-5 mx-5 mb-5 btn btn-outline">
+                    </div>
                 </div>
-            </div>
-            <div class="flex w-full  justify-center items-center">
-                <div class="grid h-20 flex-grow card bg-base-300 rounded-box place-items-center">
-                    <label class="w-[250px]">이메일</label>
-                </div>
-                <div class="divider divider-horizontal"></div>
-                <div class="grid flex-grow card bg-base-300 rounded-box place-items-center">
-                    <input type="text" th:value="${user.email}" readonly class="w-[250px] input input-bordered input-error max-w-xs" />
-                    <input type="button" value="이메일 변경" onclick="location.href='/user/changeEmail'"
-                           class="mt-5 mx-5 mb-5 btn btn-outline">
-                </div>
-            </div>
 
-            <div class="flex w-full  justify-center items-center">
-                <div class="grid h-20 flex-grow card bg-base-300 rounded-box place-items-center">
-                    <label class="w-[250px]">아이디</label>
+                <div class="flex w-full  justify-center items-center">
+                    <div class="grid h-20 flex-grow card bg-base-300 rounded-box place-items-center">
+                        <label class="w-[250px]">아이디</label>
+                    </div>
+                    <div class="divider divider-horizontal"></div>
+                    <div class="grid flex-grow card bg-base-300 rounded-box place-items-center">
+                        <input type="text" th:value="${user.id}" readonly
+                               class="w-[250px] input input-bordered input-error max-w-xs"/>
+                        <input type="button" value="비밀번호 변경" onclick="location.href='/user/changePassword'"
+                               class="mt-5 mx-5 mb-5 btn btn-outline">
+                    </div>
                 </div>
-                <div class="divider divider-horizontal"></div>
-                <div class="grid flex-grow card bg-base-300 rounded-box place-items-center">
-                    <input type="text" th:value="${user.id}" readonly class="w-[250px] input input-bordered input-error max-w-xs" />
-                    <input type="button" value="비밀번호 변경" onclick="location.href='/user/changePassword'"
-                           class="mt-5 mx-5 mb-5 btn btn-outline">
+                <div class="flex w-full  justify-center items-center">
+                    <input type="submit" value="적용" class="mx-5 mb-5 btn btn-outline">
+                    <input type="button" value="취소" onclick="location.href='/user/profile'"
+                           class="mx-5 mb-5 btn btn-outline">
                 </div>
             </div>
-            <div class="flex w-full  justify-center items-center">
-                <input type="button" id="submit" value="적용" class="mx-5 mb-5 btn btn-outline">
-                <form th:action="@{/user/profile}" method="post" id="save">
-                    <input type="hidden" name="url" id="url" th:value="${iconUrl}">
-                    <input type="hidden" name="nickname" id="nickname" th:value="${user.nickname}">
-                </form>
-                <input type="button" value="취소" onclick="location.href='/user/profile'"
-                       class="mx-5 mb-5 btn btn-outline">
-            </div>
-        </div>
-<!--        <div class="divider"></div>-->
-<!--        <div class="grid h-50 card bg-base-300 rounded-box place-items-center">-->
-<!--            content-->
-<!--        </div>-->
-
+        </form>
     </div>
 </div>
 <script layout:fragment="script" type='text/javascript'>
@@ -77,13 +70,9 @@
     });
     const file = document.getElementById('file');
     file.addEventListener('change',function(){
-        document.getElementById('r_nickname').value = document.getElementById('newNickname').value;
-        document.getElementById('temp').submit();
-    });
-    const submit = document.getElementById("submit");
-    submit.addEventListener('click',function(){
-        document.getElementById('nickname').value = document.getElementById('newNickname').value;
-        document.getElementById('save').submit();
+        const form = document.getElementById('form');
+        form.action = '/user/profile/image';
+        form.submit();
     });
 
 </script>

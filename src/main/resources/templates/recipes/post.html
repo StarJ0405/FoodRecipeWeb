@@ -3,7 +3,7 @@
 <div layout:fragment="content" th:object="${recipeEditForm}"
      class="flex flex-col w-full border-opacity-50 place-items-center bg-base-300 p-5">
     <div th:replace="~{/layouts/form_errors :: formErrorsFragment}"></div>
-    <form th:action="@{|${destination}|}" method="post">
+    <form th:action="@{|${destination}|}" method="post" enctype="multipart/form-data" id="form">
         <div class="w-[1000px] border-2 p-4 border-black">
             <input type="text" th:field="*{subject}" th:value="*{subject}" id="subject" name="subject"
                    class="w-full p-2 mb-3" placeholder="제목"/>
@@ -15,8 +15,9 @@
                            onclick="#">
                 </div>
                 <div class="divider divider-horizontal"></div>
-                <img id="img" th:src="@{${imgUrl !=null?imgUrl:'/common/white.png'}}" class="w-[150px] h-[150px] flex"/>
-                <input type="hidden" name="baseImg" th:value="${imgUrl}">
+                <img id="img" th:src="@{${  !#strings.isEmpty(imgUrl) ?imgUrl:'/common/white.png'}}" class="w-[150px] h-[150px] flex"/>
+                <input type="hidden" id="baseImg" name="baseImg" th:value="${imgUrl}">
+                <input type="file" id="tempImg" name="tempImg" class="hidden"/>
             </div>
             <div class="divider"></div>
             <div>
@@ -56,12 +57,14 @@
                        onclick="#">
                 <div id="bodyImages">
                     <div th:each="bodyImage,loop : *{bodyImages}" class="flex mb-4">
-                        <textarea th:name="'bodyImages['+${loop.index}+'].body'" class="body resize-none w-3/4 body" rows="6"
+                        <textarea th:name="'bodyImages['+${loop.index}+'].body'" class="body resize-none w-3/4 body"
+                                  rows="6"
                                   th:text="${bodyImage.body}"></textarea>
-                        <img th:src="@{${bodyURL !=null ? bodyURL : '/common/white.png'}}"
+                        <img th:src="@{${ !#strings.isEmpty(bodyImage.imgURL) ? bodyImage.imgURL : '/common/white.png'}}"
                              th:name="'bodyImages['+${loop.index}+'].img'"
                              class="w-1/4 h-[150px] ml-2 img"/>
-                        <input type="hidden" name="bodyImage" th:name="'bodyImages['+${loop.index}+'].imgURL'" class="imgURL"
+                        <input type="hidden" name="bodyImage" th:name="'bodyImages['+${loop.index}+'].imgURL'"
+                               class="imgURL"
                                th:value="${bodyImage.imgURL}"/>
                         <input class="btn btn-outline btn-info ml-2" type="button"
                                th:name="'bodyImages['+${loop.index}+']'" value="제거" onclick="remove(this)"/>
@@ -77,28 +80,31 @@
                    th:if="${!#strings.contains(destination, 'create')}"
                    th:data-uri="@{|/recipe/delete/${id}|}">
         </div>
-    </form>
-    <form th:action="@{/recipe/baseImg}" id="temp" enctype="multipart/form-data" method="post">
-        <input type="file" id="tempImg" name="tempImg" class="hidden"/>
         <input type="hidden" id="destination" name="destination" th:value="${destination}"/>
+
+        <select class="mb-2 w-1/2 hidden" id="select_ingredient">
+            <option th:each="ingredient : ${ingredients}" th:text="${ingredient.name}"
+                    th:value="${ingredient.name}"/>
+        </select>
+        <input type="hidden" id="temp" name="temp" />
     </form>
-    <select class="mb-2 w-1/2 hidden" id="select_ingredient">
-        <option th:each="ingredient : ${ingredients}" th:text="${ingredient.name}"
-                th:value="${ingredient.name}"/>
-    </select>
-    <input class="hidden w-1/4" type="number" id="amount_ingredient" min="0" value="0"/>
-    <input class="hidden btn btn-outline btn-info ml-2" type="button" id="remove" value="제거" onclick="remove(this)"/>
-    <input type="hidden" id="index_ingredient"
-           th:value="${recipeEditForm.ingredientInfos!=null ? #lists.size(recipeEditForm.ingredientInfos) : 0}">
-    <textarea id="body" name="body" class="hidden resize-none w-3/4 body" rows="6"></textarea>
-    <img th:src="@{${bodyURL !=null ? bodyURL : '/common/white.png'}}" id="body_image"
-         class="hidden w-1/4 h-[150px] ml-2"/>
-    <input type="hidden" id="bodyImage" name="bodyImage"/>
-    <input class="hidden btn btn-outline btn-info ml-2" type="button"
-           id="body_remove"
-           name="body_remove" value="제거" onclick="remove(this)"/>
-    <input type="hidden" id="index_bodyImages"
-           th:value="${recipeEditForm.bodyImages!=null ? #lists.size(recipeEditForm.bodyImages) : 0}">
+    <div>
+        <input class="hidden w-1/4" type="number" id="amount_ingredient" min="0" value="0"/>
+        <input class="hidden btn btn-outline btn-info ml-2" type="button" id="remove" value="제거"
+               onclick="remove(this)"/>
+        <input type="hidden" id="index_ingredient"
+               th:value="${recipeEditForm.ingredientInfos!=null ? #lists.size(recipeEditForm.ingredientInfos) : 0}">
+        <textarea id="body" name="body" class="hidden resize-none w-3/4 body" rows="6"></textarea>
+        <img th:src="@{${bodyURL !=null ? bodyURL : '/common/white.png'}}" id="body_image"
+             class="hidden w-1/4 h-[150px] ml-2 img"/>
+        <input type="hidden" id="bodyImage" name="bodyImage"/>
+        <input class="hidden btn btn-outline btn-info ml-2" type="button"
+               id="body_remove"
+               name="body_remove" value="제거" onclick="remove(this)"/>
+        <input type="hidden" id="index_bodyImages"
+               th:value="${recipeEditForm.bodyImages!=null ? #lists.size(recipeEditForm.bodyImages) : 0}">
+
+    </div>
 </div>
 <script layout:fragment="script" type='text/javascript'>
     const add_bodyImage = document.getElementById("add_bodyImage");
@@ -120,6 +126,12 @@
        clone2.classList.remove('hidden');
        clone2.removeAttribute('id');
        clone2.setAttribute('name','bodyImages['+index+'].img')
+       clone2.addEventListener('click',function(){
+            const name = this.getAttribute('name');
+            const temp = document.getElementById('temp');
+            temp.value = name.split('.')[0];
+            document.getElementById('tempImg').click();
+       });
 
        const bodyImage =document.getElementById("bodyImage");
        const clone3 = bodyImage.cloneNode(true);
@@ -142,50 +154,42 @@
        div.appendChild(clone4);
        document.getElementById("index_bodyImages").value = Number(index)+1;
    });
-   function post(){
-    const temp = document.getElementById('temp');
-       const subject = document.getElementById('subject').cloneNode(true);
-       temp.appendChild(subject);
-       //
-       const origin_tools = document.getElementById('tools');
-       const tools =origin_tools.cloneNode(true)
-       for(var i=0, cnt=origin_tools.options.length;i<cnt;i++)
-           if(origin_tools.options[i].selected==true)
-               tools.options[i].selected=true;
-       temp.appendChild(tools);
-       //
-       const ingredient = document.getElementsByClassName('ingredient');
-       Array.from(ingredient).forEach(function(element) {
-           const copy = element.cloneNode(true);
-           copy.setAttribute('name','ingredient');
-           copy.classList.remove('ingredient');
-           copy.value = element.value;
-           temp.appendChild(copy);
-       });
-       const ingredient_amount= document.getElementsByClassName('ingredient_amount');
-       Array.from(ingredient_amount).forEach(function(element) {
-           const copy = element.cloneNode(true);
-           copy.setAttribute('name','ingredient_amount');
-           copy.classList.remove('ingredient_amount');
-           temp.appendChild(copy);
-       });
-       const tags= document.getElementsByClassName('tags');
-       Array.from(tags).forEach(function(element) {
-           const copy = element.cloneNode(true);
-           temp.appendChild(copy);
-       });
-       temp.submit();
-   };
-   const remove_img = document.getElementById("remove_img");
-   remove_img.addEventListener('click', post);
 
+   const remove_img = document.getElementById("remove_img");
+   remove_img.addEventListener('click', function(){
+        const tempImg= document.getElementById('tempImg');
+        tempImg.value= '';
+        const form = document.getElementById('form');
+        form.action = '/recipe/baseImg';
+        form.submit();
+   });
+
+    const images = document.getElementsByClassName('img');
+    Array.from(images).forEach(function(img){
+        img.addEventListener('click',function(){
+            const name = img.getAttribute('name');
+            const temp = document.getElementById('temp');
+            temp.value = name.split('.')[0];
+            document.getElementById('tempImg').click();
+        });
+    });
    const icon = document.getElementById("img");
    icon.addEventListener('click', function() {
+       const temp = document.getElementById('temp');
+       temp.value = 'baseImg';
        document.getElementById('tempImg').click();
    });
 
    const tempImg = document.getElementById('tempImg');
-   tempImg.addEventListener('change',post);
+   tempImg.addEventListener('change',function(){
+        const form = document.getElementById('form');
+        const where = document.getElementById('temp').value;
+        if(where =='baseImg')
+            form.action = '/recipe/baseImg';
+        else
+            form.action = '/recipe/bodyImg';
+        form.submit();
+   });
 
    const add_ingredient = document.getElementById("add_ingredient");
    add_ingredient.addEventListener("click", () => {

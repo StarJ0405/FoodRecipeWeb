@@ -1,4 +1,4 @@
-package com.StarJ.food_recipe.Exceptions;
+package com.StarJ.food_recipe.Global.Exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

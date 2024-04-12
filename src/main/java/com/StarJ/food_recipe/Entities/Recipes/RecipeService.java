@@ -17,7 +17,7 @@ import com.StarJ.food_recipe.Entities.Tags.TagService;
 import com.StarJ.food_recipe.Entities.Tools.Tool;
 import com.StarJ.food_recipe.Entities.Tools.ToolService;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
-import com.StarJ.food_recipe.Exceptions.DataNotFoundException;
+import com.StarJ.food_recipe.Global.Exceptions.DataNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +57,7 @@ public class RecipeService {
     private ResourceLoader resourceLoader;
 
     public Page<Recipe> getRecipes(int page) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Order.desc("createDate")));
+        Pageable pageable = PageRequest.of(page, 24, Sort.by(Sort.Order.desc("createDate")));
         return recipeRepository.findAll(pageable);
     }
 
@@ -149,8 +150,26 @@ public class RecipeService {
             }
         List<BodyImage> bodyImages = recipe.getBodyImages();
         bodyImages.clear();
-        for (BodyImageForm form : bodyImageForms)
-            bodyImages.add(bodyImageService.getBodyImage(recipe, form.getBody(), form.getImgURL()));
+        for (int i = 0; i < bodyImageForms.size(); i++) {
+            BodyImageForm form = bodyImageForms.get(i);
+            BodyImage bodyImage = bodyImageService.getBodyImage(recipe, form.getBody(), form.getImgURL());
+            String imgURL = bodyImage.getImgURL();
+            if (imgURL != null && !imgURL.equals(""))
+                try {
+                    String path = resourceLoader.getResource("classpath:/static").getFile().getPath();
+                    Path oldPath = Paths.get(path + imgURL);
+                    File recipeFolder = new File(path + "/recipes/" + recipe.getUUID().toString());
+                    if (!recipeFolder.exists())
+                        recipeFolder.mkdirs();
+                    String newUrl = "/recipes/" + recipe.getUUID().toString() + "/bodyImg_" + i + "." + imgURL.split("\\.")[1];
+                    Path newPath = Paths.get(path + newUrl);
+                    Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+                    bodyImage.setImgURL(newUrl);
+                } catch (IOException ex) {
+
+                }
+            bodyImages.add(bodyImage);
+        }
         List<IngredientInfo> ingredientInfos = recipe.getIngredientInfos();
         ingredientInfos.clear();
         for (IngredientInfoForm form : ingredientInfoForms) {
@@ -192,8 +211,7 @@ public class RecipeService {
         List<BodyImage> bodyImages = recipe.getBodyImages();
         for (BodyImageForm form : bodyImageForms) {
             BodyImage bodyImage = bodyImageService.getBodyImage(recipe, form.getBody(), form.getImgURL());
-            if (bodyImage != null)
-                bodyImages.add(bodyImage);
+            bodyImages.add(bodyImage);
         }
         List<IngredientInfo> ingredientInfos = recipe.getIngredientInfos();
         for (IngredientInfoForm form : ingredientInfoForms) {
@@ -222,6 +240,22 @@ public class RecipeService {
                 if (!userFolder.exists())
                     userFolder.mkdirs();
                 String fileloc = "/users/" + user.getId() + "/temp_recipe." + file.getContentType().split("/")[1];
+                file.transferTo(new File(path + fileloc));
+                return fileloc;
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        return null;
+    }
+
+    public String saveTempBodyImage(MultipartFile file, SiteUser user) {
+        if (!file.isEmpty())
+            try {
+                String path = resourceLoader.getResource("classpath:/static").getFile().getPath();
+                File userFolder = new File(path + "/users/" + user.getId());
+                if (!userFolder.exists())
+                    userFolder.mkdirs();
+                String fileloc = "/users/" + user.getId() + "/temp_recipe_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("hh_mm_ss_SSSS")) + "." + file.getContentType().split("/")[1];
                 file.transferTo(new File(path + fileloc));
                 return fileloc;
             } catch (IOException ex) {

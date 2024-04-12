@@ -1,7 +1,7 @@
 package com.StarJ.food_recipe.Entities.Nutrients;
 
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
-import com.StarJ.food_recipe.Exceptions.DataNotFoundException;
+import com.StarJ.food_recipe.Global.Exceptions.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
