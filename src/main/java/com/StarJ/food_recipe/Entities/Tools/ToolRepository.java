@@ -25,4 +25,5 @@ public interface ToolRepository extends JpaRepository<Tool, Integer> {
             + "and "
             + "   t.name in :names ")
     List<Tool> findByNames(List<String> names);
+
 }

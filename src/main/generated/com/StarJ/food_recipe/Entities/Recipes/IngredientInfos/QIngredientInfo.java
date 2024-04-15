@@ -22,7 +22,7 @@ public class QIngredientInfo extends EntityPathBase<IngredientInfo> {
 
     public static final QIngredientInfo ingredientInfo = new QIngredientInfo("ingredientInfo");
 
-    public final NumberPath<Integer> amount = createNumber("amount", Integer.class);
+    public final NumberPath<Double> amount = createNumber("amount", Double.class);
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 

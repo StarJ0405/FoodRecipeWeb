@@ -54,13 +54,13 @@ public class IngredientService {
             throw new DataNotFoundException("없는 데이터입니다.");
     }
 
-    public void modify(Ingredient ingredient, SiteUser user, String name, String info, int cal, String _unit, List<NutrientInfoForm> nutrients) {
+    public void modify(Ingredient ingredient, SiteUser user, String name, String info, double kcal, String _unit, List<NutrientInfoForm> nutrients) {
         Unit unit = unitService.getUnit(_unit);
         ingredient.setModifier(user);
         ingredient.setModifiedDate(LocalDateTime.now());
         ingredient.setName(name);
         ingredient.setInfo(info);
-        ingredient.setCal(cal);
+        ingredient.setKcal(kcal);
         ingredient.setUnit(unit);
         List<NutrientInfo> nutrientInfos = ingredient.getNutrientInfos();
         nutrientInfos.clear();
@@ -82,9 +82,9 @@ public class IngredientService {
     }
 
     @Transactional
-    public void create(SiteUser user, String name, String info, int cal, String _unit, List<NutrientInfoForm> nutrients) {
+    public void create(SiteUser user, String name, String info, double kcal, String _unit, List<NutrientInfoForm> nutrients) {
         Unit unit = unitService.getUnit(_unit);
-        Ingredient ingredient = Ingredient.builder().author(user).name(name).info(info).cal(cal).unit(unit).build();
+        Ingredient ingredient = Ingredient.builder().author(user).name(name).info(info).kcal(kcal).unit(unit).build();
         List<NutrientInfo> nutrientInfos = ingredient.getNutrientInfos();
         for (NutrientInfoForm form : nutrients) {
             Nutrient nutrient = nutrientService.getNutrient(form.getNutrient());

@@ -9,5 +9,5 @@ public class NutrientInfoForm {
     @NotBlank(message = "영양분을 선택해주세요")
     private String nutrient;
     @NotNull(message = "양을 입력해주세요")
-    private int amount;
+    private double amount;
 }

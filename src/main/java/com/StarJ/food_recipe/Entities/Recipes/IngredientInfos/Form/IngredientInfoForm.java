@@ -13,5 +13,5 @@ public class IngredientInfoForm {
     @NotBlank(message = "재료를 선택해주세요")
     private String ingredient;
     @NotNull(message = "양을 입력해주세요")
-    private int amount;
+    private double amount;
 }

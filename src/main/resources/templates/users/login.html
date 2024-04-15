@@ -18,12 +18,13 @@
                 <!--                                <form th:action="@{/user/login}" method="post" class="flex flex-col items-center">-->
                 <form th:action="@{/user/loginProcess}" method="post" class="flex flex-col items-center">
                     <input type="text" name="username" id="username" placeholder="아이디"
-                           class="border border-2 border-primary-content rounded-md w-[300px]">
+                           class="border border-2 border-primary-content rounded-md w-[300px]"/>
                     <input type="password" id="password" name="password" placeholder="비밀번호"
-                           class="border border-2 border-primary-content rounded-md w-[300px] ">
-                    <br>
+                           class="border border-2 border-primary-content rounded-md w-[300px] "/>
+<!--                    <div class="flex self-start"><input type="checkbox" id="rememberMe" value="rememberMe"/><label>로그인 상태 유지</label></div>-->
                     <input type="submit" value="Login"
-                           class="w-[300px] border border-2 border-primary-content rounded-md bg-primary-content">
+                           class="w-[300px] border border-2 border-primary-content rounded-md bg-primary-content"/>
+
                     <div class="m-5 flex justify-center">
                         <a href="/oauth2/authorization/google" class="p-2"><img src="/common/google.png" class="w-[75px] rounded-full overflow-hidden m-0" alt="구글 로그인"/></a>
                         <a href="/oauth2/authorization/kakao" class="p-2"><img src="/common/kakao.png" class="w-[75px] rounded-full overflow-hidden m-0" alt="카카오 로그인"/></a>

@@ -12,7 +12,7 @@ import java.util.Optional;
 public class NutrientInfoService {
     private final NutrientInfoRepository nutrientInfoRepository;
 
-    public NutrientInfo getNutrientInfo(Ingredient ingredient, Nutrient nutrient, int amount) {
+    public NutrientInfo getNutrientInfo(Ingredient ingredient, Nutrient nutrient, double amount) {
         Optional<NutrientInfo> _info = nutrientInfoRepository.find(ingredient.getName(), nutrient.getName());
         if (_info.isPresent()) {
             NutrientInfo info = _info.get();
@@ -22,7 +22,7 @@ public class NutrientInfoService {
         } else
             return nutrientInfoRepository.save(NutrientInfo.builder().ingredient(ingredient).nutrient(nutrient).amount(amount).build());
     }
-    public NutrientInfo getModifiedNutrientInfo(Ingredient ingredient, Nutrient nutrient, int amount) {
+    public NutrientInfo getModifiedNutrientInfo(Ingredient ingredient, Nutrient nutrient, double amount) {
         Optional<NutrientInfo> _info = nutrientInfoRepository.find(ingredient.getName(), nutrient.getName());
         if (_info.isPresent()) {
             NutrientInfo info = _info.get();

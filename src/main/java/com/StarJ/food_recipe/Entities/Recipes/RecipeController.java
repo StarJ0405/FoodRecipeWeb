@@ -74,9 +74,9 @@ public class RecipeController {
         if (principalDetail != null)
             model.addAttribute("user", principalDetail.getUser());
         long totalCal = 0l;
-        HashMap<Nutrient, Integer> nutrients = new HashMap<>();
+        HashMap<Nutrient, Double> nutrients = new HashMap<>();
         for (IngredientInfo ingredientInfo : recipe.getIngredientInfos()) {
-            totalCal += ingredientInfo.getIngredient().getCal() * ingredientInfo.getAmount();
+            totalCal += ingredientInfo.getIngredient().getKcal() * ingredientInfo.getAmount();
             for (NutrientInfo info : ingredientInfo.getIngredient().getNutrientInfos()) {
                 Nutrient nutrient = info.getNutrient();
                 if (!nutrients.containsKey(nutrient))

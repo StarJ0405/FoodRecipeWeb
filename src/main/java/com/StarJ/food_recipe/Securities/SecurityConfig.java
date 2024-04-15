@@ -13,14 +13,21 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import javax.sql.DataSource;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+    private final DataSource dataSource;
+
+    private final UserSecurityService userSecurityService;
     @Autowired
     private PrincipalOauth2UserService principalOauth2UserService;
 
@@ -32,9 +39,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-//                .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-//                        .requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
-                .sessionManagement(manage -> manage.sessionCreationPolicy(SessionCreationPolicy.ALWAYS ))
+                .sessionManagement(manage -> manage.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .csrf((csrf) -> csrf
                         .ignoringRequestMatchers(new AntPathRequestMatcher("/h2/**")))
                 .authorizeHttpRequests(request -> request
@@ -48,6 +53,13 @@ public class SecurityConfig {
                 .headers((headers) -> headers
                         .addHeaderWriter(new XFrameOptionsHeaderWriter(
                                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
+                // 자동 로그인
+//                .rememberMe(rm -> rm
+//                        .key("key")
+//                        .rememberMeParameter("rememberMe")
+//                        .tokenValiditySeconds(60 * 60 * 24 * 365)
+//                        .tokenRepository(tokenRepository())
+//                )
                 //일반 적인 로그인
                 .formLogin(login -> login
                         .loginPage("/user/login") // 로그인 페이지 url
@@ -62,11 +74,27 @@ public class SecurityConfig {
                 )
                 // 로그아웃
                 .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
-                        .logoutSuccessUrl("/")
-                        .invalidateHttpSession(true))
+                                .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
+                                .logoutSuccessUrl("/")
+                                .invalidateHttpSession(true)
+//                        .deleteCookies("JSESSIONID", "rememberMe")
+                )
+                // 세션 관리
+//                .sessionManagement(ss -> ss
+//                        .maximumSessions(200)
+//                        .expiredUrl("/user/login")
+//                        .maxSessionsPreventsLogin(true)
+//                )
         ;
         return http.build();
+    }
+
+    @Bean
+    public PersistentTokenRepository tokenRepository() {
+        // JDBC 기반의 tokenRepository 구현체
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource); // dataSource 주입
+        return jdbcTokenRepository;
     }
 
     @Bean

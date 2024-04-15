@@ -14,7 +14,7 @@ public class IngredientEditForm {
     @NotBlank(message = "정보를 입력해주세요")
     private String info;
     @NotNull(message = "열량을 입력해주세요")
-    private Integer cal;
+    private Double kcal;
     @NotBlank(message = "단위를 입력해주세요")
     private String unit;
 

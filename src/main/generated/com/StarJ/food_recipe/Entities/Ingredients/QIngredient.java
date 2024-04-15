@@ -24,13 +24,13 @@ public class QIngredient extends EntityPathBase<Ingredient> {
 
     public final com.StarJ.food_recipe.Entities.Users.QSiteUser author;
 
-    public final NumberPath<Integer> cal = createNumber("cal", Integer.class);
-
     public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
     public final StringPath info = createString("info");
+
+    public final NumberPath<Double> kcal = createNumber("kcal", Double.class);
 
     public final DateTimePath<java.time.LocalDateTime> modifiedDate = createDateTime("modifiedDate", java.time.LocalDateTime.class);
 

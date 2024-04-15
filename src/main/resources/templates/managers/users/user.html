@@ -1,3 +1,4 @@
+
 <html layout:decorate="~{/layouts/managerLayout}" xmlns:layout="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content" class="flex flex-col w-full border-opacity-50">
@@ -5,25 +6,20 @@
         <div class="overflow-x-auto">
             <input type="button" value="추가" id="delete" class="btn btn-outline btn-info mb-2"
                    onclick="location.href = this.dataset.uri;"
-                   th:data-uri="@{/manager/nutrient/create}">
+                   th:data-uri="@{/manager/user/create}">
             <table class="table [&_th]:border-2 [&_th]:border-black [&_td]:border-2 [&_td]:border-black text-center">
                 <tr>
                     <th class="w-[100px]" th:text="번호"/>
-                    <th class="min-w-[150px]" th:text="이름"/>
-                    <th class="w-[300px]" th:text="'작성 정보'"/>
-                    <th class="w-[300px]" th:text="'수정 정보'"/>
+                    <th class="min-w-[150px]" th:text="아이디"/>
+                    <th class="min-w-[150px]" th:text="닉네임"/>
+                    <th class="w-[300px]" th:text="생성일"/>
                 </tr>
-                <tr th:each="nutrient,loop : ${paging}" class="hover">
+                <tr th:each="user,loop : ${paging}" class="hover">
                     <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
-                    <td><a th:href="@{|/manager/nutrient/${nutrient.id}|}" th:text="${nutrient.name}"/></td>
+                    <td><a th:href="@{|/manager/user/${user.id}|}" th:text="${user.id}"/></td>
+                    <td><span th:text="${user.nickname}"/></td>
                     <td>
-                        <span th:text="${#temporals.format(nutrient.createDate, 'yyyy-MM-dd HH:mm')}"/>
-                        <span th:if="${nutrient.author != null}" th:text="${nutrient.author.nickname}"/>
-                    </td>
-                    <td th:if="${nutrient.modifiedDate!=null}">
-                        <span th:text="${#temporals.format(nutrient.modifiedDate, 'yyyy-MM-dd HH:mm')}"/>
-                        <span th:if="${nutrient.modifier != null}" th:text="${nutrient.modifier.nickname}"/></td>
-                    <td th:if="${nutrient.modifiedDate==null}"></td>
+                        <span th:text="${#temporals.format(user.createDate, 'yyyy-MM-dd HH:mm')}"/>
                 </tr>
             </table>
             <div class="join">

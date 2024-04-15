@@ -12,7 +12,7 @@ import java.util.Optional;
 public class IngredientInfoService {
     private final IngredientInfoRepository ingredientInfoRepository;
 
-    public IngredientInfo getIngredientInfo(Recipe recipe, Ingredient ingredient, int amount) {
+    public IngredientInfo getIngredientInfo(Recipe recipe, Ingredient ingredient, double amount) {
         Optional<IngredientInfo> _info = ingredientInfoRepository.find(ingredient.getName(), recipe.getId());
         if (_info.isPresent()) {
             IngredientInfo info = _info.get();
@@ -23,7 +23,7 @@ public class IngredientInfoService {
             return ingredientInfoRepository.save(IngredientInfo.builder().ingredient(ingredient).recipe(recipe).amount(amount).build());
     }
 
-    public IngredientInfo getModifiedIngredientInfo(Recipe recipe, Ingredient ingredient, int amount) {
+    public IngredientInfo getModifiedIngredientInfo(Recipe recipe, Ingredient ingredient, double amount) {
         Optional<IngredientInfo> _info = ingredientInfoRepository.find(ingredient.getName(), recipe.getId());
         if (_info.isPresent()) {
             IngredientInfo info = _info.get();

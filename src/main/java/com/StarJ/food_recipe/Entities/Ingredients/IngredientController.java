@@ -48,8 +48,9 @@ public class IngredientController {
         Ingredient ingredient = ingredientService.getIngredient(id);
         ingredientEditForm.setName(ingredient.getName());
         ingredientEditForm.setInfo(ingredient.getInfo());
-        ingredientEditForm.setCal(ingredient.getCal());
-        ingredientEditForm.setUnit(ingredient.getUnit().getName());
+        ingredientEditForm.setKcal(ingredient.getKcal());
+        if (ingredient.getUnit() != null)
+            ingredientEditForm.setUnit(ingredient.getUnit().getName());
         List<NutrientInfoForm> infos = new ArrayList<>();
         for (NutrientInfo info : ingredient.getNutrientInfos()) {
             NutrientInfoForm form = new NutrientInfoForm();
@@ -76,7 +77,7 @@ public class IngredientController {
         }
         List<NutrientInfoForm> nutrientInfoForms = ingredientEditForm.getNutrientInfos();
         ingredientEditForm.setNutrientInfos(nutrientInfoForms != null ? nutrientInfoForms.stream().filter(v -> v.getNutrient() != null).toList() : new ArrayList<>());
-        ingredientService.modify(ingredient, principalDetail.getUser(), ingredientEditForm.getName(), ingredientEditForm.getInfo(), ingredientEditForm.getCal(), ingredientEditForm.getUnit(), ingredientEditForm.getNutrientInfos());
+        ingredientService.modify(ingredient, principalDetail.getUser(), ingredientEditForm.getName(), ingredientEditForm.getInfo(), ingredientEditForm.getKcal(), ingredientEditForm.getUnit(), ingredientEditForm.getNutrientInfos());
         return "redirect:/manager/ingredient";
     }
 
@@ -106,7 +107,7 @@ public class IngredientController {
         }
         List<NutrientInfoForm> nutrientInfoForms = ingredientEditForm.getNutrientInfos();
         ingredientEditForm.setNutrientInfos(nutrientInfoForms != null ? nutrientInfoForms.stream().filter(n -> n.getNutrient() != null && n.getAmount() > 0).toList() : new ArrayList<>());
-        ingredientService.create(principalDetail.getUser(), ingredientEditForm.getName(), ingredientEditForm.getInfo(), ingredientEditForm.getCal(), ingredientEditForm.getUnit(), ingredientEditForm.getNutrientInfos());
+        ingredientService.create(principalDetail.getUser(), ingredientEditForm.getName(), ingredientEditForm.getInfo(), ingredientEditForm.getKcal(), ingredientEditForm.getUnit(), ingredientEditForm.getNutrientInfos());
         return "redirect:/manager/ingredient";
     }
 }

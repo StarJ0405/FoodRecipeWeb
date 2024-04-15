@@ -5,6 +5,10 @@ import com.StarJ.food_recipe.Securities.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +20,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -29,6 +32,12 @@ public class UserService {
     private final EmailService emailService;
     @Autowired
     private ResourceLoader resourceLoader;
+
+    public Page<SiteUser> getUsers(int page) {
+        Sort sort = Sort.by(Sort.Order.desc("createDate"));
+        Pageable pageable = PageRequest.of(page, 10, sort);
+        return userRepository.findAll(pageable);
+    }
 
     public boolean hasUser(String id) {
         return userRepository.findById(id).isPresent();
@@ -138,11 +147,13 @@ public class UserService {
     public boolean isSamePassword(SiteUser user, String password) {
         return passwordEncoder.matches(password, user.getPassword());
     }
-    public void changePassword(SiteUser user, String newPassword){
+
+    public void changePassword(SiteUser user, String newPassword) {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
-    public void changeEmail(SiteUser user, String newEmail){
+
+    public void changeEmail(SiteUser user, String newEmail) {
         user.setEmail(newEmail);
         userRepository.save(user);
     }

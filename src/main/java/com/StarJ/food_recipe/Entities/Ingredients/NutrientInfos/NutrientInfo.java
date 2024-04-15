@@ -20,10 +20,10 @@ public class NutrientInfo {
     private Ingredient ingredient;
     @ManyToOne(fetch = FetchType.LAZY)
     private Nutrient nutrient;
-    private int amount;
+    private double amount;
 
     @Builder
-    public NutrientInfo(Ingredient ingredient, Nutrient nutrient, int amount) {
+    public NutrientInfo(Ingredient ingredient, Nutrient nutrient, double amount) {
         this.ingredient = ingredient;
         this.nutrient = nutrient;
         this.amount = amount;

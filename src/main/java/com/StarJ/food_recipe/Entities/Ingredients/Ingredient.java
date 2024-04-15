@@ -25,7 +25,7 @@ public class Ingredient {
     private String name;
     @Column(columnDefinition = "TEXT")
     private String info;
-    private int cal;
+    private double kcal;
     @ManyToOne(fetch = FetchType.LAZY)
     private Unit unit;
 
@@ -40,9 +40,9 @@ public class Ingredient {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public Ingredient(String name, String info, int cal, Unit unit, SiteUser author) {
+    public Ingredient(String name, String info, double kcal, Unit unit, SiteUser author) {
         this.name = name;
-        this.cal = cal;
+        this.kcal = kcal;
         this.info = info;
         this.unit = unit;
         this.nutrientInfos = new ArrayList<>();
