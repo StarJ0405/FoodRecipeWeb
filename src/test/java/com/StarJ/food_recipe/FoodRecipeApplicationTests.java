@@ -8,7 +8,12 @@ import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.NutrientInfo;
 import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.NutrientInfoRepository;
 import com.StarJ.food_recipe.Entities.Nutrients.Nutrient;
 import com.StarJ.food_recipe.Entities.Nutrients.NutrientRepository;
+import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfo;
+import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfoRepository;
 import com.StarJ.food_recipe.Entities.Recipes.Recipe;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeRepository;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeTags.RecipeTag;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeTags.RecipeTagRepository;
 import com.StarJ.food_recipe.Entities.Tags.Tag;
 import com.StarJ.food_recipe.Entities.Tags.TagRepository;
 import com.StarJ.food_recipe.Entities.Tools.Tool;
@@ -17,6 +22,7 @@ import com.StarJ.food_recipe.Entities.Units.Unit;
 import com.StarJ.food_recipe.Entities.Units.UnitRepository;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
 import com.StarJ.food_recipe.Entities.Users.UserRepository;
+import com.StarJ.food_recipe.Global.Exceptions.DataNotFoundException;
 import com.StarJ.food_recipe.Securities.UserRole;
 import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.*;
@@ -27,10 +33,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @SpringBootTest
 class FoodRecipeApplicationTests {
@@ -52,9 +55,16 @@ class FoodRecipeApplicationTests {
     private IngredientRepository ingredientRepository;
     @Autowired
     private NutrientInfoRepository nutrientInfoRepository;
+    @Autowired
+    private RecipeRepository recipeRepository;
+    @Autowired
+    private IngredientInfoRepository ingredientInfoRepository;
+    @Autowired
+    private RecipeTagRepository recipeTagRepository;
 
     //&#10;
     @Test
+//    @Transactional
     void initialData() {
         try {
             String filePath = "C:/Users/admin/IdeaProjects/FoodRecipeWeb/initialData.xlsx";
@@ -73,10 +83,10 @@ class FoodRecipeApplicationTests {
             List<Category> categories = initialCategories(admin, workbook.getSheet("categories"));
             List<Tag> tags = initialTags(admin, workbook.getSheet("tags"));
             List<Ingredient> ingredients = initialIngredients(admin, workbook.getSheet("ingredients"));
+            List<Recipe> recipes = initialRecipes(admin, workbook.getSheet("recipes"));
             workbook.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
-            System.out.print("IOException");
+            System.out.print(ex.getLocalizedMessage());
         }
     }
 
@@ -86,8 +96,7 @@ class FoodRecipeApplicationTests {
             String id = row.getCell(0).getStringCellValue();
             String role = row.getCell(1).getStringCellValue();
             String nickname = row.getCell(2).getStringCellValue();
-            row.getCell(3).setCellType(CellType.STRING);
-            String password = row.getCell(3).getStringCellValue();
+            String password = row.getCell(3).getCellType().equals(CellType.NUMERIC) ? String.format("%d", (int) row.getCell(3).getNumericCellValue()) : row.getCell(3).getStringCellValue();
             SiteUser user = SiteUser.builder().id(id).role(role).nickname(nickname).password(passwordEncoder.encode(password)).build();
             userRepository.save(user);
             list.add(user);
@@ -99,15 +108,23 @@ class FoodRecipeApplicationTests {
         List<Tool> list = new ArrayList<>();
         for (Row row : toolSheet) {
             String name = null;
-            String description = "";
+
+            StringBuilder description = new StringBuilder();
             for (Cell cell : row)
                 if (name == null)
                     name = cell.getStringCellValue();
-                else
-                    description += (description.equals("") ? "" : "\n") + cell.getStringCellValue();
-            Tool tool = Tool.builder().author(admin).name(name).description(description).build();
-            toolRepository.save(tool);
-            list.add(tool);
+                else {
+                    if (!description.isEmpty())
+                        description.append("\n");
+                    description.append(cell.getStringCellValue());
+                }
+            Optional<Tool> _tool = toolRepository.findById(name);
+            if (_tool.isEmpty()) {
+                Tool tool = Tool.builder().author(admin).name(name).description(description.toString()).build();
+                toolRepository.save(tool);
+                list.add(tool);
+            } else
+                list.add(_tool.get());
         }
         return list;
     }
@@ -116,15 +133,22 @@ class FoodRecipeApplicationTests {
         List<Unit> list = new ArrayList<>();
         for (Row row : unitSheet) {
             String name = null;
-            String description = "";
+            StringBuilder description = new StringBuilder();
             for (Cell cell : row)
                 if (name == null)
                     name = cell.getStringCellValue();
-                else
-                    description += (description.equals("") ? "" : "\n") + cell.getStringCellValue();
-            Unit unit = Unit.builder().author(admin).name(name).description(description).build();
-            unitRepository.save(unit);
-            list.add(unit);
+                else {
+                    if (!description.isEmpty())
+                        description.append("\n");
+                    description.append(cell.getStringCellValue());
+                }
+            Optional<Unit> _unit = unitRepository.findById(name);
+            if (_unit.isEmpty()) {
+                Unit unit = Unit.builder().author(admin).name(name).description(description.toString()).build();
+                unitRepository.save(unit);
+                list.add(unit);
+            } else
+                list.add(_unit.get());
         }
         return list;
     }
@@ -133,15 +157,22 @@ class FoodRecipeApplicationTests {
         List<Nutrient> list = new ArrayList<>();
         for (Row row : nutrientSheet) {
             String name = null;
-            String description = "";
+            StringBuilder description = new StringBuilder();
             for (Cell cell : row)
                 if (name == null)
                     name = cell.getStringCellValue();
-                else
-                    description += (description.equals("") ? "" : "\n") + cell.getStringCellValue();
-            Nutrient nutrient = Nutrient.builder().author(admin).name(name).description(description).build();
-            nutrientRepository.save(nutrient);
-            list.add(nutrient);
+                else {
+                    if (!description.isEmpty())
+                        description.append("\n");
+                    description.append(cell.getStringCellValue());
+                }
+            Optional<Nutrient> _nutrient = nutrientRepository.findById(name);
+            if (_nutrient.isEmpty()) {
+                Nutrient nutrient = Nutrient.builder().author(admin).name(name).description(description.toString()).build();
+                nutrientRepository.save(nutrient);
+                list.add(nutrient);
+            } else list
+                    .add(_nutrient.get());
         }
         return list;
     }
@@ -150,9 +181,13 @@ class FoodRecipeApplicationTests {
         List<Category> list = new ArrayList<>();
         for (Row row : categorySheet)
             for (Cell cell : row) {
-                Category category = Category.builder().author(admin).name(cell.getStringCellValue()).build();
-                categoryRepository.save(category);
-                list.add(category);
+                String name = cell.getStringCellValue();
+                Optional<Category> _category = categoryRepository.findById(name);
+                if (_category.isEmpty()) {
+                    Category category = Category.builder().author(admin).name(name).build();
+                    categoryRepository.save(category);
+                    list.add(category);
+                } else list.add(_category.get());
             }
         return list;
     }
@@ -161,13 +196,17 @@ class FoodRecipeApplicationTests {
         List<Tag> list = new ArrayList<>();
         for (Row row : tagSheet) {
             String name = row.getCell(0).getStringCellValue();
-            String category_name = row.getCell(1).getStringCellValue();
-            Optional<Category> _category = categoryRepository.findById(name);
-            Category category = _category.isPresent() ? _category.get() : null;
+            Optional<Tag> _tag = tagRepository.findById(name);
+            if (_tag.isEmpty()) {
+                String category_name = row.getCell(1).getStringCellValue();
+                Optional<Category> _category = categoryRepository.findById(category_name);
+                Category category = _category.orElse(null);
 
-            Tag tag = Tag.builder().author(admin).name(name).category(category).build();
-            tagRepository.save(tag);
-            list.add(tag);
+                Tag tag = Tag.builder().author(admin).name(name).category(category).build();
+                tagRepository.save(tag);
+                list.add(tag);
+            } else
+                list.add(_tag.get());
         }
         return list;
     }
@@ -175,6 +214,7 @@ class FoodRecipeApplicationTests {
     @Transactional
     List<Ingredient> initialIngredients(SiteUser admin, Sheet ingredientSheet) {
         List<Ingredient> list = new ArrayList<>();
+        row:
         for (Row row : ingredientSheet) {
             if (row.getRowNum() == 0)
                 continue;
@@ -182,11 +222,16 @@ class FoodRecipeApplicationTests {
             String info = null;
             double kcal = 0d;
             Unit unit = null;
-            HashMap<Nutrient, Double> nutrientMap = new HashMap();
+            HashMap<Nutrient, Double> nutrientMap = new HashMap<>();
             for (Cell cell : row)
                 switch (cell.getColumnIndex()) {
                     case 0:
                         name = row.getCell(0).getStringCellValue();
+                        Optional<Ingredient> _ingredient = ingredientRepository.findById(name);
+                        if (_ingredient.isPresent()) {
+                            list.add(_ingredient.get());
+                            continue row;
+                        }
                         break;
                     case 1:
                         info = row.getCell(1).getStringCellValue();
@@ -204,8 +249,7 @@ class FoodRecipeApplicationTests {
                             double amount = cell.getNumericCellValue();
                             if (amount > 0) {
                                 Optional<Nutrient> _nutrient = nutrientRepository.findById(ingredientSheet.getRow(0).getCell(cell.getColumnIndex()).getStringCellValue());
-                                if (_nutrient.isPresent())
-                                    nutrientMap.put(_nutrient.get(), amount);
+                                _nutrient.ifPresent(nutrient -> nutrientMap.put(nutrient, amount/100d));
                             }
                         }
                         break;
@@ -224,8 +268,69 @@ class FoodRecipeApplicationTests {
         return list;
     }
 
+    @Transactional
     List<Recipe> initialRecipes(SiteUser admin, Sheet recipeSheet) {
         List<Recipe> list = new ArrayList<>();
+        for (Row row : recipeSheet) {
+            String subject = null;
+            boolean ing = true;
+            HashMap<Ingredient, Double> ingredientMap = new HashMap<>();
+            List<Tag> tags = new ArrayList<>();
+            for (Cell cell : row)
+                if (cell.getColumnIndex() == 0)
+                    subject = cell.getStringCellValue();
+                else if (cell.getCellType().equals(CellType.BLANK))
+                    ing = !ing;
+                else if (ing) {
+                    String origin = cell.getStringCellValue();
+                    if (origin.contains(":")) {
+                        String[] split = origin.split(":");
+                        Optional<Ingredient> _ingredient = ingredientRepository.findById(split[0]);
+
+                        if (_ingredient.isPresent()) {
+                            Ingredient ingredient = _ingredient.get();
+                            double amount = 0d;
+                            try {
+                                amount = Double.parseDouble(split[1]);
+                            } catch (Exception ex) {
+                                System.out.println(ex.getLocalizedMessage());
+                                System.out.print(row.getRowNum() + "," + cell.getColumnIndex() + " - " + origin + "은 잘못된 데이터 입니다.");
+                            }
+                            ingredientMap.put(ingredient, amount);
+                        } else
+                            throw new DataNotFoundException(row.getRowNum() + "," + cell.getColumnIndex() + " - " + origin + "은 잘못된 데이터 입니다.");
+                    }
+                } else {
+                    String origin = cell.getStringCellValue();
+                    Optional<Tag> _tag = tagRepository.findById(origin);
+                    if (_tag.isPresent()) {
+                        tags.add(_tag.get());
+                    } else
+                        throw new DataNotFoundException(row.getRowNum() + "," + cell.getColumnIndex() + " - " + origin + "은 잘못된 데이터 입니다.");
+                }
+            Optional<Recipe> _recipe = recipeRepository.search(subject, ingredientMap.keySet().stream().toList());
+            if (_recipe.isEmpty()) {
+                Recipe recipe = Recipe.builder().author(admin).uuid(UUID.randomUUID()).subject(subject).build();
+
+                List<IngredientInfo> ingredientInfos = new ArrayList<>();
+                for (Ingredient ingredient : ingredientMap.keySet()) {
+                    IngredientInfo ingredientInfo = IngredientInfo.builder().recipe(recipe).ingredient(ingredient).amount(ingredientMap.get(ingredient)).build();
+                    ingredientInfoRepository.save(ingredientInfo);
+                    ingredientInfos.add(ingredientInfo);
+                }
+                List<RecipeTag> recipeTags = new ArrayList<>();
+                for (Tag tag : tags) {
+                    RecipeTag recipeTag = RecipeTag.builder().recipe(recipe).tag(tag).build();
+                    recipeTagRepository.save(recipeTag);
+                    recipeTags.add(recipeTag);
+                }
+                recipe.setIngredientInfos(ingredientInfos);
+                recipe.setTags(recipeTags);
+                recipe.setTools(new ArrayList<>());
+                recipeRepository.save(recipe);
+                list.add(recipe);
+            } else list.add(_recipe.get());
+        }
         return list;
     }
 }
