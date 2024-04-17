@@ -3,10 +3,7 @@ package com.StarJ.food_recipe.Entities.Tags;
 import com.StarJ.food_recipe.Entities.Categories.Category;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +14,7 @@ import java.time.LocalDateTime;
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private int id;
     @Column(unique = true)
     private String name;
@@ -24,7 +22,9 @@ public class Tag {
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
     @ManyToOne(fetch = FetchType.LAZY)
+    @Setter(AccessLevel.NONE)
     private SiteUser author;
+    @Setter(AccessLevel.NONE)
     private LocalDateTime createDate;
     @ManyToOne(fetch = FetchType.LAZY)
     private SiteUser modifier;

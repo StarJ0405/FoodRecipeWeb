@@ -8,13 +8,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.function.Supplier;
 
 
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-public class Tool {
+public class Tool  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -36,4 +37,5 @@ public class Tool {
         this.author = author;
         this.createDate = LocalDateTime.now();
     }
+
 }
