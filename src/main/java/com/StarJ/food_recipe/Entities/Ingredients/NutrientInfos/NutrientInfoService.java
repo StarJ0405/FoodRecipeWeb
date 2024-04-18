@@ -20,7 +20,8 @@ public class NutrientInfoService {
                 return info;
             else return null;
         } else
-            return nutrientInfoRepository.save(NutrientInfo.builder().ingredient(ingredient).nutrient(nutrient).amount(amount).build());
+//            return nutrientInfoRepository.save(NutrientInfo.builder().ingredient(ingredient).nutrient(nutrient).amount(amount).build());
+            return NutrientInfo.builder().ingredient(ingredient).nutrient(nutrient).amount(amount).build();
     }
     public NutrientInfo getModifiedNutrientInfo(Ingredient ingredient, Nutrient nutrient, double amount) {
         Optional<NutrientInfo> _info = nutrientInfoRepository.find(ingredient.getName(), nutrient.getName());
@@ -28,11 +29,13 @@ public class NutrientInfoService {
             NutrientInfo info = _info.get();
             if (info.getAmount() != amount){
                 info.setAmount(amount);
-                nutrientInfoRepository.save(info);
+//                nutrientInfoRepository.save(info);
             }
             return info;
         } else
-            return nutrientInfoRepository.save(NutrientInfo.builder().ingredient(ingredient).nutrient(nutrient).amount(amount).build());
+//            return nutrientInfoRepository.save(NutrientInfo.builder().ingredient(ingredient).nutrient(nutrient).amount(amount).build());
+            return NutrientInfo.builder().ingredient(ingredient).nutrient(nutrient).amount(amount).build();
     }
+
 
 }

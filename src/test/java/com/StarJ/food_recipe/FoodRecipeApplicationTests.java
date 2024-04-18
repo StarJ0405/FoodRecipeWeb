@@ -11,6 +11,8 @@ import com.StarJ.food_recipe.Entities.Nutrients.NutrientRepository;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfo;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfoRepository;
 import com.StarJ.food_recipe.Entities.Recipes.Recipe;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEval;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEvalRepository;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeRepository;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeTags.RecipeTag;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeTags.RecipeTagRepository;
@@ -32,6 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -61,6 +64,8 @@ class FoodRecipeApplicationTests {
     private IngredientInfoRepository ingredientInfoRepository;
     @Autowired
     private RecipeTagRepository recipeTagRepository;
+    @Autowired
+    private RecipeEvalRepository recipeEvalRepository;
 
     //&#10;
     @Test
@@ -72,19 +77,61 @@ class FoodRecipeApplicationTests {
 
             List<SiteUser> users = initialUsers(workbook.getSheet("users"));
             SiteUser admin = null;
-            for (SiteUser user : users)
+            for (int i = 0; i < users.size(); i++) {
+                SiteUser user = users.get(i);
                 if (user.getRole().equals(UserRole.ADMIN.getValue())) {
                     admin = user;
+                    users.remove(i);
                     break;
                 }
-            List<Tool> tools = initialTools(admin, workbook.getSheet("tools"));
-            List<Unit> units = initialUnits(admin, workbook.getSheet("units"));
-            List<Nutrient> nutrients = initialNutrients(admin, workbook.getSheet("nutrients"));
-            List<Category> categories = initialCategories(admin, workbook.getSheet("categories"));
-            List<Tag> tags = initialTags(admin, workbook.getSheet("tags"));
-            List<Ingredient> ingredients = initialIngredients(admin, workbook.getSheet("ingredients"));
-            List<Recipe> recipes = initialRecipes(admin, workbook.getSheet("recipes"));
+            }
+//            List<Tool> tools =
+            initialTools(admin, workbook.getSheet("tools"));
+//            List<Unit> units =
+            initialUnits(admin, workbook.getSheet("units"));
+//            List<Nutrient> nutrients =
+            initialNutrients(admin, workbook.getSheet("nutrients"));
+//            List<Category> categories =
+            initialCategories(admin, workbook.getSheet("categories"));
+//            List<Tag> tags =
+            initialTags(admin, workbook.getSheet("tags"));
+//            List<Ingredient> ingredients =
+            initialIngredients(admin, workbook.getSheet("ingredients"));
+            List<Recipe> recipes =
+                    initialRecipes(admin, workbook.getSheet("recipes"));
             workbook.close();
+
+            Random r = new Random();
+            HashMap<Recipe, List<RecipeEval>> evalMap = new HashMap<>();
+//            for (SiteUser user : users) {
+//                Collections.shuffle(recipes);
+//                for (int i = 0; i < r.nextInt(recipes.size()); i++) {
+//                    Recipe recipe = recipes.get(i);
+//                    Optional<RecipeEval> _recipeEval = recipeEvalRepository.findByUserRecipe(user, recipe);
+//                    RecipeEval recipeEval = _recipeEval.orElseGet(() -> RecipeEval.builder().siteUser(user).recipe(recipe).build());
+//                    recipeEval.setVal(Math.ceil(r.nextDouble() * 100d / 2d) / 10d);
+//                    recipeEvalRepository.save(recipeEval);
+//                }
+//            }
+
+            // 저장
+            String definePath = "C:/Users/admin/IdeaProjects/FoodRecipeWeb/defined.xlsx";
+            Workbook defined_workbook = WorkbookFactory.create(new File(definePath));
+            Sheet sheet = workbook.getSheetAt(0);
+            // 데이터 초기화
+            for (Row row : sheet)
+                for (Cell cell : row)
+                    cell.setCellValue("");
+            // 데이터 입력
+
+
+            // 반환
+            FileOutputStream out = new FileOutputStream(definePath);
+            workbook.write(out);
+            out.close();
+            workbook.close();
+
+
         } catch (IOException ex) {
             System.out.print(ex.getLocalizedMessage());
         }
@@ -232,7 +279,7 @@ class FoodRecipeApplicationTests {
                             double amount = cell.getNumericCellValue();
                             if (amount > 0) {
                                 Optional<Nutrient> _nutrient = nutrientRepository.findById(ingredientSheet.getRow(0).getCell(cell.getColumnIndex()).getStringCellValue());
-                                _nutrient.ifPresent(nutrient -> nutrientMap.put(nutrient, amount / 100d));
+                                _nutrient.ifPresent(nutrient -> nutrientMap.put(nutrient, amount));
                             }
                         }
                         break;
@@ -246,7 +293,6 @@ class FoodRecipeApplicationTests {
             List<NutrientInfo> nutrientInfos = new ArrayList<>();
             for (Nutrient nutrient : nutrientMap.keySet()) {
                 NutrientInfo nutrientInfo = NutrientInfo.builder().ingredient(ingredient).nutrient(nutrient).amount(nutrientMap.get(nutrient)).build();
-                nutrientInfoRepository.save(nutrientInfo);
                 nutrientInfos.add(nutrientInfo);
             }
             ingredient.setNutrientInfos(nutrientInfos);
@@ -285,7 +331,8 @@ class FoodRecipeApplicationTests {
                             }
                             ingredientMap.put(ingredient, amount);
                         } else
-                            throw new DataNotFoundException((row.getRowNum() + 1) + "," + getColumn(cell.getColumnIndex()) + " - " + origin + "은 잘못된 데이터 입니다.");
+                            throw new DataNotFoundException((row.getRowNum() + 1) + "," + getColumn(cell.getColumnIndex()) + " - " + origin + "는/은 없는 재료 입니다.");
+//                            System.out.println((row.getRowNum() + 1) + "," + getColumn(cell.getColumnIndex()) + " - " + origin + "는/은 없는 재료 입니다.");
                     }
                 } else {
                     String origin = cell.getStringCellValue();
@@ -293,7 +340,7 @@ class FoodRecipeApplicationTests {
                     if (_tag.isPresent()) {
                         tags.add(_tag.get());
                     } else
-                        throw new DataNotFoundException((row.getRowNum() + 1) + "," + getColumn(cell.getColumnIndex()) + " - " + origin + "은 잘못된 데이터 입니다.");
+                        throw new DataNotFoundException((row.getRowNum() + 1) + "," + getColumn(cell.getColumnIndex()) + " - " + origin + "은 없는 태그 입니다.");
                 }
             Optional<Recipe> _recipe = recipeRepository.search(subject.toString());
             Recipe recipe = _recipe.orElseGet(() -> Recipe.builder().author(admin).uuid(UUID.randomUUID()).subject(subject.toString()).build());
@@ -301,13 +348,11 @@ class FoodRecipeApplicationTests {
             List<IngredientInfo> ingredientInfos = new ArrayList<>();
             for (Ingredient ingredient : ingredientMap.keySet()) {
                 IngredientInfo ingredientInfo = IngredientInfo.builder().recipe(recipe).ingredient(ingredient).amount(ingredientMap.get(ingredient)).build();
-                ingredientInfoRepository.save(ingredientInfo);
                 ingredientInfos.add(ingredientInfo);
             }
             List<RecipeTag> recipeTags = new ArrayList<>();
             for (Tag tag : tags) {
                 RecipeTag recipeTag = RecipeTag.builder().recipe(recipe).tag(tag).build();
-                recipeTagRepository.save(recipeTag);
                 recipeTags.add(recipeTag);
             }
             recipe.setIngredientInfos(ingredientInfos);

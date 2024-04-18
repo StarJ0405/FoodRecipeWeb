@@ -28,11 +28,13 @@ public class RecipeRepositoryCustomImpl implements RecipeRepositoryCustom {
             booleanBuilder.and(recipe.ingredientInfos.any().ingredient.eq(ingredient));
         List<Recipe> recipes = jpaQueryFactory.select(recipe).where(recipe.subject.eq(subject)).where(booleanBuilder).from(recipe).fetch();
 
-        Recipe recipe = null;
+
         if (!recipes.isEmpty())
-            recipe = recipes.getFirst();
-        return Optional.ofNullable(recipe);
+            return Optional.ofNullable(recipes.getFirst());
+        else
+            return Optional.empty();
     }
+
     @Override
     public Optional<Recipe> search(String subject) {
         List<Recipe> recipes = jpaQueryFactory.select(recipe).where(recipe.subject.eq(subject)).from(recipe).fetch();

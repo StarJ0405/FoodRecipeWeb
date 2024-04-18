@@ -2,6 +2,7 @@ package com.StarJ.food_recipe.Entities.Recipes;
 
 import com.StarJ.food_recipe.Entities.Recipes.BodyImages.BodyImage;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfo;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEval;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeTags.RecipeTag;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeTools.RecipeTool;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
@@ -47,6 +48,9 @@ public class Recipe {
     private SiteUser modifier;
     private LocalDateTime modifiedDate;
 
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecipeEval> evals;
+
     @Builder
     public Recipe(String subject, UUID uuid, SiteUser author) {
         this.subject = subject;
@@ -55,5 +59,6 @@ public class Recipe {
         this.ingredientInfos = new ArrayList<>();
         this.author = author;
         this.createDate = LocalDateTime.now();
+        this.evals = new ArrayList<>();
     }
 }

@@ -30,6 +30,8 @@ public class QRecipe extends EntityPathBase<Recipe> {
 
     public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
 
+    public final ListPath<com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEval, com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.QRecipeEval> evals = this.<com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEval, com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.QRecipeEval>createList("evals", com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEval.class, com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.QRecipeEval.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
     public final ListPath<com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfo, com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.QIngredientInfo> ingredientInfos = this.<com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfo, com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.QIngredientInfo>createList("ingredientInfos", com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfo.class, com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.QIngredientInfo.class, PathInits.DIRECT2);
