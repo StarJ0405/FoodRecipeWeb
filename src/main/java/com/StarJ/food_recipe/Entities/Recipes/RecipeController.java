@@ -87,7 +87,7 @@ public class RecipeController {
         }
         model.addAttribute("totalCal", new DecimalFormat("###,###").format(totalCal));
         model.addAttribute("nutrients",nutrients);
-
+        model.addAttribute("evals",recipe.getEvals());
         return "recipes/detail";
     }
 

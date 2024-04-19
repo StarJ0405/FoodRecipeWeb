@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class SiteUser {
     @Id
-    @Column(columnDefinition = "TEXT")
     private String id;
 
     @Column(columnDefinition = "TEXT")

@@ -48,8 +48,10 @@ public class Recipe {
     private SiteUser modifier;
     private LocalDateTime modifiedDate;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    //    @OneToMany( mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeEval> evals;
+
 
     @Builder
     public Recipe(String subject, UUID uuid, SiteUser author) {

@@ -56,11 +56,16 @@
         <div id="태그" class="flex bg-white">
             <label th:each="tag, loop  : ${recipe.tags}" th:text="${(loop.index>0?', ' :'' )+ tag.tag.name}"/>
         </div>
+        <div class="divider"></div>
+        <div id="평점">
+            <label th:each="eval : ${evals}" th:text="${eval.val}" />
+        </div>
         <input sec:authorize="isAuthenticated()" th:disabled="${user.id != recipe.author.id}" type="button" value="수정하기"
                class="btn btn-outline btn-info mt-5"
                th:onclick="@{${'location.href=''/recipe/edit/'+id+''''}}">
         <input type="button" value="목록" class="btn btn-outline btn-info mt-5"
                onclick="location.href='/recipe/list'">
+
     </div>
 </div>
 </html>

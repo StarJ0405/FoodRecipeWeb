@@ -34,6 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
@@ -85,53 +86,49 @@ class FoodRecipeApplicationTests {
                     break;
                 }
             }
-//            List<Tool> tools =
             initialTools(admin, workbook.getSheet("tools"));
-//            List<Unit> units =
             initialUnits(admin, workbook.getSheet("units"));
-//            List<Nutrient> nutrients =
             initialNutrients(admin, workbook.getSheet("nutrients"));
-//            List<Category> categories =
             initialCategories(admin, workbook.getSheet("categories"));
-//            List<Tag> tags =
             initialTags(admin, workbook.getSheet("tags"));
-//            List<Ingredient> ingredients =
             initialIngredients(admin, workbook.getSheet("ingredients"));
-            List<Recipe> recipes =
-                    initialRecipes(admin, workbook.getSheet("recipes"));
+
+            initialRecipes(admin, workbook.getSheet("recipes"));
             workbook.close();
 
-            Random r = new Random();
-            HashMap<Recipe, List<RecipeEval>> evalMap = new HashMap<>();
-//            for (SiteUser user : users) {
-//                Collections.shuffle(recipes);
-//                for (int i = 0; i < r.nextInt(recipes.size()); i++) {
-//                    Recipe recipe = recipes.get(i);
-//                    Optional<RecipeEval> _recipeEval = recipeEvalRepository.findByUserRecipe(user, recipe);
-//                    RecipeEval recipeEval = _recipeEval.orElseGet(() -> RecipeEval.builder().siteUser(user).recipe(recipe).build());
-//                    recipeEval.setVal(Math.ceil(r.nextDouble() * 100d / 2d) / 10d);
-//                    recipeEvalRepository.save(recipeEval);
-//                }
-//            }
+            // 평가
+            initialEval();
 
             // 저장
             String definePath = "C:/Users/admin/IdeaProjects/FoodRecipeWeb/defined.xlsx";
-            Workbook defined_workbook = WorkbookFactory.create(new File(definePath));
-            Sheet sheet = workbook.getSheetAt(0);
+            FileInputStream in = new FileInputStream(definePath);
+            Workbook defined_workbook = WorkbookFactory.create(in);
+            Sheet sheet = defined_workbook.getSheetAt(0);
             // 데이터 초기화
             for (Row row : sheet)
                 for (Cell cell : row)
                     cell.setCellValue("");
             // 데이터 입력
-
+            List<Tag> tags = tagRepository.findAll();
+            // user_id recipe_id eval
+            int i = 0;
+            for (Recipe recipe : recipeRepository.findAll())
+                for (SiteUser user : users) {
+                    Optional<RecipeEval> _eval = recipeEvalRepository.findByUserRecipe(user, recipe);
+                    if (_eval.isPresent()) {
+                        Row row = sheet.createRow(i);
+                        row.createCell(0).setCellValue(user.getId());
+                        row.createCell(1).setCellValue(recipe.getId());
+                        row.createCell(2).setCellValue(_eval.get().getVal());
+                        i++;
+                    }
+                }
 
             // 반환
             FileOutputStream out = new FileOutputStream(definePath);
-            workbook.write(out);
+            defined_workbook.write(out);
             out.close();
-            workbook.close();
-
-
+            defined_workbook.close();
         } catch (IOException ex) {
             System.out.print(ex.getLocalizedMessage());
         }
@@ -151,7 +148,7 @@ class FoodRecipeApplicationTests {
         return list;
     }
 
-    List<Tool> initialTools(SiteUser admin, Sheet toolSheet) {
+    void initialTools(SiteUser admin, Sheet toolSheet) {
         List<Tool> list = new ArrayList<>();
         for (Row row : toolSheet) {
             StringBuilder name = new StringBuilder();
@@ -169,13 +166,10 @@ class FoodRecipeApplicationTests {
             Tool tool = _tool.orElseGet(() -> Tool.builder().author(admin).name(name.toString()).build());
             tool.setDescription(description.toString());
             toolRepository.save(tool);
-            list.add(tool);
         }
-        return list;
     }
 
-    List<Unit> initialUnits(SiteUser admin, Sheet unitSheet) {
-        List<Unit> list = new ArrayList<>();
+    void initialUnits(SiteUser admin, Sheet unitSheet) {
         for (Row row : unitSheet) {
             StringBuilder name = new StringBuilder();
             StringBuilder description = new StringBuilder();
@@ -191,13 +185,10 @@ class FoodRecipeApplicationTests {
             Unit unit = _unit.orElseGet(() -> Unit.builder().author(admin).name(name.toString()).build());
             unit.setDescription(description.toString());
             unitRepository.save(unit);
-            list.add(unit);
         }
-        return list;
     }
 
-    List<Nutrient> initialNutrients(SiteUser admin, Sheet nutrientSheet) {
-        List<Nutrient> list = new ArrayList<>();
+    void initialNutrients(SiteUser admin, Sheet nutrientSheet) {
         for (Row row : nutrientSheet) {
             StringBuilder name = new StringBuilder();
             StringBuilder description = new StringBuilder();
@@ -213,26 +204,20 @@ class FoodRecipeApplicationTests {
             Nutrient nutrient = _nutrient.orElseGet(() -> Nutrient.builder().author(admin).name(name.toString()).build());
             nutrient.setDescription(description.toString());
             nutrientRepository.save(nutrient);
-            list.add(nutrient);
         }
-        return list;
     }
 
-    List<Category> initialCategories(SiteUser admin, Sheet categorySheet) {
-        List<Category> list = new ArrayList<>();
+    void initialCategories(SiteUser admin, Sheet categorySheet) {
         for (Row row : categorySheet)
             for (Cell cell : row) {
                 String name = cell.getStringCellValue();
                 Optional<Category> _category = categoryRepository.findById(name);
                 Category category = _category.orElseGet(() -> Category.builder().author(admin).name(name).build());
                 categoryRepository.save(category);
-                list.add(category);
             }
-        return list;
     }
 
-    List<Tag> initialTags(SiteUser admin, Sheet tagSheet) {
-        List<Tag> list = new ArrayList<>();
+    void initialTags(SiteUser admin, Sheet tagSheet) {
         for (Row row : tagSheet) {
             String name = row.getCell(0).getStringCellValue();
             Optional<Tag> _tag = tagRepository.findById(name);
@@ -242,14 +227,11 @@ class FoodRecipeApplicationTests {
             Tag tag = _tag.orElseGet(() -> Tag.builder().author(admin).name(name).build());
             tag.setCategory(_category.orElse(null));
             tagRepository.save(tag);
-            list.add(tag);
         }
-        return list;
     }
 
     @Transactional
-    List<Ingredient> initialIngredients(SiteUser admin, Sheet ingredientSheet) {
-        List<Ingredient> list = new ArrayList<>();
+    void initialIngredients(SiteUser admin, Sheet ingredientSheet) {
         for (Row row : ingredientSheet) {
             if (row.getRowNum() == 0)
                 continue;
@@ -298,23 +280,20 @@ class FoodRecipeApplicationTests {
             ingredient.setNutrientInfos(nutrientInfos);
             ingredientRepository.save(ingredient);
         }
-        return list;
     }
 
     @Transactional
-    List<Recipe> initialRecipes(SiteUser admin, Sheet recipeSheet) {
-        List<Recipe> list = new ArrayList<>();
+    void initialRecipes(SiteUser admin, Sheet recipeSheet) {
         for (Row row : recipeSheet) {
             StringBuilder subject = new StringBuilder();
-            boolean ing = true;
             HashMap<Ingredient, Double> ingredientMap = new HashMap<>();
             List<Tag> tags = new ArrayList<>();
-            for (Cell cell : row)
+            Iterator<Cell> iterator = row.iterator();
+            while (iterator.hasNext()) {
+                Cell cell = iterator.next();
                 if (cell.getColumnIndex() == 0)
                     subject.append(cell.getStringCellValue());
-                else if (cell.getCellType().equals(CellType.BLANK))
-                    ing = false;
-                else if (ing) {
+                else {
                     String origin = cell.getStringCellValue();
                     if (origin.contains(":")) {
                         String[] split = origin.split(":");
@@ -333,15 +312,17 @@ class FoodRecipeApplicationTests {
                         } else
                             throw new DataNotFoundException((row.getRowNum() + 1) + "," + getColumn(cell.getColumnIndex()) + " - " + origin + "는/은 없는 재료 입니다.");
 //                            System.out.println((row.getRowNum() + 1) + "," + getColumn(cell.getColumnIndex()) + " - " + origin + "는/은 없는 재료 입니다.");
+                    } else {
+                        Optional<Tag> _tag = tagRepository.findById(origin);
+                        if (_tag.isPresent()) {
+                            tags.add(_tag.get());
+                        } else
+                            throw new DataNotFoundException((row.getRowNum() + 1) + "," + getColumn(cell.getColumnIndex()) + " - " + origin + "은 없는 태그 입니다.");
                     }
-                } else {
-                    String origin = cell.getStringCellValue();
-                    Optional<Tag> _tag = tagRepository.findById(origin);
-                    if (_tag.isPresent()) {
-                        tags.add(_tag.get());
-                    } else
-                        throw new DataNotFoundException((row.getRowNum() + 1) + "," + getColumn(cell.getColumnIndex()) + " - " + origin + "은 없는 태그 입니다.");
                 }
+                if(row.getRowNum()==5)
+                System.out.println(cell.getCellType().name()+" - "+(cell.getCellType().equals(CellType.NUMERIC)?cell.getNumericCellValue():cell.getStringCellValue()));
+            }
             Optional<Recipe> _recipe = recipeRepository.search(subject.toString());
             Recipe recipe = _recipe.orElseGet(() -> Recipe.builder().author(admin).uuid(UUID.randomUUID()).subject(subject.toString()).build());
             recipeRepository.save(recipe);
@@ -359,9 +340,7 @@ class FoodRecipeApplicationTests {
             recipe.setTags(recipeTags);
             recipe.setTools(new ArrayList<>());
             recipeRepository.save(recipe);
-            list.add(recipe);
         }
-        return list;
     }
 
     private static String getColumn(int column_index) {
@@ -376,4 +355,36 @@ class FoodRecipeApplicationTests {
             str.append(c);
         return str.toString();
     }
+
+    @Transactional
+    public void initialEval() {
+        List<SiteUser> users = userRepository.findAll();
+        List<Recipe> recipes = recipeRepository.findAll();
+        Random r = new Random();
+
+        HashMap<Recipe, List<RecipeEval>> evalMap = new HashMap<>();
+        for (SiteUser user : users) {
+            Collections.shuffle(recipes);
+            for (int i = 0; i < Math.max(r.nextInt(recipes.size()), recipes.size() * 3 / 4); i++) {
+                Recipe recipe = recipes.get(i);
+                if (!evalMap.containsKey(recipe))
+                    evalMap.put(recipe, new ArrayList<>());
+                List<RecipeEval> evals = evalMap.get(recipe);
+                Optional<RecipeEval> _recipeEval = recipeEvalRepository.findByUserRecipe(user, recipe);
+                RecipeEval recipeEval = _recipeEval.orElseGet(() -> RecipeEval.builder().siteUser(user).recipe(recipe).build());
+                recipeEval.setVal(Math.ceil(r.nextDouble() * 100d / 2d) / 10d);
+
+                evals.add(recipeEval);
+                evalMap.put(recipe, evals);
+            }
+        }
+
+        for (Recipe recipe : evalMap.keySet()) {
+            List<RecipeEval> recipeEvals = recipe.getEvals();
+            recipeEvals.clear();
+            recipeEvals.addAll(evalMap.get(recipe));
+            recipeRepository.save(recipe);
+        }
+    }
+
 }
