@@ -1,4 +1,4 @@
-package com.StarJ.food_recipe.Entities.Recipes.RecipeEvals;
+package com.StarJ.food_recipe.Entities.PredictData;
 
 import com.StarJ.food_recipe.Entities.Recipes.Recipe;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
@@ -7,31 +7,28 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class RecipeEval {
+public class PredictDatum {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
     private int id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private SiteUser user;
     @ManyToOne(fetch = FetchType.LAZY)
     private Recipe recipe;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private SiteUser siteUser;
     @Min(0)
     @Max(5)
-    private double val;
-    @Setter(AccessLevel.NONE)
-    private LocalDateTime createDate;
+    private double predict_val;
 
     @Builder
-    public RecipeEval(Recipe recipe, SiteUser siteUser) {
+    public PredictDatum(SiteUser user, Recipe recipe, double predict_val) {
+        this.user = user;
         this.recipe = recipe;
-        this.siteUser = siteUser;
-        this.createDate = LocalDateTime.now();
+        this.predict_val = predict_val;
     }
 }

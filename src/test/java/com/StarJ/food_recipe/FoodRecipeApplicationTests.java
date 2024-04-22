@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @SpringBootTest
@@ -109,8 +110,6 @@ class FoodRecipeApplicationTests {
                 for (Cell cell : row)
                     cell.setCellValue("");
             // 데이터 입력
-            List<Tag> tags = tagRepository.findAll();
-            // user_id recipe_id eval
             int i = 0;
             for (Recipe recipe : recipeRepository.findAll())
                 for (SiteUser user : users) {
@@ -120,6 +119,7 @@ class FoodRecipeApplicationTests {
                         row.createCell(0).setCellValue(user.getId());
                         row.createCell(1).setCellValue(recipe.getId());
                         row.createCell(2).setCellValue(_eval.get().getVal());
+                        row.createCell(3).setCellValue(Long.parseLong(_eval.get().getCreateDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))));
                         i++;
                     }
                 }

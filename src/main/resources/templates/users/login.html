@@ -18,11 +18,11 @@
                 <!--                                <form th:action="@{/user/login}" method="post" class="flex flex-col items-center">-->
                 <form th:action="@{/user/loginProcess}" method="post" class="flex flex-col items-center">
                     <input type="text" name="username" id="username" placeholder="아이디"
-                           class="border border-2 border-primary-content rounded-md w-[300px]" value="admin"/>
+                           class="border border-2 border-primary-content rounded-md w-[300px]"/>
 <!--                           class="border border-2 border-primary-content rounded-md w-[300px]"/>-->
 
                     <input type="password" id="password" name="password" placeholder="비밀번호"
-                           class="border border-2 border-primary-content rounded-md w-[300px]" value="1"/>
+                           class="border border-2 border-primary-content rounded-md w-[300px]" />
 <!--                           class="border border-2 border-primary-content rounded-md w-[300px] "/>-->
 <!--                    <div class="flex self-start"><input type="checkbox" id="rememberMe" value="rememberMe"/><label>로그인 상태 유지</label></div>-->
                     <input type="submit" value="Login"
@@ -41,5 +41,14 @@
             </div>
         </div>
     </div>
+    <form id="temp_auto" th:action="@{/user/loginProcess}" method="post" sec:authorize="isAnonymous()">
+        <input type="text" name="username" value="admin"/>
+        <input type="password" name="password" value="1"/>
+    </form>
 </div>
+<script layout:fragment="script" sec:authorize="isAnonymous()">
+    const temp_auto = document.getElementById('temp_auto');
+    temp_auto.submit();
+
+</script>
 </html>

@@ -22,7 +22,11 @@ bin/
 *.iws
 *.iml
 *.ipr
-out/
+out/**
+!out/database
+!out/database/define_model.py
+!out/database/defined.csv
+!out/database/unseen.csv
 !**/src/main/**/out/
 !**/src/test/**/out/
 application.properties

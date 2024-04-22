@@ -1,4 +1,5 @@
-<html layout:decorate="~{/layouts/layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<html layout:decorate="~{/layouts/layout}" xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml">
 <body layout:fragment="body">
 <!-- Header 내용 -->
 <header th:replace="~{/layouts/header :: headerFragment}"></header>
@@ -17,6 +18,9 @@
             <li><a class="link link-hover" th:href="@{|/manager/tag|}">태그</a></li>
             <li><a class="link link-hover" th:href="@{|/manager/ingredient|}">재료</a></li>
         </ul>
+        <form th:action="@{|/manager/training|}" id="training_form" method="post" class="flex justify-center mt-5">
+            <input class="link link-hover" id="training" type="button" value="데이터 학습하기"/>
+        </form>
     </div>
     <div class="divider divider-horizontal"></div>
     <div class="grid h-full flex-grow card bg-base-300 rounded-box place-items-center pt-20 pb-20">
@@ -27,6 +31,13 @@
 <footer th:replace="~{/layouts/footer :: footerFragment}"></footer>
 <!-- 자바스크립트 -->
 <th:block layout:fragment="script"></th:block>
+<script type='text/javascript'>
+    const training = document.getElementById('training');
+    training.addEventListener('click', ()=>{
+        if(confirm('정말 학습을 시작하시겠습니까?'))
+            document.getElementById('training_form').submit();
+    });
+</script>
 </body>
 </html>
 

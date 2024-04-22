@@ -1,5 +1,5 @@
 <header th:fragment="headerFragment" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="">
-    <div class="flex justify-end">
+    <div class="flex justify-end" id="main">
         <div>
             <div sec:authorize="isAuthenticated()" property="principal" var="principal" class="dropdown dropdown-hover">
                 <div tabindex="0" role="button" th:text="${user.nickname+'▼'}" class="btn m-1"/>

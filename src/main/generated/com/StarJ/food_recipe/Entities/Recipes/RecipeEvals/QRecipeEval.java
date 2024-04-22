@@ -22,6 +22,8 @@ public class QRecipeEval extends EntityPathBase<RecipeEval> {
 
     public static final QRecipeEval recipeEval = new QRecipeEval("recipeEval");
 
+    public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
+
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
     public final com.StarJ.food_recipe.Entities.Recipes.QRecipe recipe;

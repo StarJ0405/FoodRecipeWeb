@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -32,7 +33,9 @@ public class UserService {
     private final EmailService emailService;
     @Autowired
     private ResourceLoader resourceLoader;
-
+    public List<SiteUser> getUsers() {
+        return userRepository.findAll();
+    }
     public Page<SiteUser> getUsers(int page) {
         Sort sort = Sort.by(Sort.Order.desc("createDate"));
         Pageable pageable = PageRequest.of(page, 10, sort);

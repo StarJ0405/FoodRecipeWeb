@@ -55,7 +55,9 @@ public class RecipeService {
     private final RecipeTagService recipeTagService;
     @Autowired
     private ResourceLoader resourceLoader;
-
+    public List<Recipe> getRecipes() {
+        return recipeRepository.findAll();
+    }
     public Page<Recipe> getRecipes(int page) {
         Pageable pageable = PageRequest.of(page, 24, Sort.by(Sort.Order.desc("createDate")));
         return recipeRepository.findAll(pageable);
