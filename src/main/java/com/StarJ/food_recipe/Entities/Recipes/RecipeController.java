@@ -9,12 +9,15 @@ import com.StarJ.food_recipe.Entities.Recipes.BodyImages.Form.BodyImageForm;
 import com.StarJ.food_recipe.Entities.Recipes.Form.RecipeEditForm;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.Form.IngredientInfoForm;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfo;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEval;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEvalService;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeTags.RecipeTag;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeTools.RecipeTool;
 import com.StarJ.food_recipe.Entities.Tags.Tag;
 import com.StarJ.food_recipe.Entities.Tags.TagService;
 import com.StarJ.food_recipe.Entities.Tools.Tool;
 import com.StarJ.food_recipe.Entities.Tools.ToolService;
+import com.StarJ.food_recipe.Entities.Users.SiteUser;
 import com.StarJ.food_recipe.Securities.PrincipalDetail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +32,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -40,6 +43,7 @@ public class RecipeController {
     private final TagService tagService;
     private final ToolService toolService;
     private final IngredientService ingredientService;
+    private final RecipeEvalService recipeEvalService;
 
     @ModelAttribute("ingredients")
     public List<Ingredient> getIngredients() {
@@ -68,13 +72,13 @@ public class RecipeController {
     }
 
     @GetMapping("/detail/{id}")
-    public String detail(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail, @PathVariable("id") Integer id, RecipeEditForm recipeEditForm) {
+    public String detail(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail, @PathVariable("id") Integer id) {
         Recipe recipe = recipeService.getRecipe(id);
         model.addAttribute("recipe", recipe);
         if (principalDetail != null)
             model.addAttribute("user", principalDetail.getUser());
         long totalCal = 0l;
-        HashMap<Nutrient, Double> nutrients = new HashMap<>();
+        LinkedHashMap<Nutrient, Double> nutrients = new LinkedHashMap<>();
         for (IngredientInfo ingredientInfo : recipe.getIngredientInfos()) {
             totalCal += ingredientInfo.getIngredient().getKcal() * ingredientInfo.getAmount();
             for (NutrientInfo info : ingredientInfo.getIngredient().getNutrientInfos()) {
@@ -85,10 +89,50 @@ public class RecipeController {
                     nutrients.put(nutrient, nutrients.get(nutrient) + info.getAmount());
             }
         }
+        double eval = Math.ceil(recipe.getEvals().stream().mapToDouble(a -> a.getVal()).average().orElse(0d) * 100d) / 100d;
+        RecipeEval recipeEval = principalDetail != null ? recipeEvalService.getEval(principalDetail.getUser(), recipe) : null;
+        double pre = recipeEval != null ? recipeEval.getVal() : -1;
+
         model.addAttribute("totalCal", new DecimalFormat("###,###").format(totalCal));
-        model.addAttribute("nutrients",nutrients);
-        model.addAttribute("evals",recipe.getEvals());
+        model.addAttribute("nutrients", nutrients);
+        model.addAttribute("eval", eval);
+        model.addAttribute("rating", getRating(eval));
+        model.addAttribute("pre", pre);
+        model.addAttribute("preRating", pre >= 0 ? getRating(pre) : "");
         return "recipes/detail";
+    }
+
+    @PostMapping("/detail/{id}")
+    public String rating(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail, @PathVariable("id") Integer id, @RequestParam("rating-10") Double rating) {
+        SiteUser user = principalDetail.getUser();
+        Recipe recipe = recipeService.getRecipe(id);
+        recipeEvalService.setEval(user, recipe, rating );
+        return "redirect:/recipe/detail/" + id;
+    }
+
+    private String getRating(double eval) {
+        if (eval < 0.5)
+            return "00";
+        else if (eval < 1)
+            return "05";
+        else if (eval < 1.5)
+            return "10";
+        else if (eval < 2)
+            return "15";
+        else if (eval < 2.5)
+            return "20";
+        else if (eval < 3)
+            return "25";
+        else if (eval < 3.5)
+            return "30";
+        else if (eval < 4)
+            return "35";
+        else if (eval < 4.5)
+            return "40";
+        else if (eval < 5)
+            return "45";
+        else
+            return "50";
     }
 
     @PreAuthorize("isAuthenticated")

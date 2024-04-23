@@ -1,5 +1,6 @@
 <html layout:decorate="~{/layouts/layoutWithNav}" xmlns:layout="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+      xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html">
 <div layout:fragment="content"
      class="flex flex-col w-full border-opacity-50 place-items-center bg-base-300 p-5">
     <div class="w-[1000px] border-2 p-4 border-black">
@@ -58,8 +59,59 @@
         </div>
         <div class="divider"></div>
         <div id="평점">
-            <label th:each="eval : ${evals}" th:text="${eval.val}" />
+            <div class="rating rating-sm rating-half">
+                <input type="radio" name="rating-10" disabled class="rating-hidden" th:checked="${rating=='00'}"/>
+                <input type="radio" name="rating-10" disabled class="bg-red-500 mask mask-star-2 mask-half-1"
+                       th:checked="${rating=='05'}"/>
+                <input type="radio" name="rating-10" disabled class="bg-red-500 mask mask-star-2 mask-half-2"
+                       th:checked="${rating=='10'}"/>
+                <input type="radio" name="rating-10" disabled class="bg-red-500 mask mask-star-2 mask-half-1"
+                       th:checked="${rating=='15'}"/>
+                <input type="radio" name="rating-10" disabled class="bg-red-500 mask mask-star-2 mask-half-2"
+                       th:checked="${rating=='20'}"/>
+                <input type="radio" name="rating-10" disabled class="bg-red-500 mask mask-star-2 mask-half-1"
+                       th:checked="${rating=='25'}"/>
+                <input type="radio" name="rating-10" disabled class="bg-red-500 mask mask-star-2 mask-half-2"
+                       th:checked="${rating=='30'}"/>
+                <input type="radio" name="rating-10" disabled class="bg-red-500 mask mask-star-2 mask-half-1"
+                       th:checked="${rating=='35'}"/>
+                <input type="radio" name="rating-10" disabled class="bg-red-500 mask mask-star-2 mask-half-2"
+                       th:checked="${rating=='40'}"/>
+                <input type="radio" name="rating-10" disabled class="bg-red-500 mask mask-star-2 mask-half-1"
+                       th:checked="${rating=='45'}"/>
+                <input type="radio" name="rating-10" disabled class="bg-red-500 mask mask-star-2 mask-half-2"
+                       th:checked="${rating=='50'}"/>
+            </div>
+            <label th:text="${eval}"/>
+            <button onclick="my_modal_3.showModal()" class="btn btn-outline btn-warning mb-5" sec:authorize="isAuthenticated()" >별점 주기</button>
+            <dialog id="my_modal_3" class="modal">
+                <div class="modal-box flex justify-center flex-col items-center text-center">
+                    <label class="text-3xl m-2 text-red-500">평점</label>
+                    <form method="post" th:action="@{|/recipe/detail/${recipe.id}|}">
+                        <div class="rating rating-lg rating-half w-full flex justify-center ">
+                            <input type="radio" name="rating-10" value=0 class="rating-hidden" th:checked="${pre>0 && preRating=='00'}" th:disabled="${pre>0}"/>
+                            <input type="radio" name="rating-10" value=0.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='05'}" th:disabled="${pre>0}"/>
+                            <input type="radio" name="rating-10" value=1.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='10'}" th:disabled="${pre>0}"/>
+                            <input type="radio" name="rating-10" value=1.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='15'}" th:disabled="${pre>0}"/>
+                            <input type="radio" name="rating-10" value=2.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='20'}" th:disabled="${pre>0}"/>
+                            <input type="radio" name="rating-10" value=2.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='25'}" th:disabled="${pre>0}"/>
+                            <input type="radio" name="rating-10" value=3.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='30'}" th:disabled="${pre>0}"/>
+                            <input type="radio" name="rating-10" value=3.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='35'}" th:disabled="${pre>0}"/>
+                            <input type="radio" name="rating-10" value=4.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='40'}" th:disabled="${pre>0}"/>
+                            <input type="radio" name="rating-10" value=4.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='45'}" th:disabled="${pre>0}"/>
+                            <input type="radio" name="rating-10" value=5.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre<0 || (pre>0&&preRating=='50')}" th:disabled="${pre>0}"/>
+                            <input type="hidden" name="rating-10" th:value="${pre}" th:if="${pre>0}"/>
+                        </div>
+                        <label class="w-full block mt-3" th:if="${pre>0}">이미 평점을 투표했습니다.</label>
+                        <input type="submit" class="btn btn-lg btn-circle btn-ghost" value="확인"/>
+                    </form>
+                    <form method="dialog">
+                        <button class="btn btn-lg btn-circle btn-ghost">취소</button>
+                    </form>
+                </div>
+            </dialog>
         </div>
+
         <input sec:authorize="isAuthenticated()" th:disabled="${user.id != recipe.author.id}" type="button" value="수정하기"
                class="btn btn-outline btn-info mt-5"
                th:onclick="@{${'location.href=''/recipe/edit/'+id+''''}}">
