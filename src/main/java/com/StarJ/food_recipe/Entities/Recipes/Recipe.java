@@ -26,6 +26,7 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String subject;
+    @Column(unique = true)
     private UUID UUID;
     @Column(columnDefinition = "TEXT")
     private String baseImg;

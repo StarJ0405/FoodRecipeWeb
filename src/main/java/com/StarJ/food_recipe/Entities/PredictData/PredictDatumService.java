@@ -1,5 +1,7 @@
 package com.StarJ.food_recipe.Entities.PredictData;
 
+import com.StarJ.food_recipe.Entities.Configs.Config;
+import com.StarJ.food_recipe.Entities.Configs.ConfigService;
 import com.StarJ.food_recipe.Entities.Recipes.Recipe;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEval;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEvalService;
@@ -21,32 +23,50 @@ public class PredictDatumService {
     private final UserService userService;
     private final RecipeEvalService recipeEvalService;
     private final PredictDatumRepository predictDatumRepository;
-    public List<PredictDatum> getTop5(SiteUser user){
+    private final ConfigService configService;
+
+    public List<PredictDatum> getTop5(SiteUser user) {
         return predictDatumRepository.getTop5(user);
     }
-    private void write() throws IOException {
-        String newLine = System.lineSeparator();
 
-        String unseenPath = "C:/Users/admin/IdeaProjects/FoodRecipeWeb/out/database/unseen.csv";
+    private final String newLine = System.lineSeparator();
+
+    private Integer getLastId() {
+        return null;
+    }
+
+    private void writeDefine() throws IOException {
         String definePath = "C:/Users/admin/IdeaProjects/FoodRecipeWeb/out/database/defined.csv";
         File defineFile = new File(definePath);
         BufferedWriter defineBW = new BufferedWriter(new FileWriter(defineFile));
+        Config config = configService.getData("re.last");
+        if (config == null || config.getIntegerValue() == null)
+            for (RecipeEval eval : recipeEvalService.getEvals()) {
+                defineBW.write(eval.getSiteUser().getId() + "," + eval.getRecipe().getId() + "," + eval.getVal() + "," + Long.parseLong(eval.getCreateDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))));
+                defineBW.write(newLine);
+            }
+        else {
+            Integer start = config.getIntegerValue();
+            for (RecipeEval eval : recipeEvalService.getEvals(start)) {
+                defineBW.write(eval.getSiteUser().getId() + "," + eval.getRecipe().getId() + "," + eval.getVal() + "," + Long.parseLong(eval.getCreateDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))));
+                defineBW.write(newLine);
+            }
+        }
+        configService.setData(config, recipeEvalService.getLastEvalID());
+        defineBW.flush();
+        defineBW.close();
+
+    }
+
+    private void writeUnseen() throws IOException {
+        String unseenPath = "C:/Users/admin/IdeaProjects/FoodRecipeWeb/out/database/unseen.csv";
         File unseenFile = new File(unseenPath);
         BufferedWriter unseenBW = new BufferedWriter(new FileWriter(unseenFile));
         for (SiteUser user : userService.getUsers())
-            for (Recipe recipe : recipeService.getRecipes()) {
-                RecipeEval eval = recipeEvalService.getEval(user, recipe);
-                if (eval != null) {
-                    defineBW.write(user.getId() + "," + recipe.getId() + "," + eval.getVal() + "," + Long.parseLong(eval.getCreateDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))));
-                    defineBW.write(newLine);
-                } else {
-                    unseenBW.write(user.getId() + "," + recipe.getId());
-                    unseenBW.write(newLine);
-                }
+            for (Recipe recipe : recipeService.getUnseenRecipe(user)) {
+                unseenBW.write(user.getId() + "," + recipe.getId());
+                unseenBW.write(newLine);
             }
-
-        defineBW.flush();
-        defineBW.close();
         unseenBW.flush();
         unseenBW.flush();
     }
@@ -54,7 +74,8 @@ public class PredictDatumService {
     @Async
     public void training() {
         try {
-            write();
+            writeDefine(); // 평점 저장
+            writeUnseen(); // 미시청 데이터 저장
             System.out.println("training start");
             ProcessBuilder processBuilder = new ProcessBuilder("python", "define_model.py").directory(new File("./out/database"));
             Process process = processBuilder.start();

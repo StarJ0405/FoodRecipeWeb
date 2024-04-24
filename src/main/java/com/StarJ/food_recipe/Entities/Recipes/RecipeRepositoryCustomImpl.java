@@ -1,6 +1,7 @@
 package com.StarJ.food_recipe.Entities.Recipes;
 
 import com.StarJ.food_recipe.Entities.Ingredients.Ingredient;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.QRecipeEval;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -43,5 +44,16 @@ public class RecipeRepositoryCustomImpl implements RecipeRepositoryCustom {
         if (!recipes.isEmpty())
             recipe = recipes.getFirst();
         return Optional.ofNullable(recipe);
+    }
+
+    @Override
+    public List<Recipe> unseenSearch(SiteUser user) {
+        QRecipeEval recipeEval = QRecipeEval.recipeEval;
+        return jpaQueryFactory.select(recipe)
+                .from(recipe)
+                .where(recipe.notIn(jpaQueryFactory.select(recipeEval.recipe)
+                        .from(recipeEval)
+                        .where(recipeEval.siteUser.eq(user))))
+                .fetch();
     }
 }

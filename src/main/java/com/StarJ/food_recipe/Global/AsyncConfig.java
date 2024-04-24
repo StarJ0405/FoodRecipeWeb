@@ -1,4 +1,4 @@
-package com.StarJ.food_recipe.Email;
+package com.StarJ.food_recipe.Global;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;

@@ -13,4 +13,5 @@ public interface RecipeRepositoryCustom {
 
     Optional<Recipe> search(String subject, List<Ingredient> ingredients);
     Optional<Recipe> search(String subject);
+    List<Recipe> unseenSearch(SiteUser user);
 }

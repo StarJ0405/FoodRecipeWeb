@@ -55,6 +55,9 @@ public class RecipeService {
     private final RecipeTagService recipeTagService;
     @Autowired
     private ResourceLoader resourceLoader;
+    public List<Recipe> getUnseenRecipe(SiteUser user){
+        return recipeRepository.unseenSearch(user);
+    }
     public List<Recipe> getRecipes() {
         return recipeRepository.findAll();
     }

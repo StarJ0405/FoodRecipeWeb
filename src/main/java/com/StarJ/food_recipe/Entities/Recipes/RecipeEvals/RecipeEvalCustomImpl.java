@@ -31,4 +31,14 @@ public class RecipeEvalCustomImpl implements RecipeEvalCustom {
         else
             return Optional.empty();
     }
+
+    @Override
+    public List<RecipeEval> findAfterId(Integer id) {
+        return jpaQueryFactory.select(recipeEval).from(recipeEval).where(recipeEval.id.gt(id)).fetch();
+    }
+
+    @Override
+    public int getLastRecipeID() {
+        return jpaQueryFactory.select(recipeEval.id.max()).from(recipeEval).fetchOne();
+    }
 }
