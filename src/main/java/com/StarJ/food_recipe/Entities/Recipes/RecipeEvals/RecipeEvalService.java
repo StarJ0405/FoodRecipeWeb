@@ -1,6 +1,8 @@
 package com.StarJ.food_recipe.Entities.Recipes.RecipeEvals;
 
+import com.StarJ.food_recipe.Entities.PredictData.PredictDatumService;
 import com.StarJ.food_recipe.Entities.Recipes.Recipe;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeService;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,10 +14,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RecipeEvalService {
     private final RecipeEvalRepository recipeEvalRepository;
+    private final RecipeService recipeService;
 
     public RecipeEval setEval(SiteUser user, Recipe recipe, double val) {
         Optional<RecipeEval> _recipeEval = recipeEvalRepository.findByUserRecipe(user, recipe);
-        RecipeEval recipeEval = _recipeEval.orElseGet(() -> RecipeEval.builder().recipe(recipe).siteUser(user).build());
+        if (_recipeEval.isPresent())
+            recipeService.removeRecipeEval(_recipeEval.get());
+        RecipeEval recipeEval = RecipeEval.builder().recipe(recipe).siteUser(user).build();
         recipeEval.setVal(val);
         recipeEvalRepository.save(recipeEval);
         return recipeEval;

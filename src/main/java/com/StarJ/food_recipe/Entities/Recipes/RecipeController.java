@@ -4,6 +4,7 @@ import com.StarJ.food_recipe.Entities.Ingredients.Ingredient;
 import com.StarJ.food_recipe.Entities.Ingredients.IngredientService;
 import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.NutrientInfo;
 import com.StarJ.food_recipe.Entities.Nutrients.Nutrient;
+import com.StarJ.food_recipe.Entities.PredictData.PredictDatumService;
 import com.StarJ.food_recipe.Entities.Recipes.BodyImages.BodyImage;
 import com.StarJ.food_recipe.Entities.Recipes.BodyImages.Form.BodyImageForm;
 import com.StarJ.food_recipe.Entities.Recipes.Form.RecipeEditForm;
@@ -44,7 +45,7 @@ public class RecipeController {
     private final ToolService toolService;
     private final IngredientService ingredientService;
     private final RecipeEvalService recipeEvalService;
-
+    private final PredictDatumService predictDatumService;
     @ModelAttribute("ingredients")
     public List<Ingredient> getIngredients() {
         return ingredientService.getIngredients();
@@ -107,6 +108,7 @@ public class RecipeController {
         SiteUser user = principalDetail.getUser();
         Recipe recipe = recipeService.getRecipe(id);
         recipeEvalService.setEval(user, recipe, rating );
+        predictDatumService.training();
         return "redirect:/recipe/detail/" + id;
     }
 

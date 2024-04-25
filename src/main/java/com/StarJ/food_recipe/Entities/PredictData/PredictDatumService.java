@@ -24,22 +24,19 @@ public class PredictDatumService {
     private final RecipeEvalService recipeEvalService;
     private final PredictDatumRepository predictDatumRepository;
     private final ConfigService configService;
-
+    public List<PredictDatum> getTop10() {
+        return predictDatumRepository.getTop10();
+    }
     public List<PredictDatum> getTop5(SiteUser user) {
         return predictDatumRepository.getTop5(user);
     }
 
     private final String newLine = System.lineSeparator();
 
-    private Integer getLastId() {
-        return null;
-    }
-
-    private void writeDefine() throws IOException {
+    private void writeDefine(Config config) throws IOException {
         String definePath = "C:/Users/admin/IdeaProjects/FoodRecipeWeb/out/database/defined.csv";
         File defineFile = new File(definePath);
         BufferedWriter defineBW = new BufferedWriter(new FileWriter(defineFile));
-        Config config = configService.getData("re.last");
         if (config == null || config.getIntegerValue() == null)
             for (RecipeEval eval : recipeEvalService.getEvals()) {
                 defineBW.write(eval.getSiteUser().getId() + "," + eval.getRecipe().getId() + "," + eval.getVal() + "," + Long.parseLong(eval.getCreateDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))));
@@ -52,7 +49,6 @@ public class PredictDatumService {
                 defineBW.write(newLine);
             }
         }
-        configService.setData(config, recipeEvalService.getLastEvalID());
         defineBW.flush();
         defineBW.close();
 
@@ -73,8 +69,17 @@ public class PredictDatumService {
 
     @Async
     public void training() {
+        // 데이터 개수 확인 > 일정 이상이면 > 아니면 return;
         try {
-            writeDefine(); // 평점 저장
+            Config config = configService.getData("re.last");
+            Integer last = recipeEvalService.getLastEvalID();
+            int N = 100;
+            if (last == null  // 쌓인 데이터가 0인 경우
+                    || ((config == null || config.getIntegerValue() == null) && last < N) // 마지막 기록이 0, 0~last까지가 N개 미만인 경우
+                    || (config != null && config.getIntegerValue() != null && last-config.getIntegerValue()  < N)) // 마지막 기록 ~ last 까지가 N개 미만인 경우
+                return;
+            configService.setData(config, last);
+            writeDefine(config); // 평점 저장
             writeUnseen(); // 미시청 데이터 저장
             System.out.println("training start");
             ProcessBuilder processBuilder = new ProcessBuilder("python", "define_model.py").directory(new File("./out/database"));

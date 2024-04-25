@@ -9,7 +9,7 @@
             <div class="flex flex-wrap w-[800px] h-[800px] content-start">
                 <a th:href="@{|/recipe/detail/${recipe.id}|}" th:each="recipe,loop : ${paging}"
                    class="flex flex-col m-4 text-center">
-                    <img th:src="@{${  !#strings.isEmpty(recipe.baseImg) ?recipe.baseImg:'/common/white.png'}}"
+                    <img th:src="@{${!#strings.isEmpty(recipe.baseImg) ?recipe.baseImg:'/common/white.png'}}"
                          class="w-[100px] h-[100px]"/>
                     <label th:text="${recipe.subject}" class="w-[100px] overflow-hidden"/>
                     <label th:text="${recipe.author.nickname}" class="w-[100px] overflow-hidden"/>

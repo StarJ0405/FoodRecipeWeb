@@ -2,6 +2,8 @@ package com.StarJ.food_recipe;
 
 import com.StarJ.food_recipe.Entities.Categories.Category;
 import com.StarJ.food_recipe.Entities.Categories.CategoryRepository;
+import com.StarJ.food_recipe.Entities.Configs.ConfigRepository;
+import com.StarJ.food_recipe.Entities.Configs.ConfigService;
 import com.StarJ.food_recipe.Entities.Ingredients.Ingredient;
 import com.StarJ.food_recipe.Entities.Ingredients.IngredientRepository;
 import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.NutrientInfo;
@@ -68,7 +70,8 @@ class FoodRecipeApplicationTests {
     private RecipeTagRepository recipeTagRepository;
     @Autowired
     private RecipeEvalRepository recipeEvalRepository;
-
+    @Autowired
+    private ConfigRepository configRepository;
     //&#10;
     @Test
 //    @Transactional
@@ -95,6 +98,7 @@ class FoodRecipeApplicationTests {
             initialIngredients(admin, workbook.getSheet("ingredients"));
 
             initialRecipes(admin, workbook.getSheet("recipes"));
+            configRepository.deleteAll();
             workbook.close();
 
             // 평가
@@ -320,8 +324,6 @@ class FoodRecipeApplicationTests {
                             throw new DataNotFoundException((row.getRowNum() + 1) + "," + getColumn(cell.getColumnIndex()) + " - " + origin + "은 없는 태그 입니다.");
                     }
                 }
-                if(row.getRowNum()==5)
-                System.out.println(cell.getCellType().name()+" - "+(cell.getCellType().equals(CellType.NUMERIC)?cell.getNumericCellValue():cell.getStringCellValue()));
             }
             Optional<Recipe> _recipe = recipeRepository.search(subject.toString());
             Recipe recipe = _recipe.orElseGet(() -> Recipe.builder().author(admin).uuid(UUID.randomUUID()).subject(subject.toString()).build());
@@ -359,6 +361,7 @@ class FoodRecipeApplicationTests {
     @Transactional
     public void initialEval() {
         List<SiteUser> users = userRepository.findAll();
+        users.removeIf(user -> user.getId().equalsIgnoreCase("admin"));
         List<Recipe> recipes = recipeRepository.findAll();
         Random r = new Random();
 

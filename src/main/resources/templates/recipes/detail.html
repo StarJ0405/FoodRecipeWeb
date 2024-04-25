@@ -89,17 +89,28 @@
                     <label class="text-3xl m-2 text-red-500">평점</label>
                     <form method="post" th:action="@{|/recipe/detail/${recipe.id}|}">
                         <div class="rating rating-lg rating-half w-full flex justify-center ">
-                            <input type="radio" name="rating-10" value=0 class="rating-hidden" th:checked="${pre>0 && preRating=='00'}" th:disabled="${pre>0}"/>
-                            <input type="radio" name="rating-10" value=0.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='05'}" th:disabled="${pre>0}"/>
-                            <input type="radio" name="rating-10" value=1.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='10'}" th:disabled="${pre>0}"/>
-                            <input type="radio" name="rating-10" value=1.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='15'}" th:disabled="${pre>0}"/>
-                            <input type="radio" name="rating-10" value=2.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='20'}" th:disabled="${pre>0}"/>
-                            <input type="radio" name="rating-10" value=2.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='25'}" th:disabled="${pre>0}"/>
-                            <input type="radio" name="rating-10" value=3.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='30'}" th:disabled="${pre>0}"/>
-                            <input type="radio" name="rating-10" value=3.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='35'}" th:disabled="${pre>0}"/>
-                            <input type="radio" name="rating-10" value=4.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='40'}" th:disabled="${pre>0}"/>
-                            <input type="radio" name="rating-10" value=4.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='45'}" th:disabled="${pre>0}"/>
-                            <input type="radio" name="rating-10" value=5.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre<0 || (pre>0&&preRating=='50')}" th:disabled="${pre>0}"/>
+<!--                            <input type="radio" name="rating-10" value=0 class="rating-hidden" th:checked="${pre>0 && preRating=='00'}" th:disabled="${pre>0}"/>-->
+<!--                            <input type="radio" name="rating-10" value=0.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='05'}" th:disabled="${pre>0}"/>-->
+<!--                            <input type="radio" name="rating-10" value=1.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='10'}" th:disabled="${pre>0}"/>-->
+<!--                            <input type="radio" name="rating-10" value=1.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='15'}" th:disabled="${pre>0}"/>-->
+<!--                            <input type="radio" name="rating-10" value=2.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='20'}" th:disabled="${pre>0}"/>-->
+<!--                            <input type="radio" name="rating-10" value=2.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='25'}" th:disabled="${pre>0}"/>-->
+<!--                            <input type="radio" name="rating-10" value=3.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='30'}" th:disabled="${pre>0}"/>-->
+<!--                            <input type="radio" name="rating-10" value=3.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='35'}" th:disabled="${pre>0}"/>-->
+<!--                            <input type="radio" name="rating-10" value=4.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='40'}" th:disabled="${pre>0}"/>-->
+<!--                            <input type="radio" name="rating-10" value=4.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='45'}" th:disabled="${pre>0}"/>-->
+<!--                            <input type="radio" name="rating-10" value=5.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre<0 || (pre>0&&preRating=='50')}" th:disabled="${pre>0}"/>-->
+                            <input type="radio" name="rating-10" value=0 class="rating-hidden" th:checked="${pre>0 && preRating=='00'}" />
+                            <input type="radio" name="rating-10" value=0.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='05'}"/>
+                            <input type="radio" name="rating-10" value=1.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='10'}"/>
+                            <input type="radio" name="rating-10" value=1.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='15'}"/>
+                            <input type="radio" name="rating-10" value=2.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='20'}"/>
+                            <input type="radio" name="rating-10" value=2.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='25'}"/>
+                            <input type="radio" name="rating-10" value=3.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='30'}"/>
+                            <input type="radio" name="rating-10" value=3.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='35'}"/>
+                            <input type="radio" name="rating-10" value=4.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre>0 && preRating=='40'}"/>
+                            <input type="radio" name="rating-10" value=4.5 class="bg-red-500 mask mask-star-2 mask-half-1" th:checked="${pre>0 && preRating=='45'}"/>
+                            <input type="radio" name="rating-10" value=5.0 class="bg-red-500 mask mask-star-2 mask-half-2" th:checked="${pre<0 || (pre>0&&preRating=='50')}"/>
                             <input type="hidden" name="rating-10" th:value="${pre}" th:if="${pre>0}"/>
                         </div>
                         <label class="w-full block mt-3" th:if="${pre>0}">이미 평점을 투표했습니다.</label>

@@ -8,6 +8,7 @@ import com.StarJ.food_recipe.Entities.Recipes.BodyImages.Form.BodyImageForm;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.Form.IngredientInfoForm;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfo;
 import com.StarJ.food_recipe.Entities.Recipes.IngredientInfos.IngredientInfoService;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEval;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeTags.RecipeTag;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeTags.RecipeTagService;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeTools.RecipeTool;
@@ -55,12 +56,15 @@ public class RecipeService {
     private final RecipeTagService recipeTagService;
     @Autowired
     private ResourceLoader resourceLoader;
-    public List<Recipe> getUnseenRecipe(SiteUser user){
+
+    public List<Recipe> getUnseenRecipe(SiteUser user) {
         return recipeRepository.unseenSearch(user);
     }
+
     public List<Recipe> getRecipes() {
         return recipeRepository.findAll();
     }
+
     public Page<Recipe> getRecipes(int page) {
         Pageable pageable = PageRequest.of(page, 24, Sort.by(Sort.Order.desc("createDate")));
         return recipeRepository.findAll(pageable);
@@ -269,5 +273,9 @@ public class RecipeService {
         return null;
     }
 
-
+    public void removeRecipeEval(RecipeEval recipeEval) {
+        Recipe recipe = recipeEval.getRecipe();
+        recipe.getEvals().remove(recipeEval);
+        recipeRepository.save(recipe);
+    }
 }
