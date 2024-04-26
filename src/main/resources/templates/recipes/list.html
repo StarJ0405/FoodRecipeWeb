@@ -1,11 +1,20 @@
 <html layout:decorate="~{/layouts/layoutWithNav}" xmlns:layout="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.w3.org/1999/xhtml">
-<div layout:fragment="content" >
+<div layout:fragment="content">
     <div class="grid card bg-base-300 rounded-box place-items-center p-5">
-        <div class="overflow-x-auto">
-            <input type="button" value="글 등록" id="delete" class="btn btn-outline btn-info mb-2"
-                   onclick="location.href = this.dataset.uri;"
-                   th:data-uri="@{/recipe/create}">
+        <div class="overflow-x-auto w-full flex flex-col items-center">
+            <div class="flex w-[800px] flex-col">
+                <div th:each="category : ${categories}" class="flex flex-row">
+                    <label th:text="${category.name}" class="w-[80px]"/>
+                    <div class="flex flex-wrap justify-start items-start w-full">
+                        <div th:each="tag : ${category.tagList}">
+                            <input type="checkbox" th:id="tags" th:name="tags" th:value="${tag.name}"
+                                   class="m-2 tags" form="search" th:checked="${tags!=null&&#arrays.contains(tags,tag.name)}"/>
+                            <label th:text="${tag.name}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="flex flex-wrap w-[800px] h-[800px] content-start">
                 <a th:href="@{|/recipe/detail/${recipe.id}|}" th:each="recipe,loop : ${paging}"
                    class="flex flex-col m-4 text-center">
@@ -15,16 +24,23 @@
                     <label th:text="${recipe.author.nickname}" class="w-[100px] overflow-hidden"/>
                 </a>
             </div>
-            <div class="join flex justify-center">
-                <input type="button" th:classappend="${!paging.hasPrevious} ? 'btn-disabled'" id="previous"
-                       class="join-item btn page-link" th:value="'< 이전'" th:data-page="${page<10? 0 :page-10 }"/>
-                <input type="button" th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
-                       th:classappend="${paging.number==page} ? 'btn-disabled'"
-                       th:if="${page >= paging.number-10 and page <= paging.number+10}"
-                       class="join-item btn page-link" th:value="${page}" th:data-page="${page}"/>
-                <input type="button" th:classappend="${!paging.hasNext} ? 'btn-disabled'" id="next"
-                       class="join-item btn page-link" th:value="'다음 >'"
-                       th:data-page="${paging.number+10 < paging.totalPages ? paging.number+10: paging.totalPages-1}"/>
+            <div class="flex mt-2">
+                <div class="w-1/8">
+                    <input type="button" value="글 등록" id="delete" class="btn btn-outline btn-info mb-2"
+                           onclick="location.href = this.dataset.uri;"
+                           th:data-uri="@{/recipe/create}">
+                </div>
+                <div class="w-full join flex justify-center">
+                    <input type="button" th:classappend="${!paging.hasPrevious} ? 'btn-disabled'" id="previous"
+                           class="join-item btn page-link" th:value="'< 이전'" th:data-page="${page<10? 0 :page-10 }"/>
+                    <input type="button" th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+                           th:classappend="${paging.number==page} ? 'btn-disabled'"
+                           th:if="${page >= paging.number-10 and page <= paging.number+10}"
+                           class="join-item btn page-link" th:value="${page}" th:data-page="${page}"/>
+                    <input type="button" th:classappend="${!paging.hasNext} ? 'btn-disabled'" id="next"
+                           class="join-item btn page-link" th:value="'다음 >'"
+                           th:data-page="${paging.number+10 < paging.totalPages ? paging.number+10: paging.totalPages-1}"/>
+                </div>
             </div>
         </div>
     </div>

@@ -18,7 +18,9 @@
     </div>
     <div class="flex justify-center">
         <a th:href="@{/}"><img src="/common/icon.png" class="w-[75px]"></a>
-        <input type="text" placeholder="검색어" class="input input-bordered input-info w-full max-w-xs"/>
-        <button class="btn btn-info text-[20px]">🔍</button>
+        <form id="search" class="flex justify-center" th:action="@{|/recipe/list|}" method="get">
+            <input type="text" name="searchKW" placeholder="검색어" th:value="${searchKW}" class="input input-bordered input-info w-full max-w-xs"/>
+            <input type="submit" class="btn btn-info text-[20px]" value="🔍"/>
+        </form>
     </div>
 </header>

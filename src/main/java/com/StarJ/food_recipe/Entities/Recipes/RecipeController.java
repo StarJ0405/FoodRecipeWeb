@@ -1,5 +1,6 @@
 package com.StarJ.food_recipe.Entities.Recipes;
 
+import com.StarJ.food_recipe.Entities.Categories.CategoryService;
 import com.StarJ.food_recipe.Entities.Ingredients.Ingredient;
 import com.StarJ.food_recipe.Entities.Ingredients.IngredientService;
 import com.StarJ.food_recipe.Entities.Ingredients.NutrientInfos.NutrientInfo;
@@ -46,6 +47,8 @@ public class RecipeController {
     private final IngredientService ingredientService;
     private final RecipeEvalService recipeEvalService;
     private final PredictDatumService predictDatumService;
+    private final CategoryService categoryService;
+
     @ModelAttribute("ingredients")
     public List<Ingredient> getIngredients() {
         return ingredientService.getIngredients();
@@ -66,9 +69,23 @@ public class RecipeController {
         return "redirect:/recipe/list";
     }
 
+    private String StringArraytoString(String[] strs) {
+        StringBuilder value = new StringBuilder();
+        for (String str : strs)
+            if (value.isEmpty())
+                value.append(str);
+            else
+                value.append(", ").append(str);
+
+        return value.toString();
+    }
+
     @GetMapping("/list")
-    public String recipes(Model model, @RequestParam(value = "page", defaultValue = "0") Integer page) {
-        model.addAttribute("paging", recipeService.getRecipes(page));
+    public String recipes(Model model, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "searchKW", defaultValue = "") String searchKW, @RequestParam(value = "tags", required = false) String[] tags) {
+        model.addAttribute("paging", recipeService.getRecipes(page, searchKW, tags));
+        model.addAttribute("searchKW", searchKW);
+        model.addAttribute("tags", tags);
+        model.addAttribute("categories", categoryService.getCategories());
         return "recipes/list";
     }
 
@@ -107,7 +124,7 @@ public class RecipeController {
     public String rating(Model model, @AuthenticationPrincipal PrincipalDetail principalDetail, @PathVariable("id") Integer id, @RequestParam("rating-10") Double rating) {
         SiteUser user = principalDetail.getUser();
         Recipe recipe = recipeService.getRecipe(id);
-        recipeEvalService.setEval(user, recipe, rating );
+        recipeEvalService.setEval(user, recipe, rating);
         predictDatumService.training();
         return "redirect:/recipe/detail/" + id;
     }

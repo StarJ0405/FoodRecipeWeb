@@ -26,7 +26,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,10 +37,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -65,9 +61,9 @@ public class RecipeService {
         return recipeRepository.findAll();
     }
 
-    public Page<Recipe> getRecipes(int page) {
-        Pageable pageable = PageRequest.of(page, 24, Sort.by(Sort.Order.desc("createDate")));
-        return recipeRepository.findAll(pageable);
+    public Page<Recipe> getRecipes(int page, String kw, String[] tags) {
+        Pageable pageable = PageRequest.of(page, 24);
+        return tags != null ? recipeRepository.recipePage(pageable, kw, Arrays.asList(tags)) : recipeRepository.recipePage(pageable, kw);
     }
 
     public Recipe getRecipe(Integer id) {

@@ -34,6 +34,8 @@ public class QCategory extends EntityPathBase<Category> {
 
     public final StringPath name = createString("name");
 
+    public final ListPath<com.StarJ.food_recipe.Entities.Tags.Tag, com.StarJ.food_recipe.Entities.Tags.QTag> tagList = this.<com.StarJ.food_recipe.Entities.Tags.Tag, com.StarJ.food_recipe.Entities.Tags.QTag>createList("tagList", com.StarJ.food_recipe.Entities.Tags.Tag.class, com.StarJ.food_recipe.Entities.Tags.QTag.class, PathInits.DIRECT2);
+
     public QCategory(String variable) {
         this(Category.class, forVariable(variable), INITS);
     }
