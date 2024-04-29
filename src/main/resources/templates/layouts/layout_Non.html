@@ -1,11 +1,11 @@
-<html layout:decorate="~{/layouts/layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<html layout:decorate="~{./layouts/layout}" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
 <body layout:fragment="body">
 <div class="navbar bg-info text-primary-content justify-center">
     <a th:href="@{/}"><img src="/common/icon.png" class="w-[150px] cursor-pointer"></a>
 </div>
 <th:block layout:fragment="content"></th:block>
 <!-- Footer 내용 -->
-<footer th:replace="~{/layouts/footer :: footerFragment}"></footer>
+<footer th:replace="~{./layouts/footer :: footerFragment}"></footer>
 <!-- 자바스크립트 -->
 <th:block layout:fragment="script"></th:block>
 </body>

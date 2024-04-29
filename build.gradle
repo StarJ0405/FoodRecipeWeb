@@ -14,7 +14,6 @@ java {
 repositories {
 	mavenCentral()
 }
-//https://velog.io/@on5949/SpringSecurity-OAuth-%EC%99%80-%EC%9D%BC%EB%B0%98%EB%A1%9C%EA%B7%B8%EC%9D%B8%EC%9D%84-%EB%8F%99%EC%9D%BC%ED%95%98%EA%B2%8C-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -43,9 +42,12 @@ dependencies {
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 	// 엑셀 데이터 사용
 	implementation 'org.apache.poi:poi-ooxml:5.2.2'
-	implementation 'org.apache.poi:poi-ooxml-schemas:5.2.2'
+//	implementation 'org.apache.poi:poi-ooxml-schemas:5.2.2'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+bootJar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

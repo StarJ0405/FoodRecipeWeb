@@ -1,11 +1,11 @@
-<html layout:decorate="~{/layouts/layout_Non}" xmlns:layout="http://www.w3.org/1999/xhtml"
+<html layout:decorate="~{./layouts/layout_Non}" xmlns:layout="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content" th:object="${findPWForm}">
-    <div th:replace="~{/layouts/form_errors :: formErrorsFragment}"></div>
+    <div th:replace="~{./layouts/form_errors :: formErrorsFragment}"></div>
     <div class="my-10 flex justify-center">
         <div class="flex items-center flex-col">
             <div class="border border-black rounded-xl flex h-[300px] w-[500px] justify-center items-center text-xl">
-                <form th:action="@{/user/findPW}" method="post" class="flex flex-col items-center">
+                <form th:action="@{|/user/findPW|}" method="post" class="flex flex-col items-center">
                     <input type="text" th:field="*{id}" placeholder="이이디를 입력하세요." class="border border-2 border-primary-content rounded-md w-[300px]">
                     <input type="email" th:field="*{email}" placeholder="이메일을 입력하세요." class="border border-2 border-primary-content rounded-md w-[300px]">
                     <input type="submit" value="확인" class="w-[300px] border border-2 border-primary-content rounded-md bg-primary-content">

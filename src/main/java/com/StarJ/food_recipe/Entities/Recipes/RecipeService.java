@@ -18,11 +18,10 @@ import com.StarJ.food_recipe.Entities.Tags.TagService;
 import com.StarJ.food_recipe.Entities.Tools.Tool;
 import com.StarJ.food_recipe.Entities.Tools.ToolService;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
+import com.StarJ.food_recipe.FoodRecipeApplication;
 import com.StarJ.food_recipe.Global.Exceptions.DataNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,8 +49,6 @@ public class RecipeService {
     private final IngredientInfoService ingredientInfoService;
     private final RecipeToolService recipeToolService;
     private final RecipeTagService recipeTagService;
-    @Autowired
-    private ResourceLoader resourceLoader;
 
     public List<Recipe> getUnseenRecipe(SiteUser user) {
         return recipeRepository.unseenSearch(user);
@@ -111,13 +108,9 @@ public class RecipeService {
     }
 
     public void delete(Recipe recipe) {
-        try {
-            String path = resourceLoader.getResource("classpath:/static").getFile().getPath();
-            File recipeFolder = new File(path + "/recipes/" + recipe.getUUID().toString());
-            deleteFile(recipeFolder);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        String path = FoodRecipeApplication.getOS_TYPE().getPath();
+        File recipeFolder = new File(path + "/recipes/" + recipe.getUUID().toString());
+        deleteFile(recipeFolder);
         recipeRepository.delete(recipe);
     }
 
@@ -141,7 +134,7 @@ public class RecipeService {
         recipe.setSubject(subject);
         if (baseImg != null && !baseImg.equals("") && !baseImg.equals(recipe.getBaseImg()))
             try {
-                String path = resourceLoader.getResource("classpath:/static").getFile().getPath();
+                String path = FoodRecipeApplication.getOS_TYPE().getPath();
                 Path oldPath = Paths.get(path + baseImg);
                 File recipeFolder = new File(path + "/recipes/" + recipe.getUUID().toString());
                 if (!recipeFolder.exists())
@@ -161,7 +154,7 @@ public class RecipeService {
             String imgURL = bodyImage.getImgURL();
             if (imgURL != null && !imgURL.equals(""))
                 try {
-                    String path = resourceLoader.getResource("classpath:/static").getFile().getPath();
+                    String path = FoodRecipeApplication.getOS_TYPE().getPath();
                     Path oldPath = Paths.get(path + imgURL);
                     File recipeFolder = new File(path + "/recipes/" + recipe.getUUID().toString());
                     if (!recipeFolder.exists())
@@ -201,7 +194,7 @@ public class RecipeService {
         Recipe recipe = Recipe.builder().author(user).subject(subject).uuid(UUID.randomUUID()).build();
         if (baseImg != null && !baseImg.equals(""))
             try {
-                String path = resourceLoader.getResource("classpath:/static").getFile().getPath();
+                String path = FoodRecipeApplication.getOS_TYPE().getPath();
                 Path oldPath = Paths.get(path + baseImg);
                 File recipeFolder = new File(path + "/recipes/" + recipe.getUUID().toString());
                 if (!recipeFolder.exists())
@@ -240,7 +233,7 @@ public class RecipeService {
     public String saveTempImage(MultipartFile file, SiteUser user) {
         if (!file.isEmpty())
             try {
-                String path = resourceLoader.getResource("classpath:/static").getFile().getPath();
+                String path = FoodRecipeApplication.getOS_TYPE().getPath();
                 File userFolder = new File(path + "/users/" + user.getId());
                 if (!userFolder.exists())
                     userFolder.mkdirs();
@@ -256,7 +249,7 @@ public class RecipeService {
     public String saveTempBodyImage(MultipartFile file, SiteUser user) {
         if (!file.isEmpty())
             try {
-                String path = resourceLoader.getResource("classpath:/static").getFile().getPath();
+                String path = FoodRecipeApplication.getOS_TYPE().getPath();
                 File userFolder = new File(path + "/users/" + user.getId());
                 if (!userFolder.exists())
                     userFolder.mkdirs();

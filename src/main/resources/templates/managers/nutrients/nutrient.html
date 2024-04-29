@@ -1,11 +1,11 @@
-<html layout:decorate="~{/layouts/managerLayout}" xmlns:layout="http://www.w3.org/1999/xhtml"
+<html layout:decorate="~{./layouts/managerLayout}" xmlns:layout="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content" class="flex flex-col w-full border-opacity-50">
     <div class="grid card bg-base-300 rounded-box place-items-center">
         <div class="overflow-x-auto">
             <input type="button" value="추가" id="delete" class="btn btn-outline btn-info mb-2"
                    onclick="location.href = this.dataset.uri;"
-                   th:data-uri="@{/manager/nutrient/create}">
+                   th:data-uri="@{|/manager/nutrient/create|}">
             <table class="table [&_th]:border-2 [&_th]:border-black [&_td]:border-2 [&_td]:border-black text-center">
                 <tr>
                     <th class="w-[100px]" th:text="번호"/>

@@ -1,4 +1,4 @@
-<html layout:decorate="~{/layouts/layout_Non}" xmlns:layout="http://www.w3.org/1999/xhtml"
+<html layout:decorate="~{./layouts/layout_Non}" xmlns:layout="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content">
     <div class="my-10 flex justify-center">
@@ -15,8 +15,7 @@
                     </dialog>
                     <script>document.getElementById("my_modal_1").showModal();</script>
                 </div>
-                <!--                                <form th:action="@{/user/login}" method="post" class="flex flex-col items-center">-->
-                <form th:action="@{/user/loginProcess}" method="post" class="flex flex-col items-center">
+                <form th:action="@{|/user/loginProcess|}" method="post" class="flex flex-col items-center">
                     <input type="text" name="username" id="username" placeholder="아이디"
                            class="border border-2 border-primary-content rounded-md w-[300px]"/>
 <!--                           class="border border-2 border-primary-content rounded-md w-[300px]"/>-->
@@ -41,14 +40,14 @@
             </div>
         </div>
     </div>
-    <form id="temp_auto" th:action="@{/user/loginProcess}" method="post" sec:authorize="isAnonymous()">
-        <input type="text" name="username" value="admin"/>
-        <input type="password" name="password" value="1"/>
-    </form>
+<!--    <form id="temp_auto" th:action="@{|/user/loginProcess|}" method="post" sec:authorize="isAnonymous()">-->
+<!--        <input type="text" name="username" value="admin"/>-->
+<!--        <input type="password" name="password" value="1"/>-->
+<!--    </form>-->
 </div>
-<script layout:fragment="script" sec:authorize="isAnonymous()">
-    const temp_auto = document.getElementById('temp_auto');
-    temp_auto.submit();
+<!--<script layout:fragment="script" sec:authorize="isAnonymous()">-->
+<!--    const temp_auto = document.getElementById('temp_auto');-->
+<!--    temp_auto.submit();-->
 
-</script>
+<!--</script>-->
 </html>

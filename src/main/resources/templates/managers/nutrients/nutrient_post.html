@@ -1,7 +1,7 @@
-<html layout:decorate="~{/layouts/managerLayout}" xmlns:layout="http://www.w3.org/1999/xhtml"
+<html layout:decorate="~{./layouts/managerLayout}" xmlns:layout="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content" class="flex flex-col w-full border-opacity-50 place-items-center" th:object="${nutrientEditForm}">
-    <div th:replace="~{/layouts/form_errors :: formErrorsFragment}"></div>
+    <div th:replace="~{./layouts/form_errors :: formErrorsFragment}"></div>
     <form th:action="@{|${destination}|}" method="post">
         <div class="w-[1000px] border-2 p-4 border-black">
             <input type="text" th:field="*{name}" id="name" name="name" class="w-full p-2" placeholder="이름">

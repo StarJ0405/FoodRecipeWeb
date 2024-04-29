@@ -1,10 +1,9 @@
 package com.StarJ.food_recipe.Entities.Users;
 
 import com.StarJ.food_recipe.Email.EmailService;
+import com.StarJ.food_recipe.FoodRecipeApplication;
 import com.StarJ.food_recipe.Securities.UserRole;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,11 +30,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
-    @Autowired
-    private ResourceLoader resourceLoader;
+//    @Autowired
+//    private ResourceLoader resourceLoader;
+
     public List<SiteUser> getUsers() {
         return userRepository.findAll();
     }
+
     public Page<SiteUser> getUsers(int page) {
         Sort sort = Sort.by(Sort.Order.desc("createDate"));
         Pageable pageable = PageRequest.of(page, 10, sort);
@@ -52,20 +53,14 @@ public class UserService {
 
     public SiteUser getUserbyID(String id) {
         Optional<SiteUser> optional = userRepository.findById(id);
-        if (optional.isPresent())
-            return optional.get();
-        else
-            return null;
+        return optional.orElse(null);
 //            throw new DataNotFoundException("유저를 찾을 수 없습니다.");
     }
 
     public SiteUser getUserbyEmail(String email) {
         Optional<SiteUser> optional = userRepository.findAllByEmail(email);
-        if (optional.isPresent())
-            return optional.get();
-        else
-//            throw new DataNotFoundException("유저를 찾을 수 없습니다.");
-            return null;
+        //            throw new DataNotFoundException("유저를 찾을 수 없습니다.");
+        return optional.orElse(null);
     }
 
     public SiteUser create(String id, String password, String nickname, String email) {
@@ -116,15 +111,13 @@ public class UserService {
     public String saveTempImage(MultipartFile file, SiteUser user) {
         if (!file.isEmpty())
             try {
-                String path = resourceLoader.getResource("classpath:/static").getFile().getPath();
+                String path =  FoodRecipeApplication.getOS_TYPE().getPath();
                 File userFolder = new File(path + "/users/" + user.getId());
                 if (!userFolder.exists())
                     userFolder.mkdirs();
                 String fileloc = "/users/" + user.getId() + "/temp_profile." + file.getContentType().split("/")[1];
                 file.transferTo(new File(path + fileloc));
                 return fileloc;
-//                user.setIconUrl();
-//                userRepository.save(user);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -134,7 +127,7 @@ public class UserService {
     public void changeProfile(SiteUser user, String url, String nickname) {
         if (!user.getIconUrl().equals(url)) {
             try {
-                String path = resourceLoader.getResource("classpath:/static").getFile().getPath();
+                String path = FoodRecipeApplication.getOS_TYPE().getPath();
                 Path oldPath = Paths.get(path + url);
                 String newUrl = url.replace("temp_", "");
                 Path newPath = Paths.get(path + newUrl);
