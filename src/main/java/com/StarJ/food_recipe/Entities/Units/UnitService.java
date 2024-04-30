@@ -17,9 +17,11 @@ import java.util.Optional;
 @Service
 public class UnitService {
     private final UnitRepository unitRepository;
-    public List<Unit> getUnits(){
+
+    public List<Unit> getUnits() {
         return unitRepository.findAll();
     }
+
     public Page<Unit> getUnits(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Order.desc("createDate")));
         return unitRepository.findAll(pageable);
@@ -38,7 +40,7 @@ public class UnitService {
         if (_unit.isPresent())
             return _unit.get();
         else
-            throw new DataNotFoundException("없는 도구입니다.");
+            return null;// throw new DataNotFoundException("없는 도구입니다.");
     }
 
 
@@ -55,7 +57,9 @@ public class UnitService {
     }
 
     public void create(SiteUser user, String name, String description) {
-        Unit unit = Unit.builder().author(user).name(name).description(description).build();
+        Optional<Unit> _unit = unitRepository.findById(name);
+        Unit unit = _unit.orElseGet(() -> Unit.builder().author(user).name(name).build());
+        unit.setDescription(description);
         unitRepository.save(unit);
     }
 

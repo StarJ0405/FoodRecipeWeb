@@ -37,6 +37,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public List<SiteUser> getUsers(String role) {
+        return userRepository.findAllByRole(role);
+    }
+
     public Page<SiteUser> getUsers(int page) {
         Sort sort = Sort.by(Sort.Order.desc("createDate"));
         Pageable pageable = PageRequest.of(page, 10, sort);
@@ -63,13 +67,13 @@ public class UserService {
         return optional.orElse(null);
     }
 
-    public SiteUser create(String id, String password, String nickname, String email) {
+    public SiteUser create(String id, String password, String nickname, String email, UserRole userRole) {
         SiteUser user = SiteUser.builder()
                 .id(id)
                 .password(passwordEncoder.encode(password))
                 .nickname(nickname)
                 .email(email)
-                .role(UserRole.USER.getValue())
+                .role(userRole.getValue())
                 .build();
         userRepository.save(user);
         return user;
@@ -111,7 +115,7 @@ public class UserService {
     public String saveTempImage(MultipartFile file, SiteUser user) {
         if (!file.isEmpty())
             try {
-                String path =  FoodRecipeApplication.getOS_TYPE().getPath();
+                String path = FoodRecipeApplication.getOS_TYPE().getPath();
                 File userFolder = new File(path + "/users/" + user.getId());
                 if (!userFolder.exists())
                     userFolder.mkdirs();
@@ -124,7 +128,7 @@ public class UserService {
         return null;
     }
 
-    public void changeProfile(SiteUser user, String url, String nickname) {
+    public SiteUser changeProfile(SiteUser user, String url, String nickname) {
         if (!user.getIconUrl().equals(url)) {
             try {
                 String path = FoodRecipeApplication.getOS_TYPE().getPath();
@@ -137,7 +141,7 @@ public class UserService {
             }
         }
         user.setNickname(nickname);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public boolean isSamePassword(SiteUser user, String password) {

@@ -54,7 +54,9 @@ public class NutrientService {
     }
 
     public void create(SiteUser user, String name, String description) {
-        Nutrient nutrient = Nutrient.builder().author(user).name(name).description(description).build();
+        Optional<Nutrient> _nutrient = nutrientRepository.findById(name);
+        Nutrient nutrient = _nutrient.orElseGet(()-> Nutrient.builder().author(user).name(name).build());
+        nutrient.setDescription(description);
         nutrientRepository.save(nutrient);
     }
 

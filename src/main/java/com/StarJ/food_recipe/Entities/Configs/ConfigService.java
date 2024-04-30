@@ -10,6 +10,14 @@ import java.util.Optional;
 public class ConfigService {
     private final ConfigRepository configRepository;
 
+    public void reset() {
+        configRepository.deleteAll();
+    }
+
+    public <T> void setData(String config, T data) {
+        setData(getData(config), data);
+    }
+
     public <T> void setData(Config config, T data) {
         if (data == null)
             configRepository.delete(config);
@@ -19,6 +27,8 @@ public class ConfigService {
                 config.setType("String");
             else if (data instanceof Integer)
                 config.setType("Integer");
+            else if (data instanceof Boolean)
+                config.setType("Boolean");
             config.setValue(value);
             configRepository.save(config);
         }

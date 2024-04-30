@@ -21,6 +21,7 @@ public class ToolService {
     public List<Tool> getTools() {
         return toolRepository.findAll();
     }
+
     public List<Tool> getTools(List<String> _tools) {
         return toolRepository.findByNames(_tools);
     }
@@ -51,7 +52,9 @@ public class ToolService {
     }
 
     public void create(SiteUser user, String name, String description) {
-        Tool tool = Tool.builder().author(user).name(name).description(description).build();
+        Optional<Tool> _tool = toolRepository.findById(name);
+        Tool tool = _tool.orElseGet(() -> Tool.builder().author(user).name(name).build());
+        tool.setDescription(description);
         toolRepository.save(tool);
     }
 

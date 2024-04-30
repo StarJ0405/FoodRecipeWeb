@@ -11,7 +11,6 @@ public class PredictDatumController {
     @PostMapping("/manager/training")
     public String training(){
         dataService.training();
-
         return "redirect:/manager";
     }
 }

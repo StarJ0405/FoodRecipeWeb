@@ -2,6 +2,7 @@ package com.StarJ.food_recipe.Entities.Users;
 
 import com.StarJ.food_recipe.Entities.Users.Form.*;
 import com.StarJ.food_recipe.Securities.PrincipalDetail;
+import com.StarJ.food_recipe.Securities.UserRole;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
@@ -49,7 +50,7 @@ public class UserController {
             bindingResult.reject("hasSameEmail", "등록된 이메일주소입니다.");
             return "users/signup";
         }
-        userService.create(signupForm.getId(), signupForm.getPassword1(), signupForm.getNickname(), signupForm.getEmail());
+        userService.create(signupForm.getId(), signupForm.getPassword1(), signupForm.getNickname(), signupForm.getEmail(), UserRole.USER);
         return "redirect:/";
     }
 
@@ -105,7 +106,8 @@ public class UserController {
 
     @PostMapping("/profile")
     public String profile(@AuthenticationPrincipal PrincipalDetail principalDetail, @Param("url") String url, @Param("nickname") String nickname) {
-        userService.changeProfile(principalDetail.getUser(), url, nickname);
+        SiteUser user = userService.changeProfile(principalDetail.getUser(), url, nickname);
+        principalDetail.setUser(user);
         return "redirect:/user/profile";
     }
 

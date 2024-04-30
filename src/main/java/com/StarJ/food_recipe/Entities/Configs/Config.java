@@ -29,8 +29,15 @@ public class Config {
 
     public Integer getIntegerValue() {
         try {
-            return Integer.valueOf(this.value);
+            return Integer.parseInt(this.value);
         } catch (NumberFormatException nfe) {
+            return null;
+        }
+    }
+    public Boolean getBooleanValue(){
+        try{
+            return Boolean.parseBoolean(this.value);
+        }catch(Exception ex){
             return null;
         }
     }

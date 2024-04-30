@@ -24,6 +24,7 @@ public class TagService {
     public List<Tag> getTags() {
         return tagRepository.findAll();
     }
+
     public List<Tag> getTags(List<String> _tags) {
         return tagRepository.findByNames(_tags);
     }
@@ -32,7 +33,16 @@ public class TagService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Order.desc("createDate")));
         return tagRepository.findAll(pageable);
     }
-
+    public Tag getTag(String name) {
+        Optional<Tag> _tag = tagRepository.findById(name);
+        if (_tag.isPresent())
+            return _tag.get();
+        else
+            throw new DataNotFoundException("없는 데이터입니다.");
+    }
+    public boolean hasTag(String name){
+        return tagRepository.findById(name).isPresent();
+    }
     public Tag getTag(Integer id) {
         Optional<Tag> _tag = tagRepository.findById(id);
         if (_tag.isPresent())
@@ -56,7 +66,9 @@ public class TagService {
 
     public void create(SiteUser user, String name, String _category) {
         Category category = categoryService.getCategory(_category);
-        Tag tag = Tag.builder().author(user).name(name).category(category).build();
+        Optional<Tag> _tag = tagRepository.findById(name);
+        Tag tag = _tag.orElseGet(() -> Tag.builder().author(user).name(name).build());
+        tag.setCategory(category);
         tagRepository.save(tag);
     }
 

@@ -206,6 +206,7 @@ public class RecipeService {
             } catch (IOException ex) {
 
             }
+        recipeRepository.save(recipe);
         List<BodyImage> bodyImages = recipe.getBodyImages();
         for (BodyImageForm form : bodyImageForms) {
             BodyImage bodyImage = bodyImageService.getBodyImage(recipe, form.getBody(), form.getImgURL());

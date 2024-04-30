@@ -83,8 +83,12 @@ public class IngredientService {
 
     @Transactional
     public void create(SiteUser user, String name, String info, double kcal, String _unit, List<NutrientInfoForm> nutrients) {
+        Optional<Ingredient> _ingredient = ingredientRepository.findById(name);
         Unit unit = unitService.getUnit(_unit);
-        Ingredient ingredient = Ingredient.builder().author(user).name(name).info(info).kcal(kcal).unit(unit).build();
+        Ingredient ingredient = _ingredient.orElseGet(() -> Ingredient.builder().author(user).name(name).build());
+        ingredient.setInfo(info);
+        ingredient.setKcal(kcal);
+        ingredient.setUnit(unit);
         List<NutrientInfo> nutrientInfos = ingredient.getNutrientInfos();
         for (NutrientInfoForm form : nutrients) {
             Nutrient nutrient = nutrientService.getNutrient(form.getNutrient());

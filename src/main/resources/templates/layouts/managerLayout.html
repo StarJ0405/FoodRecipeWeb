@@ -21,6 +21,9 @@
         <form th:action="@{|/manager/training|}" id="training_form" method="post" class="flex justify-center mt-5">
             <input class="link link-hover" id="training" type="button" value="데이터 학습하기"/>
         </form>
+        <form th:action="@{|/manager/initialData|}" id="initialData_form" method="post" class="flex justify-center mt-5">
+            <input class="link link-hover" id="initialData" type="button" value="정규 데이터 등록하기"/>
+        </form>
     </div>
     <div class="divider divider-horizontal"></div>
     <div class="grid h-full flex-grow card bg-base-300 rounded-box place-items-center pt-20 pb-20">
@@ -36,6 +39,11 @@
     training.addEventListener('click', ()=>{
         if(confirm('정말 학습을 시작하시겠습니까?'))
             document.getElementById('training_form').submit();
+    });
+    const initialData = document.getElementById('initialData');
+    initialData.addEventListener('click', ()=>{
+        if(confirm('정말 학습을 시작하시겠습니까?'))
+            document.getElementById('initialData_form').submit();
     });
 </script>
 </body>
