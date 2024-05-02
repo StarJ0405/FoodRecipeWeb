@@ -78,13 +78,14 @@ public class initialDataService {
             workbook.close();
 
             // 평가
-            initialEval();
+            initialEvals();
         } catch (IOException ex) {
             System.out.print(ex.getLocalizedMessage());
         }
     }
 
     private void initialUsers(Sheet userSheet) {
+        System.out.println("initializing Users Start");
         for (Row row : userSheet) {
             String id = row.getCell(0).getStringCellValue();
             String role = row.getCell(1).getStringCellValue();
@@ -92,9 +93,11 @@ public class initialDataService {
             String password = row.getCell(3).getCellType().equals(CellType.NUMERIC) ? String.format("%d", (int) row.getCell(3).getNumericCellValue()) : row.getCell(3).getStringCellValue();
             userService.create(id, password, nickname, id + "@mail.com", UserRole.getUserRole(role));
         }
+        System.out.println("initializing Users End");
     }
 
     private void initialTools(SiteUser admin, Sheet toolSheet) {
+        System.out.println("initializing Tools Start");
         for (Row row : toolSheet) {
             StringBuilder name = new StringBuilder();
 
@@ -107,9 +110,11 @@ public class initialDataService {
                 }
             toolService.create(admin, name.toString(), description.toString());
         }
+        System.out.println("initializing Tools End");
     }
 
     private void initialUnits(SiteUser admin, Sheet unitSheet) {
+        System.out.println("initializing Units Start");
         for (Row row : unitSheet) {
             StringBuilder name = new StringBuilder();
             StringBuilder description = new StringBuilder();
@@ -121,9 +126,11 @@ public class initialDataService {
                 }
             unitService.create(admin, name.toString(), description.toString());
         }
+        System.out.println("initializing Units End");
     }
 
     private void initialNutrients(SiteUser admin, Sheet nutrientSheet) {
+        System.out.println("initializing Nutrients Start");
         for (Row row : nutrientSheet) {
             StringBuilder name = new StringBuilder();
             StringBuilder description = new StringBuilder();
@@ -135,25 +142,31 @@ public class initialDataService {
                 }
             nutrientService.create(admin, name.toString(), description.toString());
         }
+        System.out.println("initializing Nutrients End");
     }
 
     private void initialCategories(SiteUser admin, Sheet categorySheet) {
+        System.out.println("initializing Categories Start");
         for (Row row : categorySheet)
             for (Cell cell : row) {
                 categoryService.create(admin, cell.getStringCellValue());
                 return;
             }
+        System.out.println("initializing Categories End");
     }
 
     private void initialTags(SiteUser admin, Sheet tagSheet) {
+        System.out.println("initializing Tag Start");
         for (Row row : tagSheet) {
             String name = row.getCell(0).getStringCellValue();
             String category_name = row.getCell(1).getStringCellValue();
             tagService.create(admin, name, category_name);
         }
+        System.out.println("initializing Tag End");
     }
 
     private void initialIngredients(SiteUser admin, Sheet ingredientSheet) {
+        System.out.println("initializing Ingredients Start");
         for (Row row : ingredientSheet) {
             if (row.getRowNum() == 0) continue;
             StringBuilder name = new StringBuilder();
@@ -194,9 +207,11 @@ public class initialDataService {
             }
             ingredientService.create(admin, name.toString(), info, kcal, unit, list);
         }
+        System.out.println("initializing Ingredients End");
     }
 
     private void initialRecipes(SiteUser admin, Sheet recipeSheet) {
+        System.out.println("initializing Recipes Start");
         for (Row row : recipeSheet) {
             StringBuilder subject = new StringBuilder();
             HashMap<String, Double> ingredientMap = new HashMap<>();
@@ -237,6 +252,7 @@ public class initialDataService {
             }
             recipeService.create(admin, subject.toString(), "", tags, new ArrayList<>(), new ArrayList<>(), ingredientInfos);
         }
+        System.out.println("initializing Recipes End");
     }
 
     public String getColumn(int column_index) {
@@ -252,7 +268,8 @@ public class initialDataService {
         return str.toString();
     }
 
-    private void initialEval() {
+    private void initialEvals() {
+        System.out.println("initializing Evals start");
         List<SiteUser> users = userService.getUsers(UserRole.USER.getValue());
         List<Recipe> recipes = recipeService.getRecipes();
         Random r = new Random();
@@ -261,5 +278,6 @@ public class initialDataService {
             for (int i = 0; i < Math.max(r.nextInt(recipes.size()), recipes.size() * 3 / 4); i++)
                 recipeEvalService.setEval(user, recipes.get(i), Math.ceil(r.nextDouble() * 100d / 2d) / 10d);
         }
+        System.out.println("initializing Evals End");
     }
 }
