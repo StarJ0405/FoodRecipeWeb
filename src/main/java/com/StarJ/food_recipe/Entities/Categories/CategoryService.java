@@ -61,6 +61,6 @@ public class CategoryService {
 
     public void create(SiteUser user, String name) {
         Optional<Category> _category = categoryRepository.findById(name);
-        Category category = _category.orElseGet(() -> categoryRepository.save(Category.builder().author(user).build()));
+        Category category = _category.orElseGet(() -> categoryRepository.save(Category.builder().author(user).name(name).build()));
     }
 }

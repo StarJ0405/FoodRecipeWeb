@@ -16,6 +16,7 @@
                 </div>
             </div>
             <div class="flex flex-wrap w-[800px] h-[800px] content-start">
+                <label class="w-full text-center text-6xl" th:text="'검색 결과가 없습니다.'" th:if="${paging.isEmpty()}"/>
                 <a th:href="@{|/recipe/detail/${recipe.id}|}" th:each="recipe,loop : ${paging}"
                    class="flex flex-col m-4 text-center">
                     <img th:src="@{${!#strings.isEmpty(recipe.baseImg) ?recipe.baseImg:'/common/white.png'}}"

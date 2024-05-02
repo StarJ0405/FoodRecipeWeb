@@ -9,6 +9,7 @@ import com.StarJ.food_recipe.Entities.Recipes.RecipeService;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
 import com.StarJ.food_recipe.Entities.Users.UserService;
 import com.StarJ.food_recipe.FoodRecipeApplication;
+import com.StarJ.food_recipe.Global.OSType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,7 @@ public class PredictDatumService {
     }
 
     private void writeDefine(Config config) throws IOException {
+        System.out.println("데이터 정제 시작");
         BufferedWriter defineBW = getBufferedWriter("database", "defined.csv");
         if (config == null || config.getIntegerValue() == null)
             for (RecipeEval eval : recipeEvalService.getEvals()) {
@@ -66,9 +68,11 @@ public class PredictDatumService {
         }
         defineBW.flush();
         defineBW.close();
+        System.out.println("데이터 정제 끝");
     }
 
     private void writeUnseen() throws IOException {
+        System.out.println("안 읽은 목록 로딩 시작");
         //"C:/Users/admin/IdeaProjects/FoodRecipeWeb/out/database/unseen.csv";
         BufferedWriter unseenBW = getBufferedWriter("database", "unseen.csv");
         for (SiteUser user : userService.getUsers())
@@ -78,6 +82,7 @@ public class PredictDatumService {
             }
         unseenBW.flush();
         unseenBW.flush();
+        System.out.println("안 읽은 목록 로딩 끝");
     }
 
     @Async
@@ -90,15 +95,21 @@ public class PredictDatumService {
             if (last == null  // 쌓인 데이터가 0인 경우
                     || ((config == null || config.getIntegerValue() == null) && last < N) // 마지막 기록이 0, 0~last까지가 N개 미만인 경우
                     || (config != null && config.getIntegerValue() != null && last - config.getIntegerValue() < N)) // 마지막 기록 ~ last 까지가 N개 미만인 경우
+            {
+                System.out.println("데이터 개수 부족으로 학습시도를 종료합니다.");
                 return;
+            }
             writeDefine(config); // 평점 저장
             writeUnseen(); // 미시청 데이터 저장
             configService.<Integer>setData(config, last);
-            System.out.println("training start");
-            ProcessBuilder processBuilder = //new ProcessBuilder("python", "./define_model.py").directory(new File("./out/database"));
-                    new ProcessBuilder("python", "./define_model.py","c:/web/database");
+            OSType osType = FoodRecipeApplication.getOS_TYPE();
+            System.out.println("training start\n"+osType.getPython()+" ./define_model.py "+osType.getPath() + "/database");
+
+            ProcessBuilder processBuilder =         new ProcessBuilder("python", "./define_model.py","C:/web/database");
+//                    new ProcessBuilder(osType.getPython(), "./define_model.py", osType.getPath() + "/database");
 
             Process process = processBuilder.start();
+
             InputStream inputStream = process.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 

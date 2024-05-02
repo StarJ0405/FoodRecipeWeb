@@ -148,10 +148,8 @@ public class initialDataService {
     private void initialCategories(SiteUser admin, Sheet categorySheet) {
         System.out.println("initializing Categories Start");
         for (Row row : categorySheet)
-            for (Cell cell : row) {
+            for (Cell cell : row)
                 categoryService.create(admin, cell.getStringCellValue());
-                return;
-            }
         System.out.println("initializing Categories End");
     }
 
