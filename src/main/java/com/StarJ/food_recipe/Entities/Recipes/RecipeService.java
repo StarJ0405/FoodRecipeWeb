@@ -49,15 +49,14 @@ public class RecipeService {
     private final IngredientInfoService ingredientInfoService;
     private final RecipeToolService recipeToolService;
     private final RecipeTagService recipeTagService;
-
-    public List<Recipe> getUnseenRecipe(SiteUser user) {
+    public  void reset(){recipeRepository.deleteAll();}
+    public List<Integer> getUnseenRecipe(String user) {
         return recipeRepository.unseenSearch(user);
     }
-
     public List<Recipe> getRecipes() {
         return recipeRepository.findAll();
     }
-
+    public Long getCount(){return recipeRepository.getCount();}
     public Page<Recipe> getRecipes(int page, String kw, String[] tags) {
         Pageable pageable = PageRequest.of(page, 24);
         return tags != null ? recipeRepository.recipePage(pageable, kw, Arrays.asList(tags)) : recipeRepository.recipePage(pageable, kw);

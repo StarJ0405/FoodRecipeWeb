@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 @Repository
-public interface UnitRepository extends JpaRepository<Unit, Integer> {
+public interface UnitRepository extends JpaRepository<Unit, Integer>, UnitRepositoryCustom {
     @Query("select "
             + "distinct u "
             + "from Unit u "

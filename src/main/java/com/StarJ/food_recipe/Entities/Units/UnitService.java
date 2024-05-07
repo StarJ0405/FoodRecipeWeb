@@ -18,8 +18,16 @@ import java.util.Optional;
 public class UnitService {
     private final UnitRepository unitRepository;
 
+    public void reset() {
+        unitRepository.deleteAll();
+    }
+
     public List<Unit> getUnits() {
         return unitRepository.findAll();
+    }
+
+    public Long getCount() {
+        return unitRepository.getCount();
     }
 
     public Page<Unit> getUnits(int page) {

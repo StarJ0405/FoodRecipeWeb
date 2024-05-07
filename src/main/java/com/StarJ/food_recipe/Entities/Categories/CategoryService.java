@@ -18,8 +18,16 @@ import java.util.Optional;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
+    public void reset() {
+        categoryRepository.deleteAll();
+    }
+
     public List<Category> getCategories() {
         return categoryRepository.findAll();
+    }
+
+    public Long getCount() {
+        return categoryRepository.getCount();
     }
 
     public Page<Category> getCategories(int page) {

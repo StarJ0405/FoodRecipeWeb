@@ -4,6 +4,8 @@ import com.StarJ.food_recipe.Entities.Categories.CategoryService;
 import com.StarJ.food_recipe.Entities.Ingredients.IngredientService;
 import com.StarJ.food_recipe.Entities.Nutrients.NutrientService;
 import com.StarJ.food_recipe.Entities.PredictData.PredictDatumService;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEval;
+import com.StarJ.food_recipe.Entities.Recipes.RecipeEvals.RecipeEvalService;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeService;
 import com.StarJ.food_recipe.Entities.Tags.TagService;
 import com.StarJ.food_recipe.Entities.Tools.ToolService;
@@ -34,17 +36,19 @@ public class MainController {
     private final IngredientService ingredientService;
     private final RecipeService recipeService;
     private final initialDataService dataService;
-
+    private final RecipeEvalService recipeEvalService;
     @GetMapping("/manager")
     public String managerHome(Model model) {
-        model.addAttribute("categories", categoryService.getCategories());
-        model.addAttribute("users", userService.getUsers());
-        model.addAttribute("tools", toolService.getTools());
-        model.addAttribute("units", unitService.getUnits());
-        model.addAttribute("nutrients", nutrientService.getNutrients());
-        model.addAttribute("tags", tagService.getTags());
-        model.addAttribute("ingredients", ingredientService.getIngredients());
-        model.addAttribute("recipes", recipeService.getRecipes());
+        model.addAttribute("categories", categoryService.getCount());
+        model.addAttribute("users", userService.getCount());
+        model.addAttribute("tools", toolService.getCount());
+        model.addAttribute("units", unitService.getCount());
+        model.addAttribute("nutrients", nutrientService.getCount());
+        model.addAttribute("tags", tagService.getCount());
+        model.addAttribute("ingredients", ingredientService.getCount());
+        model.addAttribute("recipes", recipeService.getCount());
+        model.addAttribute("evals", recipeEvalService.getCount());
+        model.addAttribute("pds", predictDatumService.getCount());
         return "managers/home";
     }
 
@@ -53,11 +57,20 @@ public class MainController {
         dataService.initial();
         return "redirect:/manager";
     }
-
+    @PostMapping("/manager/resetData")
+    public String reset() {
+        dataService.resetAllData();
+        return "redirect:/manager";
+    }
+    @PostMapping("/manager/initialTestData")
+    public String testData() {
+        dataService.createTestData();
+        return "redirect:/manager";
+    }
     @GetMapping("/init")
     public String init() {
         dataService.check();
-        return "redirect:/";
+        return "redirect:/user/login";
     }
 
     @GetMapping("/")

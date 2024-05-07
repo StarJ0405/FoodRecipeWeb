@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 @Repository
-public interface ToolRepository extends JpaRepository<Tool, Integer> {
+public interface ToolRepository extends JpaRepository<Tool, Integer>,ToolRepositoryCustom {
     @Query("select "
             + "distinct t "
             + "from Tool t "

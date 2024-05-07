@@ -4,7 +4,7 @@ import lombok.Getter;
 
 public enum OSType {
     Window("C:/web"),
-    Linux("/home/ubuntu/food/data","sudo python3.10"),
+    Linux("/home/ubuntu/food/data","python3.10"),
     ETC("/");
     //
 

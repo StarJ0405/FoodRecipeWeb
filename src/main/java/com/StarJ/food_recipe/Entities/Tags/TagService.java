@@ -20,11 +20,11 @@ import java.util.Optional;
 public class TagService {
     private final TagRepository tagRepository;
     private final CategoryService categoryService;
-
+    public  void reset(){tagRepository.deleteAll();}
     public List<Tag> getTags() {
         return tagRepository.findAll();
     }
-
+    public Long getCount(){return tagRepository.getCount();}
     public List<Tag> getTags(List<String> _tags) {
         return tagRepository.findByNames(_tags);
     }

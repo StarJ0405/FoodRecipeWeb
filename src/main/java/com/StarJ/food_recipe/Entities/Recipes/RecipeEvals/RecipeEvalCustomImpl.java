@@ -11,21 +11,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RecipeEvalCustomImpl implements RecipeEvalCustom {
     private final JPAQueryFactory jpaQueryFactory;
-    QRecipeEval recipeEval = QRecipeEval.recipeEval;
+    QRecipeEval qRecipeEval = QRecipeEval.recipeEval;
 
     @Override
     public List<RecipeEval> findByRecipe(Recipe recipe) {
-        return jpaQueryFactory.select(recipeEval).from(recipeEval).where(recipeEval.recipe.eq(recipe)).fetch();
+        return jpaQueryFactory.select(qRecipeEval).from(qRecipeEval).where(qRecipeEval.recipe.eq(recipe)).fetch();
     }
 
     @Override
     public List<RecipeEval> findByUser(SiteUser user) {
-        return jpaQueryFactory.select(recipeEval).from(recipeEval).where(recipeEval.siteUser.eq(user)).fetch();
+        return jpaQueryFactory.select(qRecipeEval).from(qRecipeEval).where(qRecipeEval.siteUser.eq(user)).fetch();
     }
 
     @Override
     public Optional<RecipeEval> findByUserRecipe(SiteUser user, Recipe recipe) {
-        List<RecipeEval> list = jpaQueryFactory.select(recipeEval).from(recipeEval).where(recipeEval.siteUser.eq(user).and(recipeEval.recipe.eq(recipe))).fetch();
+        List<RecipeEval> list = jpaQueryFactory.select(qRecipeEval).from(qRecipeEval).where(qRecipeEval.siteUser.eq(user).and(qRecipeEval.recipe.eq(recipe))).fetch();
         if (!list.isEmpty())
             return Optional.ofNullable(list.getFirst());
         else
@@ -33,12 +33,22 @@ public class RecipeEvalCustomImpl implements RecipeEvalCustom {
     }
 
     @Override
-    public List<RecipeEval> findAfterId(Integer id) {
-        return jpaQueryFactory.select(recipeEval).from(recipeEval).where(recipeEval.id.gt(id)).fetch();
+    public int getLastRecipeID() {
+        return jpaQueryFactory.select(qRecipeEval.id.max()).from(qRecipeEval).fetchOne();
     }
 
     @Override
-    public int getLastRecipeID() {
-        return jpaQueryFactory.select(recipeEval.id.max()).from(recipeEval).fetchOne();
+    public Long getCount() {
+        return jpaQueryFactory.select(qRecipeEval.count()).from(qRecipeEval).fetchOne();
+    }
+
+    @Override
+    public List<RecipeEval> findAfterIdByLimited(Integer id) {
+        return jpaQueryFactory.select(qRecipeEval).from(qRecipeEval).where(qRecipeEval.id.gt(id)).limit(1000l).orderBy(qRecipeEval.id.asc()).fetch();
+    }
+
+    @Override
+    public List<RecipeEval> findAllByLimited() {
+        return jpaQueryFactory.select(qRecipeEval).from(qRecipeEval).limit(1000l).orderBy(qRecipeEval.id.asc()).fetch();
     }
 }

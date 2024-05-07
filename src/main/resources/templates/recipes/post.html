@@ -2,7 +2,7 @@
       xmlns:th="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content" th:object="${recipeEditForm}"
      class="flex flex-col w-full border-opacity-50 place-items-center bg-base-300 p-5">
-    <div th:replace="~{/layouts/form_errors :: formErrorsFragment}"></div>
+    <div th:replace="~{./layouts/form_errors :: formErrorsFragment}"></div>
     <form th:action="@{|${destination}|}" method="post" enctype="multipart/form-data" id="form">
         <div class="w-[1000px] border-2 p-4 border-black">
             <input type="text" th:field="*{subject}" th:value="*{subject}" id="subject" name="subject"

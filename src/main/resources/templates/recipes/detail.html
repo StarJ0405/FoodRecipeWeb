@@ -19,7 +19,7 @@
                            th:value="${ingredientInfo.ingredient.name}"/>
                     <input type="text" readonly class="w-[60px] overflow-hidden" th:value="${ingredientInfo.amount}"/>
                     <input type="text" readonly class="w-[75px] overflow-hidden"
-                           th:value="${ingredientInfo.ingredient.unit.name}"/>
+                           th:value="${ingredientInfo.ingredient.unit!=null?ingredientInfo.ingredient.unit.name:''}"/>
                 </div>
             </div>
         </div>

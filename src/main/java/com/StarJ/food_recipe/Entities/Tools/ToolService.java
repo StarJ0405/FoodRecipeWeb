@@ -17,11 +17,11 @@ import java.util.Optional;
 @Service
 public class ToolService {
     private final ToolRepository toolRepository;
-
+    public void reset(){toolRepository.deleteAll();}
     public List<Tool> getTools() {
         return toolRepository.findAll();
     }
-
+    public Long getCount(){return toolRepository.getCount();}
     public List<Tool> getTools(List<String> _tools) {
         return toolRepository.findByNames(_tools);
     }

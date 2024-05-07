@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class IngredientInfoService {
     private final IngredientInfoRepository ingredientInfoRepository;
-
+    public  void reset(){ingredientInfoRepository.deleteAll();}
     public IngredientInfo getIngredientInfo(Recipe recipe, Ingredient ingredient, double amount) {
         Optional<IngredientInfo> _info = ingredientInfoRepository.find(ingredient.getName(), recipe.getId());
         if (_info.isPresent()) {

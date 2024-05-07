@@ -11,6 +11,8 @@ import com.StarJ.food_recipe.Entities.Users.UserService;
 import com.StarJ.food_recipe.FoodRecipeApplication;
 import com.StarJ.food_recipe.Global.OSType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,9 @@ public class PredictDatumService {
     private final RecipeEvalService recipeEvalService;
     private final PredictDatumRepository predictDatumRepository;
     private final ConfigService configService;
+    private boolean status = false;
 
+    public void reset(){predictDatumRepository.deleteAll();}
     public List<PredictDatum> getTop10() {
         return predictDatumRepository.getTop10();
     }
@@ -51,38 +55,58 @@ public class PredictDatumService {
     }
 
     private void writeDefine(Config config) throws IOException {
-        System.out.println("데이터 정제 시작");
+        System.out.println("Data Defining Start");
         BufferedWriter defineBW = getBufferedWriter("database", "defined.csv");
         if (config == null || config.getIntegerValue() == null)
-            for (RecipeEval eval : recipeEvalService.getEvals()) {
+            for (RecipeEval eval : recipeEvalService.getEvalsByLimited()) {
                 defineBW.write(eval.getSiteUser().getId() + "," + eval.getRecipe().getId() + "," + eval.getVal() + "," + Long.parseLong(eval.getCreateDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))));
                 defineBW.write(newLine);
             }
         else {
             Integer start = config.getIntegerValue();
             System.out.println("continue write : " + start.toString());
-            for (RecipeEval eval : recipeEvalService.getEvals(start)) {
+            for (RecipeEval eval : recipeEvalService.getEvalsByLimited(start)) {
                 defineBW.write(eval.getSiteUser().getId() + "," + eval.getRecipe().getId() + "," + eval.getVal() + "," + Long.parseLong(eval.getCreateDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))));
                 defineBW.write(newLine);
             }
         }
         defineBW.flush();
         defineBW.close();
-        System.out.println("데이터 정제 끝");
+        System.out.println("Data Defining End");
     }
 
     private void writeUnseen() throws IOException {
-        System.out.println("안 읽은 목록 로딩 시작");
+        System.out.println("Unseen List Loading Start");
         //"C:/Users/admin/IdeaProjects/FoodRecipeWeb/out/database/unseen.csv";
         BufferedWriter unseenBW = getBufferedWriter("database", "unseen.csv");
-        for (SiteUser user : userService.getUsers())
-            for (Recipe recipe : recipeService.getUnseenRecipe(user)) {
-                unseenBW.write(user.getId() + "," + recipe.getId());
+        for (String user : userService.getUsersId()) {
+            for (Integer recipe : recipeService.getUnseenRecipe(user)) {
+                unseenBW.write(user + "," + recipe);
                 unseenBW.write(newLine);
             }
-        unseenBW.flush();
-        unseenBW.flush();
-        System.out.println("안 읽은 목록 로딩 끝");
+            unseenBW.flush();
+        }
+        unseenBW.close();
+        System.out.println("Unseen List Loading End");
+    }
+
+    private final ResourceLoader resourceLoader;
+
+    private void copyModelFile(OSType osType) throws IOException {
+        Resource resource = resourceLoader.getResource("classpath:/static/define_model.py");
+        if (resource.exists()) {
+            InputStream inputStream = resource.getInputStream();
+            File file = new File(osType.getPath() + "/database/define_model.py");
+            file.getParentFile().mkdirs();
+            try (OutputStream outputStream = new FileOutputStream(file)) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            }
+        } else
+            System.out.println("모델 파일이 존재하지않습니다.");
     }
 
     @Async
@@ -90,52 +114,74 @@ public class PredictDatumService {
         // 데이터 개수 확인 > 일정 이상이면 > 아니면 return;
         try {
             Config config = configService.getData("re.last");
-            Integer last = recipeEvalService.getLastEvalID();
-            int N = 100;
-            if (last == null  // 쌓인 데이터가 0인 경우
-                    || ((config == null || config.getIntegerValue() == null) && last < N) // 마지막 기록이 0, 0~last까지가 N개 미만인 경우
-                    || (config != null && config.getIntegerValue() != null && last - config.getIntegerValue() < N)) // 마지막 기록 ~ last 까지가 N개 미만인 경우
-            {
-                System.out.println("데이터 개수 부족으로 학습시도를 종료합니다.");
+            Integer last = recipeEvalService.getLastEvalID(config);
+            int N = 500;
+            if (status) {
+                System.out.println("Already Study is Processing.");
                 return;
             }
+            if (last == null  // 쌓인 데이터가 0인 경우
+                    || ((config == null || config.getIntegerValue() == null) && last < N) // 마지막 기록이 0, 0 ~ last까지가 N개 미만인 경우
+                    || (config != null && config.getIntegerValue() != null && last - config.getIntegerValue() < N)) // 마지막 기록 ~ last 까지가 N개 미만인 경우
+            {
+                System.out.println("Need More data trying to study");
+                return;
+            }
+            status = true;
             writeDefine(config); // 평점 저장
             writeUnseen(); // 미시청 데이터 저장
             configService.<Integer>setData(config, last);
             OSType osType = FoodRecipeApplication.getOS_TYPE();
-            System.out.println("training start\n"+osType.getPython()+" ./define_model.py "+osType.getPath() + "/database");
-
-            ProcessBuilder processBuilder =         new ProcessBuilder("python", "./define_model.py","C:/web/database");
+            copyModelFile(osType);
+            System.out.println(osType.getPython() + " " + osType.getPath() + "/database/define_model.py " + osType.getPath() + "/database");
+            ProcessBuilder processBuilder = new ProcessBuilder(osType.getPython(), osType.getPath() + "/database/define_model.py", osType.getPath() + "/database");
 //                    new ProcessBuilder(osType.getPython(), "./define_model.py", osType.getPath() + "/database");
-
+            System.out.println("training Start");
             Process process = processBuilder.start();
 
+            System.out.println("input_reader start");
             InputStream inputStream = process.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
             String line;
-            while ((line = reader.readLine()) != null) {
-                // 실행 결과 처리
-                if (line.contains(" ")) {
-                    String[] sp = line.split(" ");
-                    if (sp.length == 3) try {
-                        String userID = sp[0];
-                        SiteUser user = userService.getUserbyID(sp[0]);
-                        Integer itemID = Integer.parseInt(sp[1]);
-                        Recipe recipe = recipeService.getRecipe(itemID);
-                        Double val = Double.parseDouble(sp[2]);
-                        PredictDatum predictDatum = PredictDatum.builder().user(user).recipe(recipe).predict_val(val).build();
-                        predictDatumRepository.save(predictDatum);
-//                        System.out.xprintln("전달 받은 데이터 : " + userID + ", " + itemID + ", " + val);
-                    } catch (Exception exception) {
-                        System.out.println("line error");
+            if (reader != null || !reader.equals(""))
+                while ((line = reader.readLine()) != null) {
+                    // 실행 결과 처리
+                    if (line.contains(" ")) {
+                        String[] sp = line.split(" ");
+                        if (sp.length >= 3) try {
+                            String userID = sp[0];
+                            SiteUser user = userService.getUserbyID(sp[0]);
+                            Integer itemID = Integer.parseInt(sp[1]);
+                            Recipe recipe = recipeService.getRecipe(itemID);
+                            Double val = Double.parseDouble(sp[2]);
+                            PredictDatum predictDatum = PredictDatum.builder().user(user).recipe(recipe).predict_val(val).build();
+                            predictDatumRepository.save(predictDatum);
+//                        System.out.println("전달 받은 데이터 : " + userID + ", " + itemID + ", " + val);
+                        } catch (Exception exception) {
+                            System.out.println("line error");
+                        }
                     }
                 }
-            }
+            System.out.println("input_reader end");
+            InputStream errorStream = process.getErrorStream();
+            System.out.println("error_reader start");
+            BufferedReader error_reader = new BufferedReader((new InputStreamReader((errorStream))));
+            String error_line;
+            if (error_reader != null || !error_reader.equals(""))
+                while ((error_line = error_reader.readLine()) != null)
+                    System.out.println(error_line);
+            System.out.println("error_reader end");
+
             System.out.println("training end(" + process.waitFor() + ")");
+            status = false;
+            training();
         } catch (IOException | InterruptedException e) {
             System.out.println("training error");
             throw new RuntimeException(e);
         }
+    }
+
+    public Long getCount() {
+        return predictDatumRepository.getCount();
     }
 }

@@ -19,4 +19,9 @@ public class RecipeToolService {
         else
             return recipeToolRepository.save(RecipeTool.builder().recipe(recipe).tool(tool).build());
     }
+
+    public void reset() {
+        recipeToolRepository.deleteAll();
+    }
+
 }

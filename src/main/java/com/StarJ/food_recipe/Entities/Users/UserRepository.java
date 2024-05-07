@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<SiteUser, String> {
+public interface UserRepository extends JpaRepository<SiteUser, String>, UserRepositoryCustom {
     @Query("select "
             + "distinct u "
             + "from SiteUser u "

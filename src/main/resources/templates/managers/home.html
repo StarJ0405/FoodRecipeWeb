@@ -3,14 +3,16 @@
 <div layout:fragment="content">
     <div class="flex flex-col w-full border-opacity-50">
         <div class="grid card bg-base-300 rounded-box place-items-center">
-            <label th:text="${'카테고리 개수 : '+#lists.size(categories)}"/>
-            <label th:text="${'유저수 : '+#lists.size(users)}"/>
-            <label th:text="${'도구 개수 : '+#lists.size(tools)}"/>
-            <label th:text="${'단위 개수 : '+#lists.size(units)}"/>
-            <label th:text="${'영양분 개수 : '+#lists.size(nutrients)}"/>
-            <label th:text="${'태그 수 : '+#lists.size(tags)}"/>
-            <label th:text="${'재료 수 : '+#lists.size(ingredients)}"/>
-            <label th:text="${'레시피 수 : '+#lists.size(recipes)}"/>
+            <label th:text="${'카테고리 개수 : '+categories}"/>
+            <label th:text="${'유저수 : '+users}"/>
+            <label th:text="${'도구 개수 : '+tools}"/>
+            <label th:text="${'단위 개수 : '+units}"/>
+            <label th:text="${'영양분 개수 : '+nutrients}"/>
+            <label th:text="${'태그 수 : '+tags}"/>
+            <label th:text="${'재료 수 : '+ingredients}"/>
+            <label th:text="${'레시피 수 : '+recipes}"/>
+            <label th:text="${'평가수 수 : '+evals}"/>
+            <label th:text="${'학습 수 : '+pds}"/>
         </div>
 <!--        <div class="divider">OR</div>-->
 <!--        <div class="grid h-20 card bg-base-300 rounded-box place-items-center">content</div>-->

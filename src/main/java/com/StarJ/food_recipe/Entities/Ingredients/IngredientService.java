@@ -28,11 +28,11 @@ public class IngredientService {
     private final UnitService unitService;
     private final NutrientService nutrientService;
     private final NutrientInfoService nutrientInfoService;
-
+    public  void reset(){ingredientRepository.deleteAll();}
     public List<Ingredient> getIngredients() {
         return ingredientRepository.findAll();
     }
-
+    public Long getCount(){return  ingredientRepository.getCount();}
     public Page<Ingredient> getIngredients(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Order.desc("createDate")));
         return ingredientRepository.findAll(pageable);

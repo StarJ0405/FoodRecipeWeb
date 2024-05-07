@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RecipeEvalCustom  {
-    List<RecipeEval> findAfterId(Integer id);
+    List<RecipeEval> findAfterIdByLimited(Integer id);
+    List<RecipeEval> findAllByLimited();
     List<RecipeEval> findByRecipe(Recipe recipe);
     List<RecipeEval> findByUser(SiteUser user);
     Optional<RecipeEval> findByUserRecipe(SiteUser user, Recipe recipe);
     int getLastRecipeID();
+    Long getCount();
 }

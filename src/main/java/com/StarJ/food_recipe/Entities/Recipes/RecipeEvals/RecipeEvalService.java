@@ -1,6 +1,6 @@
 package com.StarJ.food_recipe.Entities.Recipes.RecipeEvals;
 
-import com.StarJ.food_recipe.Entities.PredictData.PredictDatumService;
+import com.StarJ.food_recipe.Entities.Configs.Config;
 import com.StarJ.food_recipe.Entities.Recipes.Recipe;
 import com.StarJ.food_recipe.Entities.Recipes.RecipeService;
 import com.StarJ.food_recipe.Entities.Users.SiteUser;
@@ -15,6 +15,10 @@ import java.util.Optional;
 public class RecipeEvalService {
     private final RecipeEvalRepository recipeEvalRepository;
     private final RecipeService recipeService;
+
+    public void reset() {
+        recipeEvalRepository.deleteAll();
+    }
 
     public RecipeEval setEval(SiteUser user, Recipe recipe, double val) {
         Optional<RecipeEval> _recipeEval = recipeEvalRepository.findByUserRecipe(user, recipe);
@@ -31,15 +35,28 @@ public class RecipeEvalService {
         return _recipeEval.isPresent() ? _recipeEval.get() : null;
     }
 
-    public List<RecipeEval> getEvals(Integer start) {
-        return recipeEvalRepository.findAfterId(start);
+    public List<RecipeEval> getEvalsByLimited(Integer start) {
+        return recipeEvalRepository.findAfterIdByLimited(start);
+    }
+    public List<RecipeEval> getEvalsByLimited() {
+        return recipeEvalRepository.findAllByLimited();
     }
 
-    public Integer getLastEvalID() {
-        return recipeEvalRepository.getLastRecipeID();
+    public Integer getLastEvalID(Config config) {
+        Integer start = config.getIntegerValue();
+        if(start == null)
+            start =0;
+        Integer last = recipeEvalRepository.getLastRecipeID();
+        return last > start + 1000 ? (start + 1000) : last;
     }
+
 
     public List<RecipeEval> getEvals() {
         return recipeEvalRepository.findAll();
     }
+
+    public Long getCount() {
+        return recipeEvalRepository.getCount();
+    }
+
 }

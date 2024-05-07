@@ -15,10 +15,11 @@ public interface RecipeRepositoryCustom {
 
     Optional<Recipe> search(String subject);
 
-    List<Recipe> unseenSearch(SiteUser user);
+    List<Integer> unseenSearch(String user);
 
     Page<Recipe> recipePage(Pageable pageable);
 
     Page<Recipe> recipePage(Pageable pageable, String kw);
     Page<Recipe> recipePage(Pageable pageable, String kw, List<String> tags);
+    public Long getCount();
 }

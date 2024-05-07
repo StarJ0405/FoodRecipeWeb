@@ -17,11 +17,11 @@ import java.util.Optional;
 @Service
 public class NutrientService {
     private final NutrientRepository nutrientRepository;
-
+    public void reset(){nutrientRepository.deleteAll();}
     public List<Nutrient> getNutrients() {
         return nutrientRepository.findAll();
     }
-
+    public Long getCount(){return nutrientRepository.getCount();}
     public Page<Nutrient> getNutrients(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Order.desc("createDate")));
         return nutrientRepository.findAll(pageable);

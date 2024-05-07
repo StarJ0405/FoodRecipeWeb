@@ -24,6 +24,12 @@
         <form th:action="@{|/manager/initialData|}" id="initialData_form" method="post" class="flex justify-center mt-5">
             <input class="link link-hover" id="initialData" type="button" value="정규 데이터 등록하기"/>
         </form>
+        <form th:action="@{|/manager/resetData|}" id="resetData_form" method="post" class="flex justify-center mt-5">
+            <input class="link link-hover" id="resetData" type="button" value="데이터 초기화"/>
+        </form>
+        <form th:action="@{|/manager/initialTestData|}" id="initialTestData_form" method="post" class="flex justify-center mt-5">
+            <input class="link link-hover" id="initialTestData" type="button" value="테스트 데이터 등록하기"/>
+        </form>
     </div>
     <div class="divider divider-horizontal"></div>
     <div class="grid h-full flex-grow card bg-base-300 rounded-box place-items-center pt-20 pb-20">
@@ -42,8 +48,18 @@
     });
     const initialData = document.getElementById('initialData');
     initialData.addEventListener('click', ()=>{
-        if(confirm('정말 학습을 시작하시겠습니까?'))
+        if(confirm('정말 데이터를 입력하시겠습니까?'))
             document.getElementById('initialData_form').submit();
+    });
+    const resetData = document.getElementById('resetData');
+    resetData.addEventListener('click', ()=>{
+        if(confirm('정말 데이터를 전체 초기화하시겠습니까?'))
+            document.getElementById('resetData_form').submit();
+    });
+    const initialTestData = document.getElementById('initialTestData');
+    initialTestData.addEventListener('click', ()=>{
+        if(confirm('정말 데이터를 테스터 데이터를 입력하시겠습니까?'))
+            document.getElementById('initialTestData_form').submit();
     });
 </script>
 </body>

@@ -4,9 +4,6 @@
 <div layout:fragment="content" class="flex flex-col w-full border-opacity-50">
     <div class="grid card bg-base-300 rounded-box place-items-center">
         <div class="overflow-x-auto">
-            <input type="button" value="추가" id="delete" class="btn btn-outline btn-info mb-2"
-                   onclick="location.href = this.dataset.uri;"
-                   th:data-uri="@{|/manager/user/create|}">
             <table class="table [&_th]:border-2 [&_th]:border-black [&_td]:border-2 [&_td]:border-black text-center">
                 <tr>
                     <th class="w-[100px]" th:text="번호"/>
@@ -16,7 +13,8 @@
                 </tr>
                 <tr th:each="user,loop : ${paging}" class="hover">
                     <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
-                    <td><a th:href="@{|/manager/user/${user.id}|}" th:text="${user.id}"/></td>
+<!--                    <td><a th:href="@{|/manager/user/${user.id}|}" th:text="${user.id}"/></td>-->
+                    <td><label th:text="${user.id}"/></td>
                     <td><span th:text="${user.nickname}"/></td>
                     <td>
                         <span th:text="${#temporals.format(user.createDate, 'yyyy-MM-dd HH:mm')}"/>

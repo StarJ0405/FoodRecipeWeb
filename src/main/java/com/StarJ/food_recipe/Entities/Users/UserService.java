@@ -30,13 +30,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
-//    @Autowired
-//    private ResourceLoader resourceLoader;
-
+    public void reset(){
+        userRepository.deleteAll();
+    }
     public List<SiteUser> getUsers() {
         return userRepository.findAll();
     }
-
+    public List<String> getUsersId() {
+        return userRepository.getUsersId();
+    }
+    public Long getCount(){
+        return userRepository.getCount();
+    }
     public List<SiteUser> getUsers(String role) {
         return userRepository.findAllByRole(role);
     }

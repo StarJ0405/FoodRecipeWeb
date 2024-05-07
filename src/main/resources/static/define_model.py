@@ -16,7 +16,7 @@ data = Dataset.load_from_df(csv[['userID', 'itemID', 'rating']], reader) # 데�
 
 # 모델 학습
 if os.path.isfile(loc+'/dump_file'):
-    _, algo = dump.load(file_name)
+    _, algo = dump.load(loc+'/dump_file')
 else:
     algo = SVD(n_factors=50, random_state=5) # 요소 50개
 

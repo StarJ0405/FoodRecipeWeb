@@ -24,4 +24,9 @@ public class PredictDatumCustomImpl implements PredictDatumCustom {
         List<PredictDatum> predictData = jpaQueryFactory.select(qPredictDatum).from(qPredictDatum).orderBy(new OrderSpecifier<>(Order.DESC, qPredictDatum.predict_val)).fetch();
         return predictData.size() > 10 ? predictData.subList(0, 10) : predictData;
     }
+
+    @Override
+    public Long getCount() {
+        return jpaQueryFactory.select(qPredictDatum.count()).from(qPredictDatum).fetchOne();
+    }
 }

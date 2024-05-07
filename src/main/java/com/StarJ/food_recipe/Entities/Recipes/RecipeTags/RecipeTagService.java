@@ -13,7 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RecipeTagService {
     private final RecipeTagRepository recipeTagRepository;
-
+    public  void reset(){recipeTagRepository.deleteAll();}
     public RecipeTag getRecipeTag(Recipe recipe, Tag tag) {
         Optional<RecipeTag> _recipeTag = recipeTagRepository.find(recipe.getId(), tag.getName());
         if (_recipeTag.isPresent())

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 @Repository
-public interface NutrientRepository extends JpaRepository<Nutrient, Integer> {
+public interface NutrientRepository extends JpaRepository<Nutrient, Integer>,NutrientRepositoryCustom {
     @Query("select "
             + "distinct n "
             + "from Nutrient n "
