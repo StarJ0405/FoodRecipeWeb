@@ -335,7 +335,7 @@ public class initialDataService {
         // 사용자
         System.out.println("User Create Start");
         SiteUser admin = userService.create("admin", "1", "관리자", "", UserRole.ADMIN);
-        for (int i = 1; i <= 10000; i++) {
+        for (int i = 1; i <= 1000; i++) {
             userService.create("user" + i, "", "", "", UserRole.USER);
             if (i % 1000 == 0)
                 System.out.println("User Create Percentage : " + Math.round(i / 100d) + "%");
@@ -390,7 +390,7 @@ public class initialDataService {
         List<Tag> tags = tagService.getTags();
         List<Tool> tools = toolService.getTools();
         List<Ingredient> ingredients = ingredientService.getIngredients();
-        for (int i = 1; i <= 100000; i++) {
+        for (int i = 1; i <= 3000; i++) {
             List<String> _tags = new ArrayList<>();
             if (i % (tags.size() / 5) == 0)
                 Collections.shuffle(tags);
@@ -418,7 +418,7 @@ public class initialDataService {
         System.out.println("Eval Create Start");
         List<Recipe> recipes = recipeService.getRecipes();
         int i=0;
-        for (SiteUser user : userService.getUsers()) {
+        for (SiteUser user : userService.getUsers(UserRole.USER.getValue())) {
             Collections.shuffle(recipes);
             for (int k = 0; k < 100; k++) {
                 Recipe recipe = recipes.get(k);
