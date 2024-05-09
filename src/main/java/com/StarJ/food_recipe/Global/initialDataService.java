@@ -417,16 +417,17 @@ public class initialDataService {
         System.out.println("Recipe Create End");
         System.out.println("Eval Create Start");
         List<Recipe> recipes = recipeService.getRecipes();
-        int i=0;
-        for (SiteUser user : userService.getUsers(UserRole.USER.getValue())) {
+        int i = 0;
+        List<SiteUser> users = userService.getUsers(UserRole.USER.getValue());
+        for (SiteUser user : users) {
             Collections.shuffle(recipes);
             for (int k = 0; k < 100; k++) {
                 Recipe recipe = recipes.get(k);
                 recipeEvalService.setEval(user, recipe, Math.ceil(new Random().nextDouble() * 50) / 10d);
             }
             i++;
-            if(i%100==0)
-                System.out.println("Eval Create Percentage : "+(i/100)+"%");
+            if (i % (users.size() / 100) == 0)
+                System.out.println("Eval Create Percentage : " + (i * 100d / users.size()) + "%");
         }
 
         System.out.println("Eval Create End");
