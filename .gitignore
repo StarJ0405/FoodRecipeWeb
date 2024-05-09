@@ -29,8 +29,7 @@ out/**
 !out/database/unseen.csv
 !**/src/main/**/out/
 !**/src/test/**/out/
-application.properties
-application.yml
+application.*
 *.yml
 
 ### NetBeans ###
