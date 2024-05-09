@@ -125,7 +125,7 @@ public class RecipeController {
         SiteUser user = principalDetail.getUser();
         Recipe recipe = recipeService.getRecipe(id);
         recipeEvalService.setEval(user, recipe, rating);
-        predictDatumService.training();
+//        predictDatumService.training();
         return "redirect:/recipe/detail/" + id;
     }
 

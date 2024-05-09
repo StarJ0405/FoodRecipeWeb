@@ -424,9 +424,9 @@ public class initialDataService {
                 Recipe recipe = recipes.get(k);
                 recipeEvalService.setEval(user, recipe, Math.ceil(new Random().nextDouble() * 50) / 10d);
             }
+            i++;
             if(i%100==0)
                 System.out.println("Eval Create Percentage : "+(i/100)+"%");
-            i++;
         }
 
         System.out.println("Eval Create End");
