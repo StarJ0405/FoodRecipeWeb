@@ -3,7 +3,7 @@ package com.StarJ.food_recipe.Global;
 import lombok.Getter;
 
 public enum OSType {
-    Window("C:/web"),
+    Window("C:/web/food"),
     Linux("/home/ubuntu/food/data","python3.10"),
     ETC("/");
     //
