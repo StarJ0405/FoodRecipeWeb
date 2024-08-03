@@ -34,7 +34,10 @@ jobs:
       - name: package copy
         env:
           ACTIONS_STEP_DEBUG: true
-        run: cp ${{ github.workspace }}/github.io/package.json ${{ github.workspace }}/
+        run: |
+         cp ${{github.workspace}}/github.io/package.json ${{github.workspace}}/package.json
+         ls
+         ls ${{github.workspace}}/github.io
       - name: Detect package manager
         id: detect-package-manager
         run: |
