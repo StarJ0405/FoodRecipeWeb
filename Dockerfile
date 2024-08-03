@@ -1,4 +1,4 @@
-FROM ghdtjdwo126/ubuntu-preset as builder
+FROM ghdtjdwo126/ubuntu-preset AS builder
 WORKDIR /
 COPY ./src/. /src/
 COPY ./gradlew /
