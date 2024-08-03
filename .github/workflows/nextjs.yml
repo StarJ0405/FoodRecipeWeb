@@ -36,7 +36,7 @@ jobs:
           ACTIONS_STEP_DEBUG: true
         run: |
          cp ${{github.workspace}}/github.io/package.json ${{github.workspace}}/package.json
-         ls ${{github.workspace}}
+         cp ${{github.workspace}}/github.io/package-lock.json ${{github.workspace}}/package-lock.json
       - name: Detect package manager
         id: detect-package-manager
         run: |
