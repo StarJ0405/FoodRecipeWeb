@@ -115,18 +115,18 @@ public class PredictDatumService {
         try {
             Config config = configService.getData("re.last");
             Integer last = recipeEvalService.getLastEvalID(config);
-            int N = 500;
+//            int N = 500;
             if (status) {
                 System.out.println("Already Study is Processing.");
                 return;
             }
-            if (last == null  // 쌓인 데이터가 0인 경우
-                    || ((config == null || config.getIntegerValue() == null) && last < N) // 마지막 기록이 0, 0 ~ last까지가 N개 미만인 경우
-                    || (config != null && config.getIntegerValue() != null && last - config.getIntegerValue() < N)) // 마지막 기록 ~ last 까지가 N개 미만인 경우
-            {
-                System.out.println("Need More data trying to study");
-                return;
-            }
+//            if (last == null  // 쌓인 데이터가 0인 경우
+//                    || ((config == null || config.getIntegerValue() == null) && last < N) // 마지막 기록이 0, 0 ~ last까지가 N개 미만인 경우
+//                    || (config != null && config.getIntegerValue() != null && last - config.getIntegerValue() < N)) // 마지막 기록 ~ last 까지가 N개 미만인 경우
+//            {
+//                System.out.println("Need More data trying to study");
+//                return;
+//            }
             status = true;
             writeDefine(config); // 평점 저장
             writeUnseen(); // 미시청 데이터 저장
