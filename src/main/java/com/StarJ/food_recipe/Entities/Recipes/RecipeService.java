@@ -49,14 +49,23 @@ public class RecipeService {
     private final IngredientInfoService ingredientInfoService;
     private final RecipeToolService recipeToolService;
     private final RecipeTagService recipeTagService;
-    public  void reset(){recipeRepository.deleteAll();}
+
+    public void reset() {
+        recipeRepository.deleteAll();
+    }
+
     public List<Integer> getUnseenRecipe(String user) {
         return recipeRepository.unseenSearch(user);
     }
+
     public List<Recipe> getRecipes() {
         return recipeRepository.findAll();
     }
-    public Long getCount(){return recipeRepository.getCount();}
+
+    public Long getCount() {
+        return recipeRepository.getCount();
+    }
+
     public Page<Recipe> getRecipes(int page, String kw, String[] tags) {
         Pageable pageable = PageRequest.of(page, 24);
         return tags != null ? recipeRepository.recipePage(pageable, kw, Arrays.asList(tags)) : recipeRepository.recipePage(pageable, kw);
@@ -133,15 +142,19 @@ public class RecipeService {
         recipe.setSubject(subject);
         if (baseImg != null && !baseImg.equals("") && !baseImg.equals(recipe.getBaseImg()))
             try {
-                String path = FoodRecipeApplication.getOS_TYPE().getPath();
-                Path oldPath = Paths.get(path + baseImg);
-                File recipeFolder = new File(path + "/recipes/" + recipe.getUUID().toString());
-                if (!recipeFolder.exists())
-                    recipeFolder.mkdirs();
-                String newUrl = "/recipes/" + recipe.getUUID().toString() + "/baseImg." + baseImg.split("\\.")[1];
-                Path newPath = Paths.get(path + newUrl);
-                Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-                recipe.setBaseImg(newUrl);
+                if (!baseImg.contains("/common/")) {
+                    String path = FoodRecipeApplication.getOS_TYPE().getPath();
+                    Path oldPath = Paths.get(path + baseImg);
+                    File recipeFolder = new File(path + "/recipes/" + recipe.getUUID().toString());
+                    if (!recipeFolder.exists())
+                        recipeFolder.mkdirs();
+                    String newUrl = "/recipes/" + recipe.getUUID().toString() + "/baseImg." + baseImg.split("\\.")[1];
+                    Path newPath = Paths.get(path + newUrl);
+                    Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+                    recipe.setBaseImg(newUrl);
+                } else
+                    recipe.setBaseImg(baseImg);
+
             } catch (IOException ex) {
 
             }
@@ -193,15 +206,18 @@ public class RecipeService {
         Recipe recipe = Recipe.builder().author(user).subject(subject).uuid(UUID.randomUUID()).build();
         if (baseImg != null && !baseImg.equals(""))
             try {
-                String path = FoodRecipeApplication.getOS_TYPE().getPath();
-                Path oldPath = Paths.get(path + baseImg);
-                File recipeFolder = new File(path + "/recipes/" + recipe.getUUID().toString());
-                if (!recipeFolder.exists())
-                    recipeFolder.mkdirs();
-                String newUrl = "/recipes/" + recipe.getUUID().toString() + "/baseImg." + baseImg.split("\\.")[1];
-                Path newPath = Paths.get(path + newUrl);
-                Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-                recipe.setBaseImg(newUrl);
+                if (!baseImg.contains("/common/")) {
+                    String path = FoodRecipeApplication.getOS_TYPE().getPath();
+                    Path oldPath = Paths.get(path + baseImg);
+                    File recipeFolder = new File(path + "/recipes/" + recipe.getUUID().toString());
+                    if (!recipeFolder.exists())
+                        recipeFolder.mkdirs();
+                    String newUrl = "/recipes/" + recipe.getUUID().toString() + "/baseImg." + baseImg.split("\\.")[1];
+                    Path newPath = Paths.get(path + newUrl);
+                    Files.move(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+                    recipe.setBaseImg(newUrl);
+                } else
+                    recipe.setBaseImg(baseImg);
             } catch (IOException ex) {
 
             }

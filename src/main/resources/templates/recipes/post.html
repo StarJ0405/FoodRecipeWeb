@@ -30,7 +30,7 @@
                             <option th:each="ingredient : ${ingredients}" th:text="${ingredient.name}"
                                     th:value="${ingredient.name}"
                                     th:selected="${ingredientInfo.ingredient == ingredient.name}"/>
-                        </select><input class="w-1/4 ingredient_amount" type="number" min="0"
+                        </select><input class="w-1/4 ingredient_amount" type="number" min="0" step="0.1"
                                         th:name="'ingredientInfos['+${loop.index}+'].amount'"
                                         th:value="${ingredientInfo.amount}"/><input
                             class="btn btn-outline btn-info ml-2" type="button"

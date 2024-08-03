@@ -259,7 +259,7 @@ public class initialDataService {
                 ingredientInfoForm.setAmount(ingredientMap.get(ingredient));
                 ingredientInfos.add(ingredientInfoForm);
             }
-            recipeService.create(admin, subject.toString(), "", tags, new ArrayList<>(), new ArrayList<>(), ingredientInfos);
+            recipeService.create(admin, subject.toString(), "/common/" + subject.toString() + ".png", tags, new ArrayList<>(), new ArrayList<>(), ingredientInfos);
         }
         System.out.println("initializing Recipes End");
     }
