@@ -174,7 +174,7 @@ public class PredictDatumService {
 
             System.out.println("training end(" + process.waitFor() + ")");
             status = false;
-            training();
+//            training();
         } catch (IOException | InterruptedException e) {
             System.out.println("training error");
             throw new RuntimeException(e);
