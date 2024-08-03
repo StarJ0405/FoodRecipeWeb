@@ -35,13 +35,13 @@ jobs:
         id: detect-package-manager
         run: |
           if [ -f "${{ github.workspace }}/github.io/yarn.lock" ]; then
-            cp "${{ github.workspace }}/github.io/yarn.lock" "${{ github.workspace }}/yarn.lock"
+            cp ${{ github.workspace }}/github.io/yarn.lock ${{ github.workspace }}/yarn.lock
             echo "manager=yarn" >> $GITHUB_OUTPUT
             echo "command=install" >> $GITHUB_OUTPUT
             echo "runner=yarn" >> $GITHUB_OUTPUT
             exit 0
           elif [ -f "${{ github.workspace }}/github.io/package.json" ]; then
-            cp "${{ github.workspace }}/github.io/package.json" "${{ github.workspace }}/package.json"
+            cp ${{ github.workspace }}/github.io/package.json ${{ github.workspace }}/package.json
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "command=ci" >> $GITHUB_OUTPUT
             echo "runner=npx --no-install" >> $GITHUB_OUTPUT
