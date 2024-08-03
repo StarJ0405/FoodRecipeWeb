@@ -36,8 +36,7 @@ jobs:
           ACTIONS_STEP_DEBUG: true
         run: |
          cp ${{github.workspace}}/github.io/package.json ${{github.workspace}}/package.json
-         ls
-         ls ${{github.workspace}}/github.io
+         ls ${{github.workspace}}
       - name: Detect package manager
         id: detect-package-manager
         run: |
